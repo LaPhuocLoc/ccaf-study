@@ -4,11 +4,26 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>CCA-F Study Hub</title>
-<meta http-equiv="refresh" content="0; url=CCA-F-Study.html">
+<noscript><meta http-equiv="refresh" content="0; url=CCA-F-Study.html"></noscript>
 <!-- Keep deep links working: /ccaf-study/#/practice/quiz -> CCA-F-Study.html#/practice/quiz -->
-<script>location.replace("CCA-F-Study.html" + location.hash);</script>
+<script>
+  // Japanese browsers land on the Japanese page; a language picked on the site always wins.
+  var page = "CCA-F-Study.html";
+  try {
+    var pref = localStorage.getItem("ccaf-lang-v1");
+    if (!pref) {
+      var langs = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || ""];
+      for (var i = 0; i < langs.length && !pref; i++) {
+        var l = String(langs[i]).toLowerCase();
+        if (l.indexOf("ja") === 0) pref = "ja"; else if (l.indexOf("vi") === 0) pref = "vi";
+      }
+    }
+    if (pref === "ja") page = "CCA-F-Study-ja.html";
+  } catch (e) {}
+  location.replace(page + location.hash);
+</script>
 </head>
 <body>
-<p><a href="CCA-F-Study.html">Mở trang ôn thi CCA-F →</a></p>
+<p><a href="CCA-F-Study.html">Mở trang ôn thi CCA-F →</a> · <a href="CCA-F-Study-ja.html" lang="ja">日本語版 →</a></p>
 </body>
 </html>

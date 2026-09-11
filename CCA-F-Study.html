@@ -1156,15 +1156,43 @@
     .qz-chip{ min-height:40px; }
   }
 
-  /* ---------- language switch (VI ⇄ JA) ---------- */
-  .lang-code{ font-size:12px; font-weight:700; letter-spacing:.04em; }
-  @media (max-width:860px){ .icon-btn.lang-switch{ width:auto; padding:0 10px; } }
-  @media (max-width:640px){ .topbar-actions a.icon-btn.lang-switch{ display:inline-flex; } }
+  /* ---------- language switch (VI ⇄ JA) ----------
+     Segmented control that names each language in its own script, so a
+     Japanese visitor recognises "日本語" even on the Vietnamese page. */
+  .lang-switch{ display:inline-flex; align-items:center; gap:2px; flex-shrink:0; min-height:40px; padding:3px;
+    border:1px solid var(--border); background:var(--surface); border-radius:10px; }
+  .lang-ico{ font-size:14px; line-height:1; padding:0 3px 0 5px; }
+  .lang-opt{ display:inline-flex; align-items:center; min-height:32px; padding:0 10px; border-radius:7px;
+    font-size:13px; font-weight:700; color:var(--text-dim); text-decoration:none; white-space:nowrap;
+    transition:background .15s ease, color .15s ease; }
+  a.lang-opt:hover{ color:var(--accent); background:var(--accent-soft); }
+  .lang-opt.is-current{ background:var(--accent); color:var(--accent-ink); cursor:default; }
+  @media (max-width:860px){
+    .lang-switch .is-current{ display:none; }            /* phones: show only the other language */
+    a.lang-opt{ color:var(--accent); padding:0 8px 0 4px; }
+  }
+
+  /* first-visit suggestion, shown only when the browser prefers the other language */
+  .lang-banner{ position:relative; display:flex; align-items:center; justify-content:center; flex-wrap:wrap;
+    gap:6px 14px; padding:9px 48px 9px 16px; background:var(--accent); color:var(--accent-ink);
+    font-size:13.5px; line-height:1.4; text-align:center; }
+  .lang-banner[hidden]{ display:none !important; }
+  .lang-banner-go{ display:inline-flex; align-items:center; min-height:32px; padding:0 14px; border-radius:99px;
+    background:var(--accent-ink); color:var(--accent); font-weight:700; text-decoration:none; white-space:nowrap; }
+  .lang-banner-go:hover{ filter:brightness(1.08); }
+  .lang-banner-close{ position:absolute; right:8px; top:50%; transform:translateY(-50%); appearance:none; border:none;
+    width:34px; height:34px; border-radius:9px; background:transparent; color:inherit; font-size:15px; cursor:pointer; }
+  .lang-banner-close:hover{ background:rgba(127,127,127,.28); }
 </style>
 
 <div class="app">
 
   <header class="topbar" id="topbar">
+    <div class="lang-banner" id="langBanner" data-page="vi" data-for="ja" lang="ja" hidden>
+      <span>🌐 このサイトには<strong>日本語版</strong>があります。</span>
+      <a class="lang-banner-go" href="CCA-F-Study-ja.html" hreflang="ja" data-lang="ja">日本語で表示する →</a>
+      <button type="button" class="lang-banner-close" data-dismiss aria-label="閉じる">✕</button>
+    </div>
     <div class="topbar-inner">
       <a class="brand" href="#/start">
         <span class="brand-mark">CCA·F</span>
@@ -1174,7 +1202,11 @@
         </div>
       </a>
       <div class="topbar-actions">
-        <a class="icon-btn lang-switch" href="CCA-F-Study-ja.html" hreflang="ja" lang="ja" title="日本語" aria-label="Xem bản tiếng Nhật (日本語版)" onclick="this.href=this.getAttribute('href').split('#')[0]+location.hash">🌐<span class="lang-code">JA</span></a>
+        <nav class="lang-switch" aria-label="Ngôn ngữ · 言語">
+          <span class="lang-ico" aria-hidden="true">🌐</span>
+          <span class="lang-opt is-current" aria-current="page">Tiếng Việt</span>
+          <a class="lang-opt" href="CCA-F-Study-ja.html" hreflang="ja" lang="ja" data-lang="ja" title="日本語で表示する">日本語</a>
+        </nav>
         <a class="icon-btn" href="CCAF-Exam-Guide.pdf" target="_blank" rel="noopener" title="Mở Exam Guide chính thức (PDF)" aria-label="Mở Exam Guide chính thức (PDF)">📄<span class="icon-btn-label">Exam Guide</span></a>
         <button class="icon-btn" id="openLookup" data-open-lookup aria-label="Tra cứu thuật ngữ">🔍<span class="icon-btn-label">Tra cứu</span><kbd>Ctrl K</kbd></button>
         <button class="icon-btn" id="themeToggle" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
@@ -5172,7 +5204,7 @@ Handwritten Notes:
 
   </main>
 
-  <footer class="note">Nội dung dịch &amp; tổng hợp từ <a href="CCAF-Exam-Guide.pdf" target="_blank" rel="noopener">Exam Guide chính thức</a> (v1.0, hiệu lực 07/2026) · Quiz từ <a href="CCAF-Quiz.pdf" target="_blank" rel="noopener">CCAF-Quiz.pdf</a> · Mẹo &amp; thi thử từ kinh nghiệm người đã thi. Dùng để ôn tập, không thay thế bản chính thức · <a href="CCA-F-Study-ja.html" hreflang="ja" lang="ja">日本語版</a>. Chúc thi tốt 🍀</footer>
+  <footer class="note">Nội dung dịch &amp; tổng hợp từ <a href="CCAF-Exam-Guide.pdf" target="_blank" rel="noopener">Exam Guide chính thức</a> (v1.0, hiệu lực 07/2026) · Quiz từ <a href="CCAF-Quiz.pdf" target="_blank" rel="noopener">CCAF-Quiz.pdf</a> · Mẹo &amp; thi thử từ kinh nghiệm người đã thi. Dùng để ôn tập, không thay thế bản chính thức · <a href="CCA-F-Study-ja.html" hreflang="ja" lang="ja" data-lang="ja">日本語版</a>. Chúc thi tốt 🍀</footer>
 
 </div>
 
@@ -6320,6 +6352,35 @@ Handwritten Notes:
   Quiz.render();
   if (!readHash()) applyState({ keepScroll:true });
 
+})();
+</script>
+<script>
+/* Language switch + first-visit suggestion (VI ⇄ JA). Kept apart from the
+   main app script: it only touches the language links and the banner. */
+(function(){
+  var KEY = "ccaf-lang-v1";
+  function remember(l){ try { localStorage.setItem(KEY, l); } catch(e){} }
+  document.querySelectorAll("a[data-lang]").forEach(function(a){
+    a.addEventListener("click", function(){
+      remember(a.dataset.lang);
+      a.href = a.getAttribute("href").split("#")[0] + location.hash;   // stay on the same step
+    });
+  });
+  var banner = document.getElementById("langBanner");
+  if (!banner) return;
+  var saved = null;
+  try { saved = localStorage.getItem(KEY); } catch(e){}
+  // Of vi/ja, whichever the browser lists first decides; other languages are ignored.
+  var langs = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || ""];
+  var prefers = null;
+  for (var i = 0; i < langs.length && !prefers; i++) {
+    var l = String(langs[i]).toLowerCase();
+    if (l.indexOf("ja") === 0) prefers = "ja";
+    else if (l.indexOf("vi") === 0) prefers = "vi";
+  }
+  if (!saved && prefers === banner.dataset.for) banner.hidden = false;
+  var close = banner.querySelector("[data-dismiss]");
+  if (close) close.addEventListener("click", function(){ banner.hidden = true; remember(banner.dataset.page); });
 })();
 </script>
 
