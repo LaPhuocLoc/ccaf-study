@@ -1,0 +1,8 @@
+# Only the published study site lives in this repo; everything else in this folder stays local.
+/*
+!/.gitignore
+!/index.html
+!/CCA-F-Study.html
+!/CCAF-Exam-Guide.pdf
+!/CCAF-Quiz.pdf
+!/README.md
