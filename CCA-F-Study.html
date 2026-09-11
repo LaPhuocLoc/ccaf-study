@@ -1183,6 +1183,12 @@
   .lang-banner-close{ position:absolute; right:8px; top:50%; transform:translateY(-50%); appearance:none; border:none;
     width:34px; height:34px; border-radius:9px; background:transparent; color:inherit; font-size:15px; cursor:pointer; }
   .lang-banner-close:hover{ background:rgba(127,127,127,.28); }
+  .brand-mark{ flex-shrink:0; }   /* the wider language control must squeeze the title, never the logo */
+  @media (max-width:480px){
+    .progress-chip-text{ display:none; }   /* the ring already shows the %; frees room for logo + language */
+    .progress-chip{ padding:4px; }
+    .brand-text{ display:none; }            /* only a clipped sliver of the title would fit */
+  }
 </style>
 
 <div class="app">
