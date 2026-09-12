@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>CCA-F Study Hub</title>
@@ -71,11 +72,12 @@
   button{ font-family:inherit; }
   :focus-visible{ outline:2px solid var(--accent); outline-offset:2px; border-radius:4px; }
 
-  .app{ max-width:1280px; margin:0 auto; padding-bottom:64px; }
+  .app{ max-width:1472px; margin:0 auto; padding-bottom:64px; }
 
   /* ---------- Header ---------- */
   .topbar{ position:sticky; top:0; z-index:40; background:var(--bg); border-bottom:1px solid var(--border); }
   .topbar-inner{ display:flex; align-items:center; justify-content:space-between; gap:16px; padding:18px 20px 12px; }
+  .mobile-crumb{ display:none; }   /* phones only - see the max-width:860px block */
   .brand{ display:flex; align-items:center; gap:12px; }
   .brand-mark{
     font-family:var(--font-display); font-weight:700; font-size:20px; letter-spacing:.02em;
@@ -281,6 +283,10 @@
     position:sticky; top:172px; max-height:calc(100vh - 192px); overflow-y:auto; padding-bottom:4px;
   }
   .ext-sidenav:empty{ display:none; }
+  .ext-sidenav-title{
+    font-size:10.5px; font-weight:700; letter-spacing:.09em; text-transform:uppercase;
+    color:var(--text-faint); padding:0 2px 2px;
+  }
   .ext-sidenav .toc-btn{
     appearance:none; cursor:pointer; text-align:left; border:1px solid var(--border); background:var(--surface);
     border-radius:9px; padding:8px 11px; color:var(--text-dim); font-family:inherit;
@@ -296,17 +302,14 @@
   .ext-panel.active{ display:block; }
   .subsec h4, .cheat-card h3{ scroll-margin-top:184px; }
 
-  /* Wide screens: content column stays the same width as every other tab's
-     .content, and the side nav hangs out in the right margin (floated out
-     via a negative margin equal to its own width) instead of sharing width
-     with the content. Needs enough room past .app's 1280px box to not
-     collide with the viewport edge, hence the fairly high min-width. */
-  @media (min-width: 1780px){
-    .ext-layout{ display:block; position:relative; }
-    .ext-content{ width:100%; }
-    .ext-sidenav{
-      float:right; flex:none; width:220px; margin-right:-244px; margin-left:0;
-    }
+  /* By default .ext-layout is a plain two-column flex row (content + the
+     "On this page" rail), which is what wide screens show. In the awkward
+     middle band there is room for the content column plus the left MỤC LỤC
+     rail, but not a third column too — so the right rail steps aside and
+     the left rail + scroll-spy on this page still get you around. Below
+     that it switches to the horizontal chip strip (see max-width:900). */
+  @media (min-width: 901px) and (max-width: 1240px){
+    .ext-sidenav{ display:none; }
   }
 
   @media (max-width: 900px){
@@ -316,6 +319,8 @@
       overflow-x:auto; overflow-y:visible; max-height:none; scrollbar-width:none;
     }
     .ext-sidenav::-webkit-scrollbar{ display:none; }
+    /* the label doesn't fit as just another chip in the horizontal strip */
+    .ext-sidenav-title{ display:none; }
     .ext-sidenav .toc-btn{ flex:0 0 auto; min-width:150px; }
   }
   .ext-group-title{ font-size:15px; margin-bottom:4px; }
@@ -365,6 +370,7 @@
 
   :root{
     --header-h:120px;          /* kept in sync with the real sticky header by JS */
+    --footer-h:80px;           /* kept in sync with the real page footer by JS */
     --text-faint:#676f85;      /* was #8891a8 — 3.15:1 on white, failed WCAG AA */
   }
   @media (prefers-color-scheme: dark){
@@ -430,17 +436,6 @@
   .step[aria-selected="true"] .step-num{ background:var(--accent); color:var(--accent-ink); }
   .step[aria-selected="true"] .step-text strong{ color:var(--accent); }
 
-  /* ---------- Bottom nav (mobile only) ---------- */
-  .bottomnav{ display:none; }
-  .bn-btn{
-    appearance:none; cursor:pointer; font-family:inherit; background:transparent; border:none;
-    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px;
-    min-height:54px; padding:4px 2px; color:var(--text-faint); font-size:10.5px; font-weight:600;
-    border-radius:10px; line-height:1.2;
-  }
-  .bn-ico{ font-size:16px; line-height:1; font-family:var(--font-display); font-weight:700; }
-  .bn-btn[aria-current="true"]{ color:var(--accent); background:var(--accent-soft); }
-
   /* ---------- Panel head + step-by-step footer ---------- */
   .panel-head{ margin-bottom:18px; }
   .step-badge{
@@ -501,43 +496,6 @@
   .rd-track i{ display:block; height:100%; background:var(--accent); width:0%; transition:width .35s ease; }
   .rd-hint{ font-size:11.5px; color:var(--text-faint); margin-top:7px; }
 
-  /* ---------- Step 2: one domain picker driving both study modes ---------- */
-  .domain-picker{ display:grid; grid-template-columns:repeat(5,1fr); gap:9px; margin-bottom:18px; }
-  .dp-btn{
-    appearance:none; cursor:pointer; font-family:inherit; text-align:left; min-height:44px;
-    display:flex; flex-direction:column; gap:6px;
-    border:1px solid var(--border); background:var(--surface); border-radius:12px; padding:11px 12px;
-    color:var(--text-dim); transition:border-color .15s ease, background .15s ease;
-  }
-  .dp-top{ display:flex; align-items:center; justify-content:space-between; gap:8px; }
-  .dp-code{ font-family:var(--font-display); font-weight:700; font-size:15px; color:var(--text); }
-  .dp-weight{
-    font-size:11px; font-weight:700; color:var(--text-dim); background:var(--surface-2);
-    border:1px solid var(--border); border-radius:99px; padding:2px 8px; font-variant-numeric:tabular-nums;
-  }
-  .dp-name{ font-size:12.3px; font-weight:600; line-height:1.35; color:var(--text-dim); }
-  .dp-bar{ display:block; height:4px; border-radius:3px; background:var(--surface-2); overflow:hidden; margin-top:auto; }
-  .dp-bar i{ display:block; height:100%; width:0%; background:var(--text-faint); transition:width .3s ease; }
-  .dp-meta{ font-size:11px; color:var(--text-faint); font-variant-numeric:tabular-nums; }
-  .dp-btn:hover{ border-color:var(--accent); }
-  .dp-btn[aria-selected="true"]{ border-color:var(--accent); background:var(--accent-soft); }
-  .dp-btn[aria-selected="true"] .dp-code,
-  .dp-btn[aria-selected="true"] .dp-name{ color:var(--accent); }
-  .dp-btn[aria-selected="true"] .dp-bar i{ background:var(--accent); }
-
-  .mode-switch{
-    display:grid; grid-template-columns:1fr 1fr; gap:4px; width:100%; max-width:460px;
-    background:var(--surface-2); border:1px solid var(--border); border-radius:13px; padding:4px; margin-bottom:20px;
-  }
-  .mode-btn{
-    appearance:none; cursor:pointer; font-family:inherit; border:none; background:transparent;
-    border-radius:10px; padding:8px 12px; min-height:46px; color:var(--text-dim);
-    font-size:13px; font-weight:700; line-height:1.25;
-  }
-  .mode-btn small{ display:block; font-size:11px; font-weight:500; color:var(--text-faint); margin-top:1px; }
-  .mode-btn[aria-selected="true"]{ background:var(--surface); color:var(--accent); box-shadow:var(--shadow); }
-  .mode-btn[aria-selected="true"] small{ color:var(--accent); opacity:.8; }
-
   .learn-mode{ display:none; }
   .learn-mode.active{ display:block; }
   .mode-hint{
@@ -546,9 +504,7 @@
     font-size:12.8px; color:var(--text-dim); margin-bottom:18px; line-height:1.55;
   }
 
-  /* whole header row toggles its checkbox — a 20px box alone is a poor target */
-  .task-head{ cursor:pointer; }
-  .task-head:hover{ background:var(--surface-2); }
+  .task-head{ cursor:default; }
 
   /* ---------- Step 3: practice sub-nav ---------- */
   .practice-nav{ display:grid; grid-template-columns:repeat(4,1fr); gap:9px; margin-bottom:22px; }
@@ -565,6 +521,260 @@
   .pr-btn[aria-selected="true"] strong{ color:var(--accent); }
   .practice-panel{ display:none; }
   .practice-panel.active{ display:block; }
+
+  /* ================================================================
+     Progressive disclosure. Nothing on this page is deleted - it is
+     closed. A closed row still has to teach you something, so every
+     summary carries a peek line built from the headings inside it.
+     ================================================================ */
+
+
+  /* ---------- always-open row look ----------
+     These four kinds of <details> ship permanently `open` and can no longer
+     be collapsed by the reader (JS blocks the native toggle) — so the row
+     just needs to read as a plain static card, not an interactive control. */
+  details.subsec, details.task-card, details.rules-card, details.cheat-card{ overflow:hidden; }
+  details.subsec > summary,
+  details.cheat-card > summary,
+  details.rules-card > summary{
+    list-style:none; cursor:default; display:flex; align-items:flex-start; gap:11px;
+  }
+  details.subsec > summary::-webkit-details-marker,
+  details.cheat-card > summary::-webkit-details-marker,
+  details.rules-card > summary::-webkit-details-marker,
+  details.task-card > summary::-webkit-details-marker{ display:none; }
+
+  /* no longer togglable, so no chevron to hint at it */
+  .ss-chev{ display:none; }
+
+  .ss-main{ flex:1; min-width:0; }
+  /* the peek line: what you would learn by opening this row */
+  .ss-peek{
+    display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+    margin-top:3px; font-size:12.4px; line-height:1.5; color:var(--text-faint);
+    font-weight:500; overflow-wrap:anywhere;
+  }
+  .ss-count{
+    flex:0 0 auto; margin-top:1px; font-size:11px; font-weight:700; white-space:nowrap;
+    padding:2px 8px; border-radius:99px; background:var(--surface-2); color:var(--text-faint);
+  }
+  details[open] > summary .ss-count{ background:var(--accent-soft); color:var(--accent); }
+
+  /* subsections sit in a flat list; the borders make the list readable when closed */
+  details.subsec{
+    border:1px solid var(--border); border-radius:var(--radius);
+    background:var(--surface); margin-bottom:8px; padding:13px 16px;
+  }
+  details.subsec > summary h4{ margin:0; font-size:15px; line-height:1.35; overflow-wrap:anywhere; }
+  details.subsec[open]{ background:var(--surface); border-color:var(--accent-soft-2); }
+  details.subsec[open] > summary{ padding-bottom:13px; margin-bottom:14px; border-bottom:1px solid var(--border); }
+  details.subsec[open] > summary .ss-peek{ display:none; }
+  .ss-body > :first-child{ margin-top:0; }
+  .ss-body > :last-child{ margin-bottom:0; }
+
+  /* ==================================================================
+     Index rail. A horizontal chip strip could not show hierarchy and
+     was unusable once a step had more than five landmarks, so the
+     table of contents became a real nested list down the left edge.
+     ================================================================== */
+  .layout{ display:flex; align-items:flex-start; }
+  .layout .content{ flex:1 1 auto; min-width:0; }
+
+  .sidenav{
+    flex:0 0 258px; width:258px; align-self:stretch;
+    position:sticky; top:var(--header-h);
+    /* The page footer (and .app's own bottom padding) sit *after* .layout, so
+       near the very bottom of the page .layout's box ends before the sticky
+       header would let go of this rail. Without reserving that trailing
+       space here too, a rail whose own content is tall enough to actually
+       need the full height gets pushed up until its top pokes out above the
+       header offset — and the opaque sticky header then covers it. */
+    max-height:calc(100vh - var(--header-h) - var(--footer-h) - 64px);
+    overflow-y:auto; overscroll-behavior:contain;
+    padding:20px 8px 40px 18px; border-right:1px solid var(--border);
+  }
+  .sidenav::-webkit-scrollbar{ width:8px; }
+  .sidenav::-webkit-scrollbar-thumb{ background:var(--surface-3); border-radius:4px; }
+  .layout.sn-closed .sidenav{
+    flex-basis:0; width:0; padding-left:0; padding-right:0;
+    border-right:none; overflow:hidden;
+  }
+
+  .sn-top{ display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:10px; padding-right:10px; }
+  .sn-title{ font-size:10.5px; font-weight:700; letter-spacing:.09em; text-transform:uppercase; color:var(--text-faint); }
+  .sn-collapse{
+    appearance:none; cursor:pointer; width:26px; height:26px; flex:0 0 auto; border-radius:7px;
+    border:1px solid var(--border); background:var(--surface); color:var(--text-faint); font-size:12px; line-height:1;
+  }
+  .sn-collapse:hover{ border-color:var(--accent); color:var(--accent); }
+
+  .sn-group + .sn-group{ margin-top:2px; }
+  .sn-step{
+    width:100%; appearance:none; cursor:pointer; text-align:left; border:none; background:transparent;
+    display:flex; align-items:center; gap:9px; padding:8px 9px; border-radius:9px;
+    font-family:var(--font-display); font-size:13.2px; font-weight:700; color:var(--text-dim);
+  }
+  .sn-step:hover{ background:var(--surface-2); color:var(--text); }
+  .sn-step .sn-num{
+    flex:0 0 auto; width:18px; height:18px; border-radius:6px; display:grid; place-items:center;
+    background:var(--surface-2); color:var(--text-faint); font-size:10.5px; font-variant-numeric:tabular-nums;
+  }
+  .sn-step .sn-label{ flex:1; min-width:0; }
+  .sn-step .sn-caret{ flex:0 0 auto; font-size:9px; color:var(--text-faint); transition:transform .18s ease; }
+  .sn-group.open > .sn-step .sn-caret{ transform:rotate(90deg); }
+  .sn-group.on > .sn-step{ color:var(--text); }
+  .sn-group.on > .sn-step .sn-num{ background:var(--accent); color:var(--accent-ink); }
+
+  .sn-items{ display:none; margin:1px 0 6px 18px; padding-left:9px; border-left:1px solid var(--border); }
+  .sn-group.open > .sn-items{ display:block; }
+
+  .sn-item{
+    width:100%; appearance:none; cursor:pointer; text-align:left; border:none; background:transparent;
+    display:flex; gap:8px; padding:6px 9px; border-radius:8px;
+    font-size:12.8px; line-height:1.45; color:var(--text-dim);
+  }
+  .sn-item:hover{ background:var(--surface-2); color:var(--text); }
+  .sn-item.on{ background:var(--accent-soft); color:var(--accent); font-weight:700; }
+  .sn-item .sn-n{ flex:0 0 auto; font-variant-numeric:tabular-nums; font-size:11.5px; color:var(--text-faint); }
+  .sn-item.on .sn-n{ color:var(--accent); }
+  .sn-item .sn-t{ flex:1; min-width:0; }
+
+  /* step 2 has one more level: domain, then the sections inside it */
+  .sn-sub + .sn-sub{ margin-top:1px; }
+  .sn-dom{
+    width:100%; appearance:none; cursor:pointer; text-align:left; border:none; background:transparent;
+    display:flex; align-items:center; gap:8px; padding:6px 9px; border-radius:8px;
+    font-size:12.6px; font-weight:700; color:var(--text-dim);
+  }
+  .sn-dom:hover{ background:var(--surface-2); color:var(--text); }
+  .sn-dom .sn-code{ flex:0 0 auto; font-size:11px; color:var(--text-faint); font-variant-numeric:tabular-nums; }
+  .sn-dom .sn-caret{ margin-left:auto; flex:0 0 auto; font-size:9px; color:var(--text-faint); transition:transform .18s ease; }
+  .sn-sub.open > .sn-dom .sn-caret{ transform:rotate(90deg); }
+  .sn-sub.on > .sn-dom{ color:var(--accent); }
+  .sn-sections{ display:none; margin:1px 0 5px 9px; padding-left:8px; border-left:1px solid var(--border); }
+  .sn-sub.open > .sn-sections{ display:block; }
+
+  .sn-backdrop{ display:none; }
+  /* The viewport takes its overflow from whichever of html/body the mode
+     makes the scrolling element, so lock both or the page keeps scrolling
+     behind the open drawer. */
+  html.sn-locked, body.sn-locked{ overflow:hidden; }
+
+  /* phones and small laptops: the rail becomes a drawer over the content */
+  @media (max-width:1080px){
+    .sidenav{
+      position:fixed; left:0; top:0; bottom:0; z-index:72;
+      width:min(310px,86vw); flex-basis:auto; max-height:none;
+      background:var(--bg); border-right:1px solid var(--border);
+      padding:18px 8px 40px 16px; transform:translateX(-101%);
+      transition:transform .2s ease; box-shadow:0 0 40px rgba(0,0,0,.35);
+    }
+    .layout:not(.sn-closed) .sidenav{ transform:none; }
+    .layout:not(.sn-closed) .sn-backdrop{ display:block; position:fixed; inset:0; background:rgba(8,11,18,.55); z-index:71; }
+    .layout.sn-closed .sidenav{ width:min(310px,86vw); padding:18px 8px 40px 16px; border-right:1px solid var(--border); overflow-y:auto; }
+  }
+
+  details.rules-card > summary h3,
+  details.cheat-card > summary h3{ margin:0; font-size:16px; line-height:1.35; }
+  details.rules-card[open] > summary,
+  details.cheat-card[open] > summary{ margin-bottom:12px; }
+  details.rules-card[open] > summary .ss-peek,
+  details.cheat-card[open] > summary .ss-peek{ display:none; }
+
+  /* checklist rows: the header keeps its checkbox, but now it also opens the card */
+  details.task-card > summary{ list-style:none; cursor:pointer; }
+  details.task-card > summary .task-head{ border-bottom:none; }
+  details.task-card[open] > summary .task-head{ border-bottom:1px solid var(--border); }
+  .task-head .ss-chev{ margin-top:3px; }
+
+  /* "chot lai" - the skim layer that sits above the original prose */
+  .gist{
+    background:var(--accent-soft); border:1px solid var(--accent-soft-2);
+    border-radius:12px; padding:12px 15px; margin:0 0 16px;
+  }
+  .gist-label{
+    display:block; font-size:11px; font-weight:700; letter-spacing:.05em;
+    text-transform:uppercase; color:var(--accent); margin-bottom:7px;
+  }
+  .gist ul{ margin:0; padding-left:1.15em; display:flex; flex-direction:column; gap:5px; }
+  .gist li{ font-size:13.4px; line-height:1.55; color:var(--text); }
+
+  /* provenance and other small print folds away from the hint line */
+  .hint-more{ display:block; margin-top:7px; }
+  .hint-more > summary{
+    list-style:none; cursor:pointer; display:inline-flex; align-items:center; gap:4px;
+    font-size:12px; font-weight:700; color:var(--accent);
+  }
+  .hint-more > summary::-webkit-details-marker{ display:none; }
+  .hint-more > summary::after{ content:" \25BE"; }
+  .hint-more[open] > summary::after{ content:" \25B4"; }
+  .hint-more[open] > summary{ margin-bottom:6px; }
+
+  @media (max-width:860px){
+    details.subsec{ padding:11px 13px; }
+    details.subsec > summary h4{ font-size:14.2px; }
+  }
+
+  /* sub-pages 1-2 are the actual flow; the last two are reference material */
+  .pr-btn.ref{ border-style:dashed; }
+  .pr-btn.ref strong{ color:var(--text-dim); }
+  .pr-btn.ref[aria-selected="true"] strong{ color:var(--accent); }
+
+  /* ---------- step 3: what the four sub-pages are for ---------- */
+  .pflow{ display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); align-items:stretch; gap:10px; margin-bottom:10px; }
+  .pflow-card{
+    appearance:none; cursor:pointer; font-family:inherit; text-align:left;
+    display:flex; flex-direction:column; gap:5px; padding:14px 16px;
+    border:1px solid var(--border); border-radius:var(--radius); background:var(--surface); box-shadow:var(--shadow);
+    transition:border-color .15s ease;
+  }
+  .pflow-card:hover{ border-color:var(--accent); }
+  .pflow-card.key{ border-color:var(--accent); background:var(--accent-soft); }
+  .pflow-tag{ font-size:11px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--text-faint); }
+  .pflow-card.key .pflow-tag{ color:var(--accent); }
+  .pflow-card b{ font-family:var(--font-display); font-size:16px; line-height:1.3; color:var(--text); }
+  .pflow-card span{ font-size:13px; line-height:1.55; color:var(--text-dim); }
+  .pflow-arrow{ align-self:center; color:var(--text-faint); font-size:20px; }
+  .pflow-aside{
+    display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-bottom:22px;
+    padding:10px 14px; border:1px dashed var(--border); border-radius:var(--radius);
+    font-size:12.5px; color:var(--text-faint);
+  }
+  .pflow-chip{
+    appearance:none; cursor:pointer; font-family:inherit; font-size:13px; font-weight:600;
+    min-height:32px; padding:4px 12px; border-radius:99px;
+    border:1px solid var(--border); background:var(--surface); color:var(--text-dim);
+  }
+  .pflow-chip:hover{ border-color:var(--accent); color:var(--accent); }
+  /* phones: the quiz question has to stay near the top, so the flow cards
+     shrink to tag + title and the reference shelf loses its padding */
+  @media (max-width:860px){
+    .pflow{ grid-template-columns:1fr; gap:8px; margin-bottom:8px; }
+    .pflow-arrow{ display:none; }
+    .pflow-card{ padding:10px 13px; gap:2px; }
+    .pflow-card b{ font-size:14.5px; }
+    .pflow-card span:not(.pflow-tag){ display:none; }
+    .pflow-aside{ padding:8px 12px; gap:6px; margin-bottom:16px; font-size:12px; }
+  }
+
+  /* ---------- reference: further reading ---------- */
+  .res-group{ margin-bottom:26px; }
+  .res-head{ display:flex; align-items:center; gap:8px; font-size:15px; margin-bottom:10px; }
+  .res-list{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+  .res-item{
+    display:flex; flex-direction:column; gap:5px; text-decoration:none;
+    padding:14px 16px; border:1px solid var(--border); border-radius:var(--radius);
+    background:var(--surface); box-shadow:var(--shadow); transition:border-color .15s ease;
+  }
+  .res-item:hover{ border-color:var(--accent); }
+  .res-item strong{ font-size:14.5px; color:var(--text); overflow-wrap:anywhere; }
+  .res-item span{ font-size:13px; line-height:1.55; color:var(--text-dim); }
+  .res-item em{ font-style:normal; font-size:12px; color:var(--text-faint); overflow-wrap:anywhere; margin-top:auto; padding-top:6px; }
+  .res-tag{
+    align-self:flex-start; font-size:10.5px; font-weight:700; letter-spacing:.04em; text-transform:uppercase;
+    padding:2px 8px; border-radius:99px; background:var(--accent-soft); color:var(--accent);
+  }
+  @media (max-width:860px){ .res-list{ grid-template-columns:1fr; } }
 
   /* ---------- Lookup drawer: glossary lives outside the learning path ---------- */
   /* .drawer sets display:flex, which beats the UA [hidden] rule — restate it. */
@@ -610,7 +820,9 @@
   .task-card{ scroll-margin-top:calc(var(--header-h) + 18px); }
   .ext-sidenav{
     top:calc(var(--header-h) + 14px);
-    max-height:calc(100vh - var(--header-h) - 40px);
+    /* same trailing-footer reservation as .sidenav above, so this rail can't
+       get pushed up under the sticky header once the page bottom is close */
+    max-height:calc(100vh - var(--header-h) - var(--footer-h) - 64px - 40px);
   }
 
   /* horizontal-scroll affordance, added by JS only when a table actually overflows */
@@ -627,7 +839,6 @@
      ========================================================================== */
 
   @media (max-width:1180px){
-    .domain-picker{ grid-template-columns:repeat(3,1fr); }
     .roadmap-steps{ grid-template-columns:repeat(2,1fr); }
   }
 
@@ -646,51 +857,53 @@
     .steps{ display:none; }
     .ext-tabbar{ display:none !important; }
 
-    .bottomnav{
-      display:grid; grid-template-columns:repeat(5,1fr); gap:2px;
-      position:fixed; left:0; right:0; bottom:0; z-index:60;
-      background:var(--surface); border-top:1px solid var(--border);
-      padding:5px 4px calc(5px + env(safe-area-inset-bottom,0px));
-      box-shadow:0 -6px 20px -14px rgba(0,0,0,.5);
-    }
-
     .topbar-inner{ padding:9px 14px; gap:10px; }
-    /* min-width:0 on both the flex item and its child, or the long product
-       name refuses to shrink and slides under the action buttons. */
-    .brand{ gap:9px; min-width:0; flex:1 1 auto; overflow:hidden; }
-    .brand-text{ min-width:0; }
+    /* Row 1 keeps only the essentials - title, search, theme, language.
+       Full navigation and "where am I" context live in the breadcrumb row
+       below instead, so this row never gets crowded. */
+    .topbar-actions a.icon-btn{ display:none; }   /* Exam Guide PDF link */
+    #sideNavOpen{ display:none; }                 /* the drawer opens from row 2 instead */
+    .progress-chip{ display:none; }
+    #openLookup{ order:1; }
+    #themeToggle{ order:2; }
+    .lang-switch{ order:3; }
+    .brand{ flex:1 1 auto; min-width:0; }
+    .brand-text{ display:none; }
     .brand-mark{ font-size:15px; padding:6px 7px; }
-    .brand-text strong{ font-size:13.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .brand-text span{ display:none; }
     .icon-btn-label, .icon-btn kbd{ display:none; }
     .icon-btn{ width:40px; padding:0; justify-content:center; }
-    .progress-chip{ padding:4px 10px 4px 5px; }
-    .progress-chip-text strong{ display:none; }
-    .ring-wrap{ width:34px; height:34px; }
-    .ring-wrap svg{ width:34px; height:34px; }
-    .ring-pct{ font-size:9.5px; }
 
-    .app{ padding-bottom:calc(80px + env(safe-area-inset-bottom,0px)); }
+    /* Row 2: the menu (opens the full MỤC LỤC drawer) plus a breadcrumb
+       showing where you are - this replaces both the old 4-step tab row
+       and the fixed bottom nav, so it's the only wayfinding chrome left. */
+    .mobile-crumb{ display:flex; align-items:center; gap:8px; padding:2px 14px 10px; }
+    .mobile-crumb .icon-btn{ flex-shrink:0; }
+    .crumb-trail{
+      flex:1 1 auto; min-width:0;
+      font-size:12.5px; font-weight:600; color:var(--text-dim);
+      overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+    }
+
     .content{ padding:18px 14px 0; }
-    .totop{ bottom:calc(78px + env(safe-area-inset-bottom,0px)); right:14px; }
 
     .roadmap-steps{ grid-template-columns:1fr; }
     .readiness{ grid-template-columns:1fr; gap:10px; }
-    .domain-picker{ grid-template-columns:repeat(2,1fr); }
-    .practice-nav{ grid-template-columns:1fr; }
+    .practice-nav{ grid-template-columns:repeat(2,1fr); }
     .pr-btn{ min-height:50px; }
-    .mode-switch{ max-width:none; }
     .panel-foot{ grid-template-columns:1fr; }
     .foot-btn.is-empty{ display:none; }
 
     .drawer{ width:100%; border-left:none; }
 
-    /* the deep-dive TOC becomes a horizontal chip rail under the picker */
+    /* the deep-dive "On this page" rail becomes a horizontal chip strip - the
+       label doesn't fit as just another chip, so it's dropped here instead
+       of getting squeezed into a narrow, wrapped sliver at the front */
     .ext-layout{ display:block; }
     .ext-sidenav{
       position:static; flex-direction:row; width:auto; max-height:none;
       overflow-x:auto; margin:0 -14px 16px; padding:0 14px 2px; gap:7px;
     }
+    .ext-sidenav-title{ display:none; }
     .ext-sidenav .toc-btn{ flex:0 0 auto; min-width:132px; }
   }
 
@@ -715,14 +928,6 @@
     .grid-2{ grid-template-columns:1fr; }
   }
 
-  @media (max-width:420px){
-    .domain-picker{ grid-template-columns:1fr; }
-    .dp-btn{ flex-direction:row; align-items:center; flex-wrap:wrap; gap:8px; }
-    .dp-top{ flex:0 0 auto; gap:8px; }
-    .dp-name{ flex:1 1 100%; order:3; }
-    .dp-bar{ flex:1 1 100%; order:4; }
-    .dp-meta{ order:2; margin-left:auto; }
-  }
 
   /* Coarse pointers get real 44px+ targets everywhere it matters */
   @media (pointer:coarse){
@@ -819,10 +1024,6 @@
   .scope-grid .rules-card{ margin-bottom:0; }
 
   /* ---------- step 2: quiz shortcut for the selected domain ---------- */
-  .learn-toolbar{ display:flex; flex-wrap:wrap; align-items:stretch; gap:10px; margin-bottom:20px; }
-  .learn-toolbar .mode-switch{ margin-bottom:0; flex:1 1 360px; }
-  .mode-quiz{ flex:0 0 auto; min-height:56px; border-radius:13px; flex-direction:column; align-items:flex-start; gap:1px; padding:6px 16px; }
-  .mode-quiz small{ font-size:11px; font-weight:500; opacity:.85; }
   .domain-quiz-cta{
     display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap;
     margin-top:26px; padding:16px 18px; border-radius:var(--radius);
@@ -832,7 +1033,7 @@
   .domain-quiz-cta span{ font-size:13px; color:var(--text-dim); }
 
   /* ---------- step 3 nav: three sub-pages ---------- */
-  .practice-nav{ grid-template-columns:repeat(3,1fr); }
+  .practice-nav{ grid-template-columns:repeat(4,1fr); }
 
   /* ---------- quiz: focus mode ---------- */
   .qz-toolbar{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:14px; }
@@ -944,8 +1145,10 @@
      box never leaves a gap under itself. */
   .qz-side{
     grid-column:1; grid-row:1; position:sticky; top:calc(var(--header-h) + 14px);
-    display:flex; flex-direction:column; min-height:min(calc(100vh - var(--header-h) - 28px), 660px);
-    max-height:calc(100vh - var(--header-h) - 28px); overflow-y:auto; scrollbar-width:thin; padding:14px;
+    display:flex; flex-direction:column;
+    min-height:min(calc(100vh - var(--header-h) - var(--footer-h) - 64px - 28px), 660px);
+    max-height:calc(100vh - var(--header-h) - var(--footer-h) - 64px - 28px);
+    overflow-y:auto; scrollbar-width:thin; padding:14px;
     background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow);
   }
   .qz-stats{ display:grid; grid-template-columns:repeat(3,1fr); text-align:center; }
@@ -1032,6 +1235,8 @@
 
   /* ---------- mock exams ---------- */
   .mock-grid{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; margin-bottom:18px; }
+  .mock-grid.single{ grid-template-columns:minmax(0,1fr); }
+  .mock-grid.single .mock-go{ align-self:flex-start; }
   .mock-card{
     background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow);
     padding:16px 18px; display:flex; flex-direction:column; gap:8px;
@@ -1105,7 +1310,7 @@
     .scenario-grid{ grid-template-columns:repeat(2,minmax(0,1fr)); }
   }
   @media (max-width:1024px){
-    .practice-nav{ grid-template-columns:repeat(3,1fr); }
+    .practice-nav{ grid-template-columns:repeat(2,1fr); }
     .overview-grid{ grid-template-columns:1fr; }
     .overview-grid .weight-label{ width:230px; font-size:13.5px; }
     .qz-layout{ grid-template-columns:300px minmax(0,1fr); }
@@ -1119,7 +1324,7 @@
   }
   @media (max-width:860px){
     /* three compact segments instead of three stacked 50px rows */
-    .practice-nav{ grid-template-columns:repeat(3,1fr); gap:6px; }
+    .practice-nav{ grid-template-columns:repeat(2,1fr); gap:6px; }
     .pr-btn{ min-height:44px; padding:8px 9px; justify-content:center; }
     .pr-btn strong{ font-size:12.3px; }
     .pr-btn small{ display:none; }
@@ -1130,8 +1335,6 @@
     .qz-nav{ bottom:calc(72px + env(safe-area-inset-bottom,0px)); }
     .qz-kbd-hint{ display:none; }
     .qz-card{ padding:15px; }
-    .learn-toolbar .mode-switch{ flex-basis:100%; }
-    .mode-quiz{ width:100%; }
 
     /* get the question itself onto the first phone screen: one scrollable
        filter row, intro copy hidden, stats + palette moved under the card */
@@ -1184,11 +1387,6 @@
     width:34px; height:34px; border-radius:9px; background:transparent; color:inherit; font-size:15px; cursor:pointer; }
   .lang-banner-close:hover{ background:rgba(127,127,127,.28); }
   .brand-mark{ flex-shrink:0; }   /* the wider language control must squeeze the title, never the logo */
-  @media (max-width:480px){
-    .progress-chip-text{ display:none; }   /* the ring already shows the %; frees room for logo + language */
-    .progress-chip{ padding:4px; }
-    .brand-text{ display:none; }            /* only a clipped sliver of the title would fit */
-  }
 </style>
 
 <div class="app">
@@ -1215,6 +1413,7 @@
         </nav>
         <a class="icon-btn" href="CCAF-Exam-Guide.pdf" target="_blank" rel="noopener" title="Mở Exam Guide chính thức (PDF)" aria-label="Mở Exam Guide chính thức (PDF)">📄<span class="icon-btn-label">Exam Guide</span></a>
         <button class="icon-btn" id="openLookup" data-open-lookup aria-label="Tra cứu thuật ngữ">🔍<span class="icon-btn-label">Tra cứu</span><kbd>Ctrl K</kbd></button>
+        <button class="icon-btn" id="sideNavOpen" aria-expanded="true" aria-controls="sideNav" title="Mục lục" aria-label="Mục lục">☰<span class="icon-btn-label">Mục lục</span></button>
         <button class="icon-btn" id="themeToggle" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
         <button class="progress-chip" id="progressChip" aria-label="Xem tiến độ học">
           <span class="ring-wrap">
@@ -1232,28 +1431,25 @@
       </div>
     </div>
 
-    <!-- The learning path itself is the navigation: four numbered steps, read
-         left to right. Reference material (glossary) deliberately lives in a
-         drawer instead of a fifth tab, so the path stays four items long. -->
-    <nav class="steps" id="stepNav" role="tablist" aria-label="Lộ trình ôn thi 4 bước">
-      <button class="step" role="tab" id="tab-start" data-tab="start" aria-selected="true" aria-controls="panel-start">
-        <span class="step-num">1</span>
-        <span class="step-text"><strong>Bắt đầu</strong><small>Hiểu kỳ thi · ~15 phút</small></span>
-      </button>
-      <button class="step" role="tab" id="tab-learn" data-tab="learn" aria-selected="false" aria-controls="panel-learn" tabindex="-1">
-        <span class="step-num">2</span>
-        <span class="step-text"><strong>Học 5 domain</strong><small>Lý thuyết + quiz · nhiều buổi</small></span>
-      </button>
-      <button class="step" role="tab" id="tab-practice" data-tab="practice" aria-selected="false" aria-controls="panel-practice" tabindex="-1">
-        <span class="step-num">3</span>
-        <span class="step-text"><strong>Luyện đề</strong><small>Quiz · mẹo · thi thử ≥ 800</small></span>
-      </button>
-      <button class="step" role="tab" id="tab-examday" data-tab="examday" aria-selected="false" aria-controls="panel-examday" tabindex="-1">
-        <span class="step-num">4</span>
-        <span class="step-text"><strong>Đăng ký &amp; thi</strong><small>Từng bước + quy chế</small></span>
-      </button>
-    </nav>
+    <!-- Phones only: row 1 above stays minimal (title, search, theme,
+         language); the drawer trigger and a "where am I" breadcrumb live
+         here instead, docked right under it. Desktop never shows this -
+         .topbar-actions already has its own Mục lục button. -->
+    <div class="mobile-crumb" id="mobileCrumb">
+      <button class="icon-btn" id="sideNavOpenMobile" aria-expanded="true" aria-controls="sideNav" title="Mục lục" aria-label="Mục lục">☰</button>
+      <div class="crumb-trail" id="crumbTrail"></div>
+    </div>
   </header>
+
+  <div class="layout" id="layout">
+    <div class="sn-backdrop" id="sideNavBackdrop"></div>
+    <aside class="sidenav" id="sideNav" aria-label="Mục lục toàn trang">
+      <div class="sn-top">
+        <span class="sn-title">Mục lục</span>
+        <button type="button" class="sn-collapse" id="sideNavCollapse" aria-label="Thu gọn mục lục">✕</button>
+      </div>
+      <nav class="sn-list" id="sideNavList"></nav>
+    </aside>
 
   <main class="content">
 
@@ -1262,7 +1458,7 @@
       <div class="panel-head">
         <div class="step-badge">Bước 1 · Bắt đầu ở đây</div>
         <h1 class="section-title">Ôn thi CCAR-F — flow nhanh gọn</h1>
-        <p class="section-sub">Không cần đọc lung tung, cũng không cần code thực hành. Hiểu đề → học lý thuyết kèm quiz → thi thử đạt ≥ 800 → đăng ký thi. Cuối mỗi trang đều có nút sang bước kế tiếp.</p>
+        <p class="section-sub">Không cần đọc lung tung, cũng không cần code thực hành. Hiểu đề → học lý thuyết kèm quiz → ôn luyện đề thật tới khi đạt ≥ 800 → đăng ký thi. Cuối mỗi trang đều có nút sang bước kế tiếp.</p>
       </div>
 
       <!-- Where the content comes from, up front: people trust a study page far
@@ -1290,14 +1486,15 @@
                 <tr><td>Bước 4 · Chấm điểm, quy chế, thi lại, NDA, gia hạn</td><td><span class="src-tag">Exam Guide §10–16</span></td></tr>
                 <tr><td>Bước 4 · Hỗ trợ lệ phí thi: đăng ký &amp; log phí thi với LDI</td><td><span class="src-tag">FPT Place</span> Chương trình Hỗ trợ Lệ phí Thi và Khen thưởng Chứng chỉ Quốc tế (v1.1)</td></tr>
                 <tr><td>Bước 3 · Quiz 77 câu</td><td><span class="src-tag">CCAF-Quiz.pdf</span> bộ câu luyện tập theo 5 domain (không phải đề chính thức) — đáp án đã đối chiếu lại với Exam Guide</td></tr>
-                <tr><td>Mẹo làm bài · Trang thi thử · Đăng ký từng bước</td><td><span class="src-tag exp">Kinh nghiệm người đã thi</span></td></tr>
+                <tr><td>Mẹo làm bài · Trang ôn luyện đề · Đăng ký từng bước</td><td><span class="src-tag exp">Kinh nghiệm người đã thi</span></td></tr>
+                <tr><td>Bước 3 · Tài liệu tham khảo</td><td><span class="src-tag">Danh sách tài liệu chính thức của Anthropic</span> theo <a href="https://claudecertificationguide.com/resources" target="_blank" rel="noopener">claudecertificationguide.com/resources</a></td></tr>
               </table>
             </div>
           </details>
         </div>
       </div>
 
-      <div class="eyebrow">Flow ôn thi nhanh gọn</div>
+      <div class="eyebrow" data-toc="Lộ trình">Flow ôn thi nhanh gọn</div>
       <div class="roadmap">
         <ol class="roadmap-steps">
           <li><button class="roadmap-step" data-goto="start" data-scroll="overview">
@@ -1313,8 +1510,8 @@
             <div class="rs-go">Mở bước 2 →</div>
           </button></li>
           <li><button class="roadmap-step" data-goto="practice" data-practice="mock">
-            <h3>Thi thử ≥ 800</h3>
-            <p>Chọn <strong>1 trong 3</strong> trang luyện đề. Thi thử <strong>2 lần trên 800</strong> là có thể đi thi (điểm đậu thật: 720).</p>
+            <h3>Ôn luyện đề thật ≥ 800</h3>
+            <p>Phần quyết định tỷ lệ đậu. Chọn <strong>1 trang</strong> rồi làm đề đi làm lại — <strong>2 lần trên 800</strong> là có thể đi thi (điểm đậu thật: 720).</p>
             <div class="rs-meta">Làm tới khi đạt mục tiêu</div>
             <div class="rs-go">Mở bước 3 →</div>
           </button></li>
@@ -1327,7 +1524,7 @@
         </ol>
       </div>
 
-      <div class="eyebrow">Bạn đang tới đâu rồi</div>
+      <div class="eyebrow" data-toc="Tiến độ">Bạn đang tới đâu rồi</div>
       <div class="readiness">
         <button class="rd-card" data-goto="learn">
           <div class="rd-label">Bước 2 · Lý thuyết</div>
@@ -1342,15 +1539,15 @@
           <div class="rd-hint">Số câu đang trả lời đúng</div>
         </button>
         <button class="rd-card" data-goto="practice" data-practice="mock">
-          <div class="rd-label">Bước 3 · Thi thử</div>
+          <div class="rd-label">Bước 3 · Ôn đề thật</div>
           <div class="rd-value" id="rdMock">0/2</div>
           <div class="rd-track"><i id="rdMockBar"></i></div>
-          <div class="rd-hint">Số lần thi thử đạt ≥ 800 — đủ 2 là đi thi</div>
+          <div class="rd-hint">Số lần làm đề đạt ≥ 800 — đủ 2 là đi thi</div>
         </button>
       </div>
 
       <div class="prose" style="margin-bottom:18px;" id="overview">
-        <div class="eyebrow">Về kỳ thi <span class="src-tag">Exam Guide §1</span></div>
+        <div class="eyebrow" data-toc="Về kỳ thi">Về kỳ thi <span class="src-tag">Exam Guide §1</span></div>
         <h2 class="section-title" style="font-size:20px;">Chứng chỉ này để làm gì?</h2>
         <p class="lede">Claude Certified Architect – Foundations (mã <code>CCAR-F</code>) chứng minh bạn biết đưa ra quyết định <em>đánh đổi (trade-off)</em> hợp lý khi build đồ thật với Claude — không phải học vẹt lý thuyết suông. Đề thi test kiến thức nền về 4 "vũ khí" chính: <strong>Claude Code</strong>, <strong>Claude Agent SDK</strong>, <strong>Claude API</strong>, và <strong>Model Context Protocol (MCP)</strong>.</p>
         <p>Câu hỏi không hỏi chay, mà dựng từ tình huống thực tế: build agent chăm sóc khách hàng, dựng pipeline multi-agent để research, nhét Claude Code vào CI/CD, làm tool tăng năng suất cho dev, trích dữ liệu có cấu trúc từ tài liệu hỗn loạn. Ngoài lý thuyết, đề còn đòi bạn phải có "gu" kiến trúc, biết config đúng chỗ, và hiểu trade-off khi lên production.</p>
@@ -1373,7 +1570,7 @@
 
       <div class="overview-grid">
         <div>
-          <div class="eyebrow">Thông tin nhanh <span class="src-tag">Exam Guide §3</span></div>
+          <div class="eyebrow" data-toc="Thông tin nhanh">Thông tin nhanh <span class="src-tag">Exam Guide §3</span></div>
           <div class="table-wrap">
             <table>
               <tr><th>Mã đề</th><td>CCAR-F</td></tr>
@@ -1389,7 +1586,7 @@
           </div>
         </div>
         <div>
-          <div class="eyebrow">Blueprint — trọng số 5 domain <span class="src-tag">Exam Guide §4</span></div>
+          <div class="eyebrow" data-toc="Blueprint">Blueprint — trọng số 5 domain <span class="src-tag">Exam Guide §4</span></div>
           <div class="card">
             <div class="weight-row">
               <span class="weight-label">D1 · Agentic Architecture &amp; Orchestration</span>
@@ -1421,7 +1618,7 @@
         </div>
       </div>
 
-      <div class="eyebrow" id="scenarios">6 Scenario — đề random ra 4/6 <span class="src-tag">Exam Guide §5</span></div>
+      <div class="eyebrow" data-toc="6 Scenario" id="scenarios">6 Scenario — đề random ra 4/6 <span class="src-tag">Exam Guide §5</span></div>
       <p class="section-sub">Mỗi lần thi, đề chọn ngẫu nhiên <strong>4 trong 6</strong> scenario dưới đây làm bối cảnh cho câu hỏi. Đọc kỹ cả 6 — không đoán trước được cái nào bị loại.</p>
       <div class="scenario-grid">
         <div class="scenario-card">
@@ -1462,7 +1659,7 @@
         </div>
       </div>
 
-      <div class="eyebrow">Phạm vi đề — học gì, bỏ gì <span class="src-tag">Exam Guide §17</span></div>
+      <div class="eyebrow" data-toc="Phạm vi đề">Phạm vi đề — học gì, bỏ gì <span class="src-tag">Exam Guide §17</span></div>
       <div class="grid-2 scope-grid">
         <div class="rules-card">
           <h3>📚 Công nghệ có thể xuất hiện</h3>
@@ -1525,55 +1722,11 @@
       <div class="panel-head">
         <div class="step-badge">Bước 2 · Nội dung chính</div>
         <h1 class="section-title">Học 5 domain</h1>
-        <p class="section-sub">Chọn <strong>1 domain</strong> ở dưới rồi học theo 3 nhịp: <strong>Checklist</strong> để biết đề hỏi gì → <strong>Đào sâu</strong> để hiểu tại sao → <strong>Quiz</strong> của domain đó để tự kiểm tra. Xong domain này mới sang domain kế — bắt đầu từ D1 vì nó nặng nhất (27%).</p>
+        <p class="section-sub">Chọn <strong>1 domain</strong> (D1 → D5) trong mục lục bên trái, đọc hết phần lý thuyết của domain đó, rồi làm <strong>Quiz</strong> của nó để tự kiểm tra. Xong mới sang domain kế — bắt đầu từ D1 vì nó nặng nhất (27%). Mục <strong>Checklist</strong> riêng trong mục lục gộp cả 5 domain: dùng để tick lại xem đã nắm đủ 30 task statement chưa.</p>
       </div>
 
-      <!-- One picker drives both study modes. Previously the same domain lived in
-           two separate tabs with two different navigators, which is what made
-           people lose track of where they were. -->
-      <nav class="domain-picker" id="domainPicker" role="tablist" aria-label="Chọn domain">
-        <button class="dp-btn" role="tab" data-domain="1" aria-selected="true">
-          <span class="dp-top"><span class="dp-code">D1</span><span class="dp-weight">27%</span></span>
-          <span class="dp-name">Agentic Architecture &amp; Orchestration</span>
-          <span class="dp-bar"><i></i></span>
-          <span class="dp-meta"><span data-dp-count="1">0/7</span> mục</span>
-        </button>
-        <button class="dp-btn" role="tab" data-domain="2" aria-selected="false" tabindex="-1">
-          <span class="dp-top"><span class="dp-code">D2</span><span class="dp-weight">18%</span></span>
-          <span class="dp-name">Tool Design &amp; MCP Integration</span>
-          <span class="dp-bar"><i></i></span>
-          <span class="dp-meta"><span data-dp-count="2">0/5</span> mục</span>
-        </button>
-        <button class="dp-btn" role="tab" data-domain="3" aria-selected="false" tabindex="-1">
-          <span class="dp-top"><span class="dp-code">D3</span><span class="dp-weight">20%</span></span>
-          <span class="dp-name">Claude Code Config &amp; Workflows</span>
-          <span class="dp-bar"><i></i></span>
-          <span class="dp-meta"><span data-dp-count="3">0/6</span> mục</span>
-        </button>
-        <button class="dp-btn" role="tab" data-domain="4" aria-selected="false" tabindex="-1">
-          <span class="dp-top"><span class="dp-code">D4</span><span class="dp-weight">20%</span></span>
-          <span class="dp-name">Prompt Engineering &amp; Structured Output</span>
-          <span class="dp-bar"><i></i></span>
-          <span class="dp-meta"><span data-dp-count="4">0/6</span> mục</span>
-        </button>
-        <button class="dp-btn" role="tab" data-domain="5" aria-selected="false" tabindex="-1">
-          <span class="dp-top"><span class="dp-code">D5</span><span class="dp-weight">15%</span></span>
-          <span class="dp-name">Context Management &amp; Reliability</span>
-          <span class="dp-bar"><i></i></span>
-          <span class="dp-meta"><span data-dp-count="5">0/6</span> mục</span>
-        </button>
-      </nav>
-
-      <div class="learn-toolbar">
-        <div class="mode-switch" id="modeSwitch" role="tablist" aria-label="Chế độ học">
-        <button class="mode-btn" role="tab" data-mode="checklist" aria-selected="true">📋 Checklist<small>Đề sẽ hỏi gì — đọc trước</small></button>
-        <button class="mode-btn" role="tab" data-mode="deep" aria-selected="false" tabindex="-1">📖 Đào sâu<small>Hiểu tại sao — đọc sau</small></button>
-        </div>
-        <button type="button" class="btn btn-primary mode-quiz" id="modeQuizBtn">❓ Quiz D1<small>22 câu · làm sau khi đọc</small></button>
-      </div>
-
-      <div class="learn-mode active" id="mode-checklist">
-        <div class="mode-hint"><span>📋</span><span>Mỗi Task Statement gồm <strong>Phải nắm</strong> (lý thuyết) và <strong>Phải làm được</strong> (kỹ năng đề test). Bấm vào tiêu đề để tick ✓ khi bạn thấy đã nắm — tiến độ tự lưu trên máy bạn.</span></div>
+      <div class="learn-mode" id="mode-checklist">
+        <div class="mode-hint"><span>📋</span><span>Mỗi Task Statement gồm <strong>Phải nắm</strong> (lý thuyết) và <strong>Phải làm được</strong> (kỹ năng đề test), hiển thị sẵn cả hai. Bấm vào ô vuông để tick ✓ khi đã nắm — tiến độ tự lưu trên máy bạn.</span></div>
       <!-- ===== DOMAIN 1 ===== -->
       <div id="domain-1" class="domain-panel active">
         <div class="domain-intro">
@@ -1581,11 +1734,11 @@
           <p>Phần nặng ký nhất đề thi (27%). Tinh thần chung: agent phải tự quyết định dựa trên <code>stop_reason</code>, coordinator phải là "trạm trung chuyển" duy nhất giữa các subagent, và chỗ nào cần chắc kèo 100% thì bắt buộc dùng hook/prerequisite chứ đừng tin vào prompt suông.</p>
         </div>
 
-        <div class="task-card" data-domain="1">
-          <div class="task-head">
+        <details class="task-card" data-domain="1" open>
+          <summary><div class="task-head">
             <input type="checkbox" class="task-check" id="t-1-1">
             <div class="task-head-text"><div class="task-id">Task Statement 1.1</div><div class="task-title">Design & implement agentic loop cho việc tự chạy task</div></div>
-          </div>
+          </div></summary>
           <div class="task-body">
             <div class="task-col"><div class="task-col-label">📚 Phải nắm</div><ul>
               <li>Vòng lặp agentic cơ bản: gửi request cho Claude → xem <code>stop_reason</code> là <code>"tool_use"</code> hay <code>"end_turn"</code> → chạy tool được yêu cầu → trả kết quả cho vòng tiếp theo</li>
@@ -1598,13 +1751,13 @@
               <li>Né các anti-pattern: parse ngôn ngữ tự nhiên để đoán khi nào dừng loop, giới hạn số vòng lặp cứng làm cơ chế dừng chính, hoặc dựa vào việc "có text trả lời" để coi là xong việc — đều sai hết</li>
             </ul></div>
           </div>
-        </div>
+        </details>
 
-        <div class="task-card" data-domain="1">
-          <div class="task-head">
+        <details class="task-card" data-domain="1" open>
+          <summary><div class="task-head">
             <input type="checkbox" class="task-check" id="t-1-2">
             <div class="task-head-text"><div class="task-id">Task Statement 1.2</div><div class="task-title">Orchestrate multi-agent theo pattern coordinator–subagent</div></div>
-          </div>
+          </div></summary>
           <div class="task-body">
             <div class="task-col"><div class="task-col-label">📚 Phải nắm</div><ul>
               <li>Kiến trúc hub-and-spoke: coordinator là trung tâm, quản lý toàn bộ giao tiếp giữa các subagent, xử lý lỗi và điều phối thông tin</li>
@@ -1619,13 +1772,13 @@
               <li>Toàn bộ giao tiếp giữa các subagent phải đi qua coordinator — để dễ theo dõi, xử lý lỗi đồng nhất, kiểm soát luồng thông tin</li>
             </ul></div>
           </div>
-        </div>
+        </details>
 
-        <div class="task-card" data-domain="1">
-          <div class="task-head">
+        <details class="task-card" data-domain="1" open>
+          <summary><div class="task-head">
             <input type="checkbox" class="task-check" id="t-1-3">
             <div class="task-head-text"><div class="task-id">Task Statement 1.3</div><div class="task-title">Config việc gọi subagent, truyền context, và spawn</div></div>
-          </div>
+          </div></summary>
           <div class="task-body">
             <div class="task-col"><div class="task-col-label">📚 Phải nắm</div><ul>
               <li><code>Task</code> tool là cơ chế để spawn subagent — <code>allowedTools</code> của coordinator bắt buộc phải có <code>"Task"</code> thì mới gọi được subagent</li>
@@ -1640,13 +1793,13 @@
               <li>Viết prompt coordinator theo hướng "mục tiêu + tiêu chí chất lượng" thay vì hướng dẫn từng bước máy móc — để subagent linh hoạt thích nghi</li>
             </ul></div>
           </div>
-        </div>
+        </details>
 
-        <div class="task-card" data-domain="1">
-          <div class="task-head">
+        <details class="task-card" data-domain="1" open>
+          <summary><div class="task-head">
             <input type="checkbox" class="task-check" id="t-1-4">
             <div class="task-head-text"><div class="task-id">Task Statement 1.4</div><div class="task-title">Multi-step workflow: khi nào ép cứng, khi nào bàn giao</div></div>
-          </div>
+          </div></summary>
           <div class="task-body">
             <div class="task-col"><div class="task-col-label">📚 Phải nắm</div><ul>
               <li>Enforcement bằng code (hooks, prerequisite gate) khác hẳn việc chỉ dặn dò trong prompt để giữ đúng thứ tự workflow</li>
@@ -1659,13 +1812,13 @@
               <li>Soạn tóm tắt bàn giao có cấu trúc (customer ID, nguyên nhân gốc, số tiền hoàn, hành động đề xuất) khi chuyển cho người thật — vì họ không đọc được transcript</li>
             </ul></div>
           </div>
-        </div>
+        </details>
 
-        <div class="task-card" data-domain="1">
-          <div class="task-head">
+        <details class="task-card" data-domain="1" open>
+          <summary><div class="task-head">
             <input type="checkbox" class="task-check" id="t-1-5">
             <div class="task-head-text"><div class="task-id">Task Statement 1.5</div><div class="task-title">Dùng Agent SDK hooks để chặn tool call & chuẩn hóa dữ liệu</div></div>
-          </div>
+          </div></summary>
           <div class="task-body">
             <div class="task-col"><div class="task-col-label">📚 Phải nắm</div><ul>
               <li>Pattern <code>PostToolUse</code> chặn kết quả tool để biến đổi trước khi model xử lý</li>
@@ -1678,13 +1831,13 @@
               <li>Biết chọn hook thay vì prompt khi business rule cần đảm bảo tuân thủ tuyệt đối</li>
             </ul></div>
           </div>
-        </div>
+        </details>
 
-        <div class="task-card" data-domain="1">
-          <div class="task-head">
+        <details class="task-card" data-domain="1" open>
+          <summary><div class="task-head">
             <input type="checkbox" class="task-check" id="t-1-6">
             <div class="task-head-text"><div class="task-id">Task Statement 1.6</div><div class="task-title">Thiết kế chiến lược task decomposition cho workflow phức tạp</div></div>
-          </div>
+          </div></summary>
           <div class="task-body">
             <div class="task-col"><div class="task-col-label">📚 Phải nắm</div><ul>
               <li>Khi nào dùng pipeline tuần tự cố định (prompt chaining) và khi nào dùng decomposition linh hoạt dựa trên kết quả trung gian</li>
@@ -1697,13 +1850,13 @@
               <li>Với task mở (vd: "thêm test đầy đủ cho codebase cũ") — map cấu trúc trước, tìm vùng ưu tiên cao, rồi lập kế hoạch có thứ tự và tự điều chỉnh khi phát hiện dependency mới</li>
             </ul></div>
           </div>
-        </div>
+        </details>
 
-        <div class="task-card" data-domain="1">
-          <div class="task-head">
+        <details class="task-card" data-domain="1" open>
+          <summary><div class="task-head">
             <input type="checkbox" class="task-check" id="t-1-7">
             <div class="task-head-text"><div class="task-id">Task Statement 1.7</div><div class="task-title">Quản lý session state, resume, và fork</div></div>
-          </div>
+          </div></summary>
           <div class="task-body">
             <div class="task-col"><div class="task-col-label">📚 Phải nắm</div><ul>
               <li>Resume session có tên bằng <code>--resume &lt;session-name&gt;</code> để tiếp tục đúng hội thoại trước đó</li>
@@ -1718,7 +1871,7 @@
               <li>Khi resume, chỉ cần báo agent những file cụ thể đã đổi để nó re-analyze đúng chỗ, khỏi bắt nó khám phá lại từ đầu</li>
             </ul></div>
           </div>
-        </div>
+        </details>
 
       </div>
       <!-- ===== /DOMAIN 1 ===== -->
@@ -1730,11 +1883,11 @@
           <p>Trọng tâm: mô tả tool là thứ LLM dựa vào để chọn đúng tool — mô tả sơ sài là auto chọn sai. Cộng thêm: error response phải có cấu trúc, tool phân bổ đúng vai trò (đừng nhét 18 tool vào 1 agent), và biết cấu hình MCP server đúng scope.</p>
         </div>
 
-        <div class="task-card" data-domain="2">
-          <div class="task-head">
+        <details class="task-card" data-domain="2" open>
+          <summary><div class="task-head">
             <input type="checkbox" class="task-check" id="t-2-1">
             <div class="task-head-text"><div class="task-id">Task Statement 2.1</div><div class="task-title">Thiết kế tool interface rõ ràng, có ranh giới cụ thể</div></div>
-          </div>
+          </div></summary>
           <div class="task-body">
             <div class="task-col"><div class="task-col-label">📚 Phải nắm</div><ul>
               <li>Mô tả tool (description) là thứ chính LLM dùng để chọn tool — mô tả sơ sài = chọn sai lung tung giữa các tool giống nhau</li>
@@ -1749,13 +1902,13 @@
               <li>Soát lại system prompt xem có từ khóa nào vô tình "đè" lên mô tả tool đã viết tốt không</li>
             </ul></div>
           </div>
-        </div>
+        </details>
 
-        <div class="task-card" data-domain="2">
-          <div class="task-head">
+        <details class="task-card" data-domain="2" open>
+          <summary><div class="task-head">
             <input type="checkbox" class="task-check" id="t-2-2">
             <div class="task-head-text"><div class="task-id">Task Statement 2.2</div><div class="task-title">Thiết kế structured error response cho MCP tool</div></div>
-          </div>
+          </div></summary>
           <div class="task-body">
             <div class="task-col"><div class="task-col-label">📚 Phải nắm</div><ul>
               <li>Pattern cờ <code>isError</code> của MCP để báo lỗi tool về cho agent</li>
@@ -1770,13 +1923,13 @@
               <li>Phân biệt rõ: lỗi truy cập thật (cần quyết định retry) khác với kết quả rỗng hợp lệ (query thành công nhưng không có match)</li>
             </ul></div>
           </div>
-        </div>
+        </details>
 
-        <div class="task-card" data-domain="2">
-          <div class="task-head">
+        <details class="task-card" data-domain="2" open>
+          <summary><div class="task-head">
             <input type="checkbox" class="task-check" id="t-2-3">
             <div class="task-head-text"><div class="task-id">Task Statement 2.3</div><div class="task-title">Phân bổ tool đúng vai trò & cấu hình tool choice</div></div>
-          </div>
+          </div></summary>
           <div class="task-body">
             <div class="task-col"><div class="task-col-label">📚 Phải nắm</div><ul>
               <li>Cho agent quá nhiều tool (vd: 18 thay vì 4-5) làm giảm độ tin cậy khi chọn tool, vì độ phức tạp quyết định tăng lên</li>
@@ -1792,13 +1945,13 @@
               <li>Set <code>tool_choice: "any"</code> để đảm bảo model chắc chắn gọi tool, không trả lời bằng text suông</li>
             </ul></div>
           </div>
-        </div>
+        </details>
 
-        <div class="task-card" data-domain="2">
-          <div class="task-head">
+        <details class="task-card" data-domain="2" open>
+          <summary><div class="task-head">
             <input type="checkbox" class="task-check" id="t-2-4">
             <div class="task-head-text"><div class="task-id">Task Statement 2.4</div><div class="task-title">Tích hợp MCP server vào Claude Code & agent workflow</div></div>
-          </div>
+          </div></summary>
           <div class="task-body">
             <div class="task-col"><div class="task-col-label">📚 Phải nắm</div><ul>
               <li>Scope của MCP server: project-level (<code>.mcp.json</code>) cho tooling chung cả team, vs user-level (<code>~/.claude.json</code>) cho server cá nhân/thử nghiệm</li>
@@ -1814,13 +1967,13 @@
               <li>Expose danh mục nội dung dưới dạng MCP resource để agent "nhìn thấy" data có sẵn mà không cần dò bằng tool call</li>
             </ul></div>
           </div>
-        </div>
+        </details>
 
-        <div class="task-card" data-domain="2">
-          <div class="task-head">
+        <details class="task-card" data-domain="2" open>
+          <summary><div class="task-head">
             <input type="checkbox" class="task-check" id="t-2-5">
             <div class="task-head-text"><div class="task-id">Task Statement 2.5</div><div class="task-title">Chọn & dùng built-in tool (Read, Write, Edit, Bash, Grep, Glob) đúng chỗ</div></div>
-          </div>
+          </div></summary>
           <div class="task-body">
             <div class="task-col"><div class="task-col-label">📚 Phải nắm</div><ul>
               <li><code>Grep</code> = tìm nội dung trong file (tên hàm, error message, câu lệnh import...)</li>
@@ -1836,7 +1989,7 @@
               <li>Trace việc dùng 1 hàm qua các module wrapper: tìm hết tên export trước, rồi search từng tên đó trên toàn codebase</li>
             </ul></div>
           </div>
-        </div>
+        </details>
 
       </div>
       <!-- ===== /DOMAIN 2 ===== -->
@@ -1848,11 +2001,11 @@
           <p>Trọng tâm: hiểu rõ hệ thống phân cấp <code>CLAUDE.md</code>, biết khi nào dùng plan mode vs làm thẳng, và cách nhét Claude Code vào CI/CD sao cho không bị treo pipeline.</p>
         </div>
 
-        <div class="task-card" data-domain="3">
-          <div class="task-head">
+        <details class="task-card" data-domain="3" open>
+          <summary><div class="task-head">
             <input type="checkbox" class="task-check" id="t-3-1">
             <div class="task-head-text"><div class="task-id">Task Statement 3.1</div><div class="task-title">Cấu hình <code>CLAUDE.md</code> đúng cấp bậc, scope, và chia module hợp lý</div></div>
-          </div>
+          </div></summary>
           <div class="task-body">
             <div class="task-col"><div class="task-col-label">📚 Phải nắm</div><ul>
               <li>3 cấp <code>CLAUDE.md</code>: user-level (<code>~/.claude/CLAUDE.md</code>), project-level (<code>.claude/CLAUDE.md</code> hoặc root <code>CLAUDE.md</code>), directory-level (file trong từng subfolder)</li>
@@ -1867,13 +2020,13 @@
               <li>Dùng lệnh <code>/memory</code> để check xem memory file nào đang load — hữu ích khi hành vi không nhất quán giữa các session</li>
             </ul></div>
           </div>
-        </div>
+        </details>
 
-        <div class="task-card" data-domain="3">
-          <div class="task-head">
+        <details class="task-card" data-domain="3" open>
+          <summary><div class="task-head">
             <input type="checkbox" class="task-check" id="t-3-2">
             <div class="task-head-text"><div class="task-id">Task Statement 3.2</div><div class="task-title">Tạo & cấu hình custom slash command và skill</div></div>
-          </div>
+          </div></summary>
           <div class="task-body">
             <div class="task-col"><div class="task-col-label">📚 Phải nắm</div><ul>
               <li>Command project-scope nằm ở <code>.claude/commands/</code> (share qua version control) vs user-scope ở <code>~/.claude/commands/</code> (cá nhân)</li>
@@ -1889,13 +2042,13 @@
               <li>Biết chọn giữa skill (gọi theo nhu cầu, cho workflow riêng lẻ) và <code>CLAUDE.md</code> (luôn load, cho chuẩn chung toàn dự án)</li>
             </ul></div>
           </div>
-        </div>
+        </details>
 
-        <div class="task-card" data-domain="3">
-          <div class="task-head">
+        <details class="task-card" data-domain="3" open>
+          <summary><div class="task-head">
             <input type="checkbox" class="task-check" id="t-3-3">
             <div class="task-head-text"><div class="task-id">Task Statement 3.3</div><div class="task-title">Áp dụng path-specific rules để load convention có điều kiện</div></div>
-          </div>
+          </div></summary>
           <div class="task-body">
             <div class="task-col"><div class="task-col-label">📚 Phải nắm</div><ul>
               <li>File trong <code>.claude/rules/</code> có YAML frontmatter chứa field <code>paths</code> là glob pattern để kích hoạt rule có điều kiện</li>
@@ -1908,13 +2061,13 @@
               <li>Chọn path-specific rule thay vì <code>CLAUDE.md</code> theo thư mục con khi convention phải áp cho file rải rác khắp codebase</li>
             </ul></div>
           </div>
-        </div>
+        </details>
 
-        <div class="task-card" data-domain="3">
-          <div class="task-head">
+        <details class="task-card" data-domain="3" open>
+          <summary><div class="task-head">
             <input type="checkbox" class="task-check" id="t-3-4">
             <div class="task-head-text"><div class="task-id">Task Statement 3.4</div><div class="task-title">Xác định khi nào dùng plan mode vs làm thẳng (direct execution)</div></div>
-          </div>
+          </div></summary>
           <div class="task-body">
             <div class="task-col"><div class="task-col-label">📚 Phải nắm</div><ul>
               <li>Plan mode hợp cho task phức tạp: thay đổi quy mô lớn, nhiều hướng làm hợp lý, quyết định kiến trúc, sửa nhiều file</li>
@@ -1929,13 +2082,13 @@
               <li>Kết hợp: dùng plan mode để điều tra, rồi direct execution để triển khai theo kế hoạch đã lập (vd: lên kế hoạch migrate thư viện, rồi thực thi)</li>
             </ul></div>
           </div>
-        </div>
+        </details>
 
-        <div class="task-card" data-domain="3">
-          <div class="task-head">
+        <details class="task-card" data-domain="3" open>
+          <summary><div class="task-head">
             <input type="checkbox" class="task-check" id="t-3-5">
             <div class="task-head-text"><div class="task-id">Task Statement 3.5</div><div class="task-title">Áp dụng kỹ thuật iterative refinement để cải thiện dần dần</div></div>
-          </div>
+          </div></summary>
           <div class="task-body">
             <div class="task-col"><div class="task-col-label">📚 Phải nắm</div><ul>
               <li>Ví dụ input/output cụ thể là cách hiệu quả nhất để truyền đạt phép biến đổi mong muốn, khi mô tả bằng chữ bị hiểu mỗi nơi mỗi kiểu</li>
@@ -1951,13 +2104,13 @@
               <li>Gộp nhiều vấn đề liên quan vào 1 message chi tiết khi chúng ảnh hưởng lẫn nhau, còn vấn đề độc lập thì sửa tuần tự</li>
             </ul></div>
           </div>
-        </div>
+        </details>
 
-        <div class="task-card" data-domain="3">
-          <div class="task-head">
+        <details class="task-card" data-domain="3" open>
+          <summary><div class="task-head">
             <input type="checkbox" class="task-check" id="t-3-6">
             <div class="task-head-text"><div class="task-id">Task Statement 3.6</div><div class="task-title">Tích hợp Claude Code vào pipeline CI/CD</div></div>
-          </div>
+          </div></summary>
           <div class="task-body">
             <div class="task-col"><div class="task-col-label">📚 Phải nắm</div><ul>
               <li>Cờ <code>-p</code> (hoặc <code>--print</code>) để chạy Claude Code chế độ non-interactive trong pipeline tự động</li>
@@ -1973,7 +2126,7 @@
               <li>Ghi rõ chuẩn testing, tiêu chí test có giá trị, và fixture có sẵn trong <code>CLAUDE.md</code> để nâng chất lượng test được generate, giảm test "rác"</li>
             </ul></div>
           </div>
-        </div>
+        </details>
 
       </div>
       <!-- ===== /DOMAIN 3 ===== -->
@@ -1985,11 +2138,11 @@
           <p>Trọng tâm: tiêu chí càng cụ thể càng giảm false positive (chỉ nói "hãy cẩn thận" là vô dụng), few-shot là vũ khí mạnh nhất cho output nhất quán, và <code>tool_use</code> + JSON schema là cách chắc kèo nhất để ép structured output.</p>
         </div>
 
-        <div class="task-card" data-domain="4">
-          <div class="task-head">
+        <details class="task-card" data-domain="4" open>
+          <summary><div class="task-head">
             <input type="checkbox" class="task-check" id="t-4-1">
             <div class="task-head-text"><div class="task-id">Task Statement 4.1</div><div class="task-title">Thiết kế prompt với tiêu chí rõ ràng để tăng độ chính xác, giảm false positive</div></div>
-          </div>
+          </div></summary>
           <div class="task-body">
             <div class="task-col"><div class="task-col-label">📚 Phải nắm</div><ul>
               <li>Tiêu chí cụ thể luôn ăn đứt hướng dẫn mập mờ (vd: "chỉ flag comment khi hành vi claim mâu thuẫn với code thật" tốt hơn nhiều so với "check xem comment có đúng không")</li>
@@ -2002,13 +2155,13 @@
               <li>Định nghĩa tiêu chí severity rõ ràng kèm ví dụ code cụ thể cho từng mức độ, để phân loại nhất quán</li>
             </ul></div>
           </div>
-        </div>
+        </details>
 
-        <div class="task-card" data-domain="4">
-          <div class="task-head">
+        <details class="task-card" data-domain="4" open>
+          <summary><div class="task-head">
             <input type="checkbox" class="task-check" id="t-4-2">
             <div class="task-head-text"><div class="task-id">Task Statement 4.2</div><div class="task-title">Áp dụng few-shot prompting để output nhất quán và chất lượng hơn</div></div>
-          </div>
+          </div></summary>
           <div class="task-body">
             <div class="task-col"><div class="task-col-label">📚 Phải nắm</div><ul>
               <li>Few-shot example là kỹ thuật hiệu quả nhất để đạt output đúng format, đúng hành động, khi chỉ hướng dẫn chi tiết bằng chữ cho kết quả không ổn định</li>
@@ -2024,13 +2177,13 @@
               <li>Thêm ví dụ extract đúng từ tài liệu định dạng khác nhau, để xử lý việc trường bắt buộc bị extract rỗng/null</li>
             </ul></div>
           </div>
-        </div>
+        </details>
 
-        <div class="task-card" data-domain="4">
-          <div class="task-head">
+        <details class="task-card" data-domain="4" open>
+          <summary><div class="task-head">
             <input type="checkbox" class="task-check" id="t-4-3">
             <div class="task-head-text"><div class="task-id">Task Statement 4.3</div><div class="task-title">Ép structured output bằng tool use và JSON schema</div></div>
-          </div>
+          </div></summary>
           <div class="task-body">
             <div class="task-col"><div class="task-col-label">📚 Phải nắm</div><ul>
               <li><code>tool_use</code> kèm JSON schema là cách chắc kèo nhất để có output đúng schema, loại bỏ hẳn lỗi cú pháp JSON</li>
@@ -2047,13 +2200,13 @@
               <li>Đưa rule chuẩn hóa định dạng vào prompt song song với schema output nghiêm ngặt, để xử lý format nguồn không đồng nhất</li>
             </ul></div>
           </div>
-        </div>
+        </details>
 
-        <div class="task-card" data-domain="4">
-          <div class="task-head">
+        <details class="task-card" data-domain="4" open>
+          <summary><div class="task-head">
             <input type="checkbox" class="task-check" id="t-4-4">
             <div class="task-head-text"><div class="task-id">Task Statement 4.4</div><div class="task-title">Xây validation, retry và feedback loop để nâng chất lượng extraction</div></div>
-          </div>
+          </div></summary>
           <div class="task-body">
             <div class="task-col"><div class="task-col-label">📚 Phải nắm</div><ul>
               <li>Retry kèm feedback lỗi: đưa lỗi validate cụ thể vào prompt khi retry để model tự sửa đúng hướng</li>
@@ -2068,13 +2221,13 @@
               <li>Thiết kế flow tự sửa: extract cả <code>calculated_total</code> lẫn <code>stated_total</code> để phát hiện lệch số, thêm boolean <code>conflict_detected</code> khi dữ liệu nguồn mâu thuẫn</li>
             </ul></div>
           </div>
-        </div>
+        </details>
 
-        <div class="task-card" data-domain="4">
-          <div class="task-head">
+        <details class="task-card" data-domain="4" open>
+          <summary><div class="task-head">
             <input type="checkbox" class="task-check" id="t-4-5">
             <div class="task-head-text"><div class="task-id">Task Statement 4.5</div><div class="task-title">Thiết kế chiến lược batch processing hiệu quả</div></div>
-          </div>
+          </div></summary>
           <div class="task-body">
             <div class="task-col"><div class="task-col-label">📚 Phải nắm</div><ul>
               <li>Message Batches API: tiết kiệm 50% chi phí, xử lý trong tối đa 24 giờ, <em>không</em> cam kết SLA về độ trễ</li>
@@ -2089,13 +2242,13 @@
               <li>Tinh chỉnh prompt trên mẫu nhỏ trước khi chạy batch số lượng lớn, để tăng tỉ lệ thành công lần đầu, giảm chi phí gửi lại nhiều lần</li>
             </ul></div>
           </div>
-        </div>
+        </details>
 
-        <div class="task-card" data-domain="4">
-          <div class="task-head">
+        <details class="task-card" data-domain="4" open>
+          <summary><div class="task-head">
             <input type="checkbox" class="task-check" id="t-4-6">
             <div class="task-head-text"><div class="task-id">Task Statement 4.6</div><div class="task-title">Thiết kế kiến trúc review nhiều instance, nhiều pass</div></div>
-          </div>
+          </div></summary>
           <div class="task-body">
             <div class="task-col"><div class="task-col-label">📚 Phải nắm</div><ul>
               <li>Giới hạn của self-review: model vẫn giữ nguyên "mạch suy luận" lúc generate, nên ít khả năng tự nghi ngờ quyết định của chính nó trong cùng session</li>
@@ -2108,7 +2261,7 @@
               <li>Chạy pass verification nơi model tự báo mức độ tự tin kèm mỗi finding, để định tuyến review theo độ tin cậy</li>
             </ul></div>
           </div>
-        </div>
+        </details>
 
       </div>
       <!-- ===== /DOMAIN 4 ===== -->
@@ -2120,11 +2273,11 @@
           <p>Trọng tâm: đừng để summarization làm mất số liệu quan trọng, hiểu hiệu ứng "lost in the middle", biết khi nào escalate cho người thật, và giữ được provenance (nguồn gốc thông tin) khi tổng hợp từ nhiều nguồn.</p>
         </div>
 
-        <div class="task-card" data-domain="5">
-          <div class="task-head">
+        <details class="task-card" data-domain="5" open>
+          <summary><div class="task-head">
             <input type="checkbox" class="task-check" id="t-5-1">
             <div class="task-head-text"><div class="task-id">Task Statement 5.1</div><div class="task-title">Quản lý context hội thoại để giữ thông tin quan trọng qua tương tác dài</div></div>
-          </div>
+          </div></summary>
           <div class="task-body">
             <div class="task-col"><div class="task-col-label">📚 Phải nắm</div><ul>
               <li>Rủi ro của progressive summarization: số liệu, phần trăm, ngày tháng, và kỳ vọng khách hàng bị nén thành tóm tắt mập mờ</li>
@@ -2141,13 +2294,13 @@
               <li>Sửa agent upstream để trả về dữ liệu có cấu trúc (fact chính, trích dẫn, điểm liên quan) thay vì nội dung dài dòng + chuỗi suy luận, khi agent downstream có ngân sách context hạn chế</li>
             </ul></div>
           </div>
-        </div>
+        </details>
 
-        <div class="task-card" data-domain="5">
-          <div class="task-head">
+        <details class="task-card" data-domain="5" open>
+          <summary><div class="task-head">
             <input type="checkbox" class="task-check" id="t-5-2">
             <div class="task-head-text"><div class="task-id">Task Statement 5.2</div><div class="task-title">Thiết kế pattern escalation & xử lý mập mờ hiệu quả</div></div>
-          </div>
+          </div></summary>
           <div class="task-body">
             <div class="task-col"><div class="task-col-label">📚 Phải nắm</div><ul>
               <li>Trigger escalation hợp lý: khách yêu cầu gặp người thật, policy có ngoại lệ/lỗ hổng (không chỉ vì case phức tạp), và agent bó tay không tiến triển được</li>
@@ -2163,13 +2316,13 @@
               <li>Dặn agent hỏi thêm thông tin định danh khi tool trả về nhiều kết quả khớp, thay vì tự chọn theo heuristic</li>
             </ul></div>
           </div>
-        </div>
+        </details>
 
-        <div class="task-card" data-domain="5">
-          <div class="task-head">
+        <details class="task-card" data-domain="5" open>
+          <summary><div class="task-head">
             <input type="checkbox" class="task-check" id="t-5-3">
             <div class="task-head-text"><div class="task-id">Task Statement 5.3</div><div class="task-title">Triển khai chiến lược lan truyền lỗi (error propagation) trong hệ multi-agent</div></div>
-          </div>
+          </div></summary>
           <div class="task-body">
             <div class="task-col"><div class="task-col-label">📚 Phải nắm</div><ul>
               <li>Context lỗi có cấu trúc (loại lỗi, query đã thử, partial result, hướng thay thế) giúp coordinator ra quyết định phục hồi thông minh</li>
@@ -2184,13 +2337,13 @@
               <li>Cấu trúc output synthesis kèm chú thích độ bao phủ, chỉ rõ finding nào có cơ sở vững vs vùng nào còn thiếu vì nguồn không truy cập được</li>
             </ul></div>
           </div>
-        </div>
+        </details>
 
-        <div class="task-card" data-domain="5">
-          <div class="task-head">
+        <details class="task-card" data-domain="5" open>
+          <summary><div class="task-head">
             <input type="checkbox" class="task-check" id="t-5-4">
             <div class="task-head-text"><div class="task-id">Task Statement 5.4</div><div class="task-title">Quản lý context hiệu quả khi khám phá codebase lớn</div></div>
-          </div>
+          </div></summary>
           <div class="task-body">
             <div class="task-col"><div class="task-col-label">📚 Phải nắm</div><ul>
               <li>Context suy giảm trong session dài: model bắt đầu trả lời không nhất quán, nói kiểu "pattern thường gặp" thay vì nhắc đúng class đã tìm thấy trước đó</li>
@@ -2206,13 +2359,13 @@
               <li>Dùng <code>/compact</code> để giảm tải context trong session khám phá dài, khi context đầy ắp output khám phá dài dòng</li>
             </ul></div>
           </div>
-        </div>
+        </details>
 
-        <div class="task-card" data-domain="5">
-          <div class="task-head">
+        <details class="task-card" data-domain="5" open>
+          <summary><div class="task-head">
             <input type="checkbox" class="task-check" id="t-5-5">
             <div class="task-head-text"><div class="task-id">Task Statement 5.5</div><div class="task-title">Thiết kế workflow human review & hiệu chỉnh độ tự tin (confidence calibration)</div></div>
-          </div>
+          </div></summary>
           <div class="task-body">
             <div class="task-col"><div class="task-col-label">📚 Phải nắm</div><ul>
               <li>Chỉ số accuracy tổng (vd: 97% overall) có thể che giấu hiệu năng kém ở loại tài liệu hoặc field cụ thể</li>
@@ -2227,13 +2380,13 @@
               <li>Định tuyến extraction có confidence thấp hoặc tài liệu nguồn mập mờ/mâu thuẫn cho human review, ưu tiên năng lực reviewer có hạn</li>
             </ul></div>
           </div>
-        </div>
+        </details>
 
-        <div class="task-card" data-domain="5">
-          <div class="task-head">
+        <details class="task-card" data-domain="5" open>
+          <summary><div class="task-head">
             <input type="checkbox" class="task-check" id="t-5-6">
             <div class="task-head-text"><div class="task-id">Task Statement 5.6</div><div class="task-title">Giữ nguồn gốc thông tin (provenance) & xử lý sự không chắc chắn khi tổng hợp đa nguồn</div></div>
-          </div>
+          </div></summary>
           <div class="task-body">
             <div class="task-col"><div class="task-col-label">📚 Phải nắm</div><ul>
               <li>Attribution nguồn dễ bị mất khi tóm tắt nén finding mà không giữ mapping claim-nguồn</li>
@@ -2249,26 +2402,24 @@
               <li>Render đúng loại nội dung trong output tổng hợp — dữ liệu tài chính thành bảng, tin tức thành văn xuôi, finding kỹ thuật thành list có cấu trúc — thay vì ép hết về 1 định dạng đồng nhất</li>
             </ul></div>
           </div>
-        </div>
+        </details>
 
       </div>
       <!-- ===== /DOMAIN 5 ===== -->      </div><!-- /mode-checklist -->
 
-      <div class="learn-mode" id="mode-deep">
-        <div class="mode-hint"><span>📖</span><span><strong>Đây không phải Exam Guide chính thức.</strong> Phần này tổng hợp từ repo cộng đồng <code>dnacenta/claude-certified-architect</code> + docs chính thức của Anthropic, chia 2 lớp: <strong style="color:var(--accent)">"Củng cố"</strong> (chi tiết hoá đúng nội dung Exam Guide — an toàn để học) và <strong>"🔭 Ngoài phạm vi"</strong> (tính năng mới hơn — nên biết cho rộng, đừng học thuộc).</span></div>
+      <div class="learn-mode active" id="mode-deep">
+        <div class="mode-hint"><span>📖</span><span>Domain này chia 2 lớp: <strong style="color:var(--accent)">"Củng cố"</strong> (chi tiết hoá đúng nội dung Exam Guide — an toàn để học) và <strong>"🔭 Ngoài phạm vi"</strong> (tính năng mới hơn — nên biết cho rộng, đừng học thuộc). <details class="hint-more"><summary>Nguồn của phần này</summary>Đây <strong>không phải</strong> Exam Guide chính thức — tổng hợp từ repo cộng đồng <code>dnacenta/claude-certified-architect</code> + docs chính thức của Anthropic.</details></span></div>
 
         <div class="ext-layout">
-          <nav class="ext-sidenav" id="extSectionNav" aria-label="Mục trong domain này">
-            <!-- filled by JS: lists the subsections (1.1, 1.2, ...) of the active domain -->
-          </nav>
           <div class="ext-content">
       <!-- ===== EXT D1 ===== -->
       <div id="ext-1" class="ext-panel">
         <div class="ext-group-title">Củng cố Domain 1</div>
         <p class="ext-group-sub">Chi tiết + số liệu cụ thể, khớp đúng tinh thần task statement 1.1–1.7 đã học.</p>
 
-<div class="subsec">
-  <h4>1.1 The Agentic Loop Lifecycle — Vòng đời của agentic loop</h4>
+<details class="subsec" data-toc="1.1" open>
+  <summary><h4>1.1 The Agentic Loop Lifecycle — Vòng đời của agentic loop</h4></summary>
+  <div class="ss-body">
 
   <p>Về bản chất, một hệ thống agentic là một cái loop. Claude nhận prompt kèm theo tools, quyết định xem có nên gọi tool hay trả lời luôn, và loop này cứ lặp lại cho đến khi Claude báo hiệu là xong.</p>
 
@@ -2445,9 +2596,11 @@
 
   <p><strong>Chọn cái nào:</strong> hãy giữ ở mức đơn giản nhất mà vẫn đáp ứng được nhu cầu. Một lần gọi đơn hoặc một workflow được code điều khiển sẵn sẽ xử lý được phần lớn task; chỉ nên dùng agent khi task thực sự mở (open-ended) và cần model tự dẫn dắt, khi giá trị mang lại xứng đáng với độ trễ và chi phí, và khi lỗi có thể bắt được (test, review, rollback).</p>
 </div>
+</details>
 
-<div class="subsec">
-  <h4>1.2 Multi-Agent Orchestration — Điều phối nhiều agent</h4>
+<details class="subsec" data-toc="1.2" open>
+  <summary><h4>1.2 Multi-Agent Orchestration — Điều phối nhiều agent</h4></summary>
+  <div class="ss-body">
 
   <h5>Hub-and-Spoke Architecture — Kiến trúc trục-nan hoa</h5>
 
@@ -2519,9 +2672,11 @@ Coordinator → Subagents (round 2, targeted)
          ↓
    Final synthesis</code></pre>
 </div>
+</details>
 
-<div class="subsec">
-  <h4>1.3 Subagent Spawning and Context Passing — Sinh subagent và truyền context</h4>
+<details class="subsec" data-toc="1.3" open>
+  <summary><h4>1.3 Subagent Spawning and Context Passing — Sinh subagent và truyền context</h4></summary>
+  <div class="ss-body">
 
   <h5>The Agent Tool — Tool Agent</h5>
 
@@ -2629,9 +2784,11 @@ async for message in query(
 
   <p>Cách này giữ được thông tin nguồn gốc (attribution) và cho phép agent nhận context có thể đánh giá được chất lượng của nguồn.</p>
 </div>
+</details>
 
-<div class="subsec">
-  <h4>1.4 Workflow Enforcement and Handoff — Cưỡng chế workflow và bàn giao</h4>
+<details class="subsec" data-toc="1.4" open>
+  <summary><h4>1.4 Workflow Enforcement and Handoff — Cưỡng chế workflow và bàn giao</h4></summary>
+  <div class="ss-body">
 
   <h5>The Critical Distinction — Sự phân biệt quan trọng nhất</h5>
 
@@ -2666,9 +2823,11 @@ Actions taken: Verified order, confirmed damage via photos
 Recommended action: Full refund + replacement shipment
 Refund amount: $149.99</code></pre>
 </div>
+</details>
 
-<div class="subsec">
-  <h4>1.5 Claude Code / Agent SDK Hooks — Hooks trong Claude Code / Agent SDK</h4>
+<details class="subsec" data-toc="1.5" open>
+  <summary><h4>1.5 Claude Code / Agent SDK Hooks — Hooks trong Claude Code / Agent SDK</h4></summary>
+  <div class="ss-body">
 
   <h5>Hook Events (Current Catalog) — Danh mục Hook Events hiện tại</h5>
 
@@ -2781,9 +2940,11 @@ Refund amount: $149.99</code></pre>
     <tr><td>Managed policy settings</td><td>Toàn tổ chức (organization-wide)</td><td>Có (do admin quản lý)</td></tr>
   </table></div>
 </div>
+</details>
 
-<div class="subsec">
-  <h4>1.6 Task Decomposition Strategies — Chiến lược chia nhỏ task</h4>
+<details class="subsec" data-toc="1.6" open>
+  <summary><h4>1.6 Task Decomposition Strategies — Chiến lược chia nhỏ task</h4></summary>
+  <div class="ss-body">
 
   <h5>Prompt Chaining (Fixed Sequential) — Nối chuỗi prompt (tuần tự cố định)</h5>
 
@@ -2833,9 +2994,11 @@ Step 3: Generate final report</code></pre>
     <li>Bỏ sót các vấn đề tích hợp (không thấy được vấn đề xuyên file khi chỉ review từng file một)</li>
   </ul>
 </div>
+</details>
 
-<div class="subsec">
-  <h4>1.7 Session Management — Quản lý session</h4>
+<details class="subsec" data-toc="1.7" open>
+  <summary><h4>1.7 Session Management — Quản lý session</h4></summary>
+  <div class="ss-body">
 
   <h5>Resuming Sessions — Tiếp tục lại session</h5>
 
@@ -2873,6 +3036,7 @@ session cookies. Please re-analyze the authentication flow with these changes."<
 
   <p>Đừng cho rằng session vừa resume sẽ tự nhận ra các thay đổi — kết quả tool từ session trước có thể vẫn đang phản ánh nội dung file cũ.</p>
 </div>
+</details>
 
       </div>
       <!-- ===== /EXT D1 ===== -->
@@ -2882,8 +3046,9 @@ session cookies. Please re-analyze the authentication flow with these changes."<
         <div class="ext-group-title">Củng cố Domain 2</div>
         <p class="ext-group-sub">MCP theo đúng spec gốc + số liệu thực tế về việc tool quá tải context.</p>
 
-<div class="subsec">
-  <h4>2.1 Tool Interface Design — Thiết kế interface cho tool</h4>
+<details class="subsec" data-toc="2.1" open>
+  <summary><h4>2.1 Tool Interface Design — Thiết kế interface cho tool</h4></summary>
+  <div class="ss-body">
 
   <h5>Tool Descriptions Are Everything — Mô tả tool là tất cả</h5>
   <p>Description của tool là <strong>cơ chế chính</strong> mà Claude dùng để quyết định gọi tool nào. Description không chỉ là tài liệu tham khảo — nó chính là tiêu chí lựa chọn.</p>
@@ -2961,9 +3126,11 @@ session cookies. Please re-analyze the authentication flow with these changes."<
 Tool 2: "analyze_document" — "Analyze a document for insights"</code></pre>
   <p>Claude không thể phân biệt đáng tin cậy giữa hai tool này. Cách sửa: đổi tên để phân biệt rõ mục đích, hoặc gộp lại thành một tool duy nhất.</p>
 </div>
+</details>
 
-<div class="subsec">
-  <h4>2.2 Structured Error Responses — Cấu trúc phản hồi lỗi</h4>
+<details class="subsec" data-toc="2.2" open>
+  <summary><h4>2.2 Structured Error Responses — Cấu trúc phản hồi lỗi</h4></summary>
+  <div class="ss-body">
 
   <h5>MCP Error Structure — Cấu trúc lỗi của MCP</h5>
   <p>Khi tool fail, response lỗi nên có cấu trúc rõ ràng, chứ không phải một chuỗi string chung chung:</p>
@@ -3010,9 +3177,11 @@ Tool 2: "analyze_document" — "Analyze a document for insights"</code></pre>
   </table></div>
   <p>Hai trường hợp này phải được xử lý khác nhau. Trường hợp đầu là thông tin. Trường hợp sau là lỗi.</p>
 </div>
+</details>
 
-<div class="subsec">
-  <h4>2.3 Tool Distribution and tool_choice — Phân bổ tool và tham số tool_choice</h4>
+<details class="subsec" data-toc="2.3" open>
+  <summary><h4>2.3 Tool Distribution and tool_choice — Phân bổ tool và tham số tool_choice</h4></summary>
+  <div class="ss-body">
 
   <h5>The 4-5 Tool Maximum — Giới hạn tối đa 4-5 tool</h5>
   <p>Mỗi agent nên có <strong>tối đa 4-5 tool</strong>. Cho một agent 18 tool sẽ làm giảm độ tin cậy khi lựa chọn — Claude có thể chọn nhầm tool, gọi những tool không cần thiết, hoặc gặp khó khăn khi suy luận nên dùng cái nào.</p>
@@ -3084,9 +3253,11 @@ response = client.messages.create(
     tool_choice={"type": "tool", "name": "extract_metadata"}
 )</code></pre>
 </div>
+</details>
 
-<div class="subsec">
-  <h4>2.4 MCP Server Configuration — Cấu hình MCP Server</h4>
+<details class="subsec" data-toc="2.4" open>
+  <summary><h4>2.4 MCP Server Configuration — Cấu hình MCP Server</h4></summary>
+  <div class="ss-body">
 
   <h5>What is MCP? — MCP là gì?</h5>
   <p>Model Context Protocol là một chuẩn mở để kết nối các model AI với nguồn dữ liệu và công cụ bên ngoài. Nó cung cấp một cách thống nhất để Claude tương tác với database, API, hệ thống file, và các dịch vụ khác.</p>
@@ -3242,9 +3413,11 @@ claude mcp add-json example '{"type":"http","url":"https://mcp.example.com/mcp"}
   ]
 }</code></pre>
 </div>
+</details>
 
-<div class="subsec">
-  <h4>2.5 Built-in Tools — Các tool tích hợp sẵn</h4>
+<details class="subsec" data-toc="2.5" open>
+  <summary><h4>2.5 Built-in Tools — Các tool tích hợp sẵn</h4></summary>
+  <div class="ss-body">
   <p>Các tool tích hợp sẵn của Claude Code và khi nào nên dùng từng cái:</p>
   <div class="table-wrap"><table>
     <tr><th>Tool</th><th>Mục đích</th><th>Khi nào dùng</th></tr>
@@ -3274,9 +3447,11 @@ claude mcp add-json example '{"type":"http","url":"https://mcp.example.com/mcp"}
   <p>Tool Edit hoạt động bằng cách khớp các chuỗi text duy nhất. Nếu đoạn text đó không phải là duy nhất trong file, việc edit sẽ thất bại.</p>
   <p><strong>Phương án dự phòng:</strong> Dùng Read để lấy toàn bộ nội dung file, sau đó dùng Write để ghi đè toàn bộ file bằng phiên bản đã chỉnh sửa.</p>
 </div>
+</details>
 
-<div class="subsec">
-  <h4>2.6 Anthropic-Defined and Server-Side Tools — Tool do Anthropic định nghĩa và tool phía server</h4>
+<details class="subsec" data-toc="2.6" open>
+  <summary><h4>2.6 Anthropic-Defined and Server-Side Tools — Tool do Anthropic định nghĩa và tool phía server</h4></summary>
+  <div class="ss-body">
   <p>Không phải tool nào cũng do bạn tự viết. Một số là <strong>Anthropic-defined</strong> (không có schema — bạn chỉ cần khai báo <code>type</code> và <code>name</code>, còn Claude tự biết interface), và một số là <strong>server-side</strong> (chạy trực tiếp trên hạ tầng của Anthropic — kết quả trả về dưới dạng content block ngay trong cùng response, không cần vòng lặp thực thi phía client).</p>
 
   <div class="table-wrap"><table>
@@ -3319,6 +3494,7 @@ claude mcp add-json example '{"type":"http","url":"https://mcp.example.com/mcp"}
 
   <p>Set <code>defer_loading</code> một lần duy nhất tại <code>default_config</code> của entry <code>mcp_toolset</code> (hoặc theo từng tool trong <code>configs</code>) thay vì set trên từng định nghĩa tool riêng lẻ.</p>
 </div>
+</details>
 
       </div>
       <!-- ===== /EXT D2 ===== -->
@@ -3328,8 +3504,9 @@ claude mcp add-json example '{"type":"http","url":"https://mcp.example.com/mcp"}
         <div class="ext-group-title">Củng cố Domain 3</div>
         <p class="ext-group-sub">Đường dẫn file chính xác, cú pháp CLI chính xác — loại kiến thức "thuộc lòng" ăn điểm chắc.</p>
 
-<div class="subsec">
-  <h4>3.0 Surfaces: Where Claude Code Runs — Claude Code chạy ở những đâu</h4>
+<details class="subsec" data-toc="3.0" open>
+  <summary><h4>3.0 Surfaces: Where Claude Code Runs — Claude Code chạy ở những đâu</h4></summary>
+  <div class="ss-body">
   <p>Claude Code giờ không còn chỉ là một CLI nữa. Mọi surface (bề mặt/nền tảng chạy) đều nối vào <strong>cùng một engine</strong>, nên các file CLAUDE.md, settings, skill, và MCP server hoạt động y hệt nhau trên tất cả các surface — đây chính là điểm mấu chốt về mặt kiến trúc: config có thể mang đi khắp nơi (portable), và một session cũng vậy.</p>
   <div class="table-wrap"><table>
     <tr><th>Surface</th><th>Là gì</th><th>Cài đặt / điểm khởi động</th></tr>
@@ -3361,9 +3538,11 @@ claude mcp add-json example '{"type":"http","url":"https://mcp.example.com/mcp"}
     <tr><td><strong><code>/loop</code></strong></td><td>Bên trong session CLI hiện tại</td><td>Poll nhanh trong một phiên làm việc</td></tr>
   </table></div>
 </div>
+</details>
 
-<div class="subsec">
-  <h4>3.1 CLAUDE.md Hierarchy — Hệ thống phân cấp CLAUDE.md</h4>
+<details class="subsec" data-toc="3.1" open>
+  <summary><h4>3.1 CLAUDE.md Hierarchy — Hệ thống phân cấp CLAUDE.md</h4></summary>
+  <div class="ss-body">
 
   <h5>What is CLAUDE.md? — CLAUDE.md là gì?</h5>
   <p>File CLAUDE.md là file chứa hướng dẫn, chỉ cho Claude Code biết cách hành xử trong một ngữ cảnh cụ thể. Nó giống <code>.editorconfig</code> hay <code>.eslintrc</code> nhưng dành cho một AI agent — dùng để định nghĩa coding standard, quy ước của project, giới hạn tool nào được dùng, và các quy tắc workflow.</p>
@@ -3448,9 +3627,11 @@ See @README.md for project overview.</code></pre>
     <tr><td><code>CLAUDE_CODE_NEW_INIT=1</code></td><td><code>/init</code> chạy tương tác nhiều bước, tự dựng khung CLAUDE.md, skill và hook</td></tr>
   </table></div>
 </div>
+</details>
 
-<div class="subsec">
-  <h4>3.2 Skills (and Legacy Slash Commands) — Skill (và slash command kiểu cũ)</h4>
+<details class="subsec" data-toc="3.2" open>
+  <summary><h4>3.2 Skills (and Legacy Slash Commands) — Skill (và slash command kiểu cũ)</h4></summary>
+  <div class="ss-body">
 
   <div class="callout">
     <div class="callout-head">💡 Thay đổi lớn (2026)</div>
@@ -3570,9 +3751,11 @@ Summarize this pull request...</code></pre>
   <p>Một <strong>plugin</strong> là một gói phân phối gồm skill, subagent, hook, và MCP server, được cài từ một marketplace và bật riêng cho từng project. Các item do plugin cung cấp đều được đặt namespace (<code>plugin-name:skill-name</code> cho skill, <code>plugin:&lt;plugin&gt;:&lt;server&gt;</code> cho MCP server) để không bị đụng tên với đồ của bạn. Plugin nằm ở mức ưu tiên thấp nhất trong thứ tự resolve skill (Enterprise > Personal > Project > Plugin).</p>
   <p>Plugin cũng chính là đơn vị mà lệnh <code>claude plugin eval</code> dùng để test: bạn viết một bộ eval nhắm vào các skill của plugin rồi chạy trong sandbox hoặc trong CI, và nó xuất ra một báo cáo JSON. Đó chính là câu trả lời ở khía cạnh đóng gói cho câu hỏi "làm sao một team ship và regression-test các quy ước Claude Code của mình?"</p>
 </div>
+</details>
 
-<div class="subsec">
-  <h4>3.3 Path-Specific Rules — Rule theo đường dẫn cụ thể</h4>
+<details class="subsec" data-toc="3.3" open>
+  <summary><h4>3.3 Path-Specific Rules — Rule theo đường dẫn cụ thể</h4></summary>
+  <div class="ss-body">
 
   <h5>Conditional Rule Loading — Load rule có điều kiện</h5>
   <p>Các rule trong <code>.claude/rules/</code> có thể chỉ định file nào chúng áp dụng bằng pattern glob trong YAML frontmatter:</p>
@@ -3627,9 +3810,11 @@ paths:
     <li>Không cần nhân bản file CLAUDE.md ra khắp các thư mục</li>
   </ul>
 </div>
+</details>
 
-<div class="subsec">
-  <h4>3.4 Plan Mode vs Direct Execution — Plan mode và thực thi trực tiếp</h4>
+<details class="subsec" data-toc="3.4" open>
+  <summary><h4>3.4 Plan Mode vs Direct Execution — Plan mode và thực thi trực tiếp</h4></summary>
+  <div class="ss-body">
 
   <h5>Permission Modes (Current) — Các chế độ permission (hiện tại)</h5>
   <p>Plan mode giờ chỉ là một trong nhiều chế độ nằm trong một hệ thống permission-mode rộng hơn. Bạn có thể bắt đầu ở một chế độ cụ thể bằng <code>--permission-mode &lt;mode&gt;</code>, hoặc chuyển vòng qua các chế độ bằng <strong>Shift+Tab</strong> trong session tương tác.</p>
@@ -3734,9 +3919,11 @@ Execute SELECT queries only. Never issue writes.</code></pre>
     <li>Implement trực tiếp, từng file một</li>
   </ol>
 </div>
+</details>
 
-<div class="subsec">
-  <h4>3.5 Iterative Refinement Techniques — Các kỹ thuật tinh chỉnh lặp lại</h4>
+<details class="subsec" data-toc="3.5" open>
+  <summary><h4>3.5 Iterative Refinement Techniques — Các kỹ thuật tinh chỉnh lặp lại</h4></summary>
+  <div class="ss-body">
 
   <h5>1. Concrete Examples — Ví dụ cụ thể</h5>
   <p>Khi hướng dẫn bằng văn xuôi cho ra kết quả không nhất quán, hãy đưa 2-3 ví dụ input/output:</p>
@@ -3773,9 +3960,11 @@ Claude: "Before I implement, a few questions:
 Fix both together."</code></pre>
   <p><strong>Vấn đề độc lập với nhau:</strong> Nên fix tuần tự để mỗi thay đổi luôn sạch và dễ review.</p>
 </div>
+</details>
 
-<div class="subsec">
-  <h4>3.6 CI/CD Integration — Tích hợp CI/CD</h4>
+<details class="subsec" data-toc="3.6" open>
+  <summary><h4>3.6 CI/CD Integration — Tích hợp CI/CD</h4></summary>
+  <div class="ss-body">
 
   <h5>CLI Flags for CI — Các flag CLI dùng cho CI</h5>
   <div class="table-wrap"><table>
@@ -3869,6 +4058,7 @@ resubmit_batch = [r for r in original_requests if r.custom_id in failed_ids]</co
                           ↓
 Review session: Claude reviews the code fresh</code></pre>
 </div>
+</details>
 
       </div>
       <!-- ===== /EXT D3 ===== -->
@@ -3878,8 +4068,9 @@ Review session: Claude reviews the code fresh</code></pre>
         <div class="ext-group-title">Củng cố Domain 4</div>
         <p class="ext-group-sub">Con số cụ thể cho few-shot, JSON schema, batch, và prompt caching.</p>
 
-<div class="subsec">
-  <h4>4.1 Explicit Criteria — Tiêu chí rõ ràng</h4>
+<details class="subsec" data-toc="4.1" open>
+  <summary><h4>4.1 Explicit Criteria — Tiêu chí rõ ràng</h4></summary>
+  <div class="ss-body">
 
   <h5>The Problem with Vague Instructions — Vấn đề của những chỉ dẫn mơ hồ</h5>
   <p>Chỉ dẫn mơ hồ tạo ra kết quả không nhất quán, vì model sẽ diễn giải nó khác nhau mỗi lần chạy.</p>
@@ -3916,9 +4107,11 @@ Do NOT flag:
   <p>Tỷ lệ false positive cao ở một hạng mục sẽ làm giảm lòng tin vào TẤT CẢ các hạng mục khác, kể cả những hạng mục đang chính xác. Developer bắt đầu bỏ qua mọi cảnh báo luôn, kể cả cái đúng.</p>
   <p><strong>Giải pháp:</strong> Khi một hạng mục có tỷ lệ false positive cao, hãy tạm thời tắt nó đi và cải thiện criteria prompt trước khi bật lại. Đừng để một hạng mục ồn ào làm giảm giá trị của những hạng mục đang chính xác.</p>
 </div>
+</details>
 
-<div class="subsec">
-  <h4>4.2 Few-Shot Prompting — Prompting kiểu cho ví dụ mẫu</h4>
+<details class="subsec" data-toc="4.2" open>
+  <summary><h4>4.2 Few-Shot Prompting — Prompting kiểu cho ví dụ mẫu</h4></summary>
+  <div class="ss-body">
 
   <h5>When to Use Few-Shot — Khi nào nên dùng few-shot</h5>
   <ul>
@@ -3961,9 +4154,11 @@ Reasoning: "The comment says 'validates input' and the function does validate
   <h5>Few-Shot Enables Generalization — Few-shot giúp model tổng quát hoá</h5>
   <p>Ví dụ tốt dạy model cái pattern, không chỉ là các trường hợp cụ thể. Model nên tổng quát hoá được sang những tình huống mới bằng cách hiểu được lý lẽ đằng sau mỗi ví dụ, chứ không phải học thuộc lòng.</p>
 </div>
+</details>
 
-<div class="subsec">
-  <h4>4.3 Structured Output via tool_use — Structured output thông qua tool_use</h4>
+<details class="subsec" data-toc="4.3" open>
+  <summary><h4>4.3 Structured Output via tool_use — Structured output thông qua tool_use</h4></summary>
+  <div class="ss-body">
 
   <h5>The Problem — Vấn đề</h5>
   <p>Khi bạn cần Claude trả về dữ liệu có cấu trúc (JSON), việc sinh text tự do (free-form) có thể tạo ra:</p>
@@ -4122,9 +4317,11 @@ Reasoning: "The comment says 'validates input' and the function does validate
 
   <p><strong>Ý nghĩa thực tế:</strong> Việc validate khoảng giá trị số (numeric range), độ dài chuỗi, regex pattern, và các schema điều kiện phức tạp phải được xử lý trong code validation của bạn, chứ không thể đặt trong schema.</p>
 </div>
+</details>
 
-<div class="subsec">
-  <h4>4.4 Validation-Retry Loops — Vòng lặp validate rồi thử lại</h4>
+<details class="subsec" data-toc="4.4" open>
+  <summary><h4>4.4 Validation-Retry Loops — Vòng lặp validate rồi thử lại</h4></summary>
+  <div class="ss-body">
 
   <h5>The Pattern — Mẫu hình thực hiện</h5>
   <pre class="code-block"><code>max_retries = 3
@@ -4187,9 +4384,11 @@ raise ExtractionError(f"Failed after {max_retries} attempts: {errors}")</code></
 }</code></pre>
   <p>Việc này cho phép phân tích các pattern hay bị dismiss (bỏ qua) — nếu developer liên tục dismiss các finding "string concatenation in query", có thể criteria prompt cho pattern đó cần được tinh chỉnh lại.</p>
 </div>
+</details>
 
-<div class="subsec">
-  <h4>4.5 Batch Processing — Xử lý theo lô</h4>
+<details class="subsec" data-toc="4.5" open>
+  <summary><h4>4.5 Batch Processing — Xử lý theo lô</h4></summary>
+  <div class="ss-body">
 
   <h5>Message Batches API</h5>
   <div class="table-wrap"><table>
@@ -4241,9 +4440,11 @@ resubmit = [orig for orig in original if orig.custom_id in [f.custom_id for f in
   <h5>Pre-Batch Refinement — Tinh chỉnh trước khi chạy batch</h5>
   <p>Luôn tinh chỉnh prompt của bạn trên một mẫu nhỏ trước khi chạy batch trên khối lượng lớn. Việc này giúp bắt lỗi prompt trước khi bạn đốt credit vào 10,000 tài liệu.</p>
 </div>
+</details>
 
-<div class="subsec">
-  <h4>4.6 Multi-Pass Review — Review nhiều vòng độc lập</h4>
+<details class="subsec" data-toc="4.6" open>
+  <summary><h4>4.6 Multi-Pass Review — Review nhiều vòng độc lập</h4></summary>
+  <div class="ss-body">
 
   <h5>The Self-Review Problem — Vấn đề khi tự review chính mình</h5>
   <p>Khi Claude sinh ra code rồi tự review nó trong cùng một session, nó vẫn giữ nguyên bối cảnh suy luận (reasoning context) từ lúc sinh code. Nó "nhớ" tại sao mình lại quyết định như vậy, nên sẽ ít có khả năng nghi ngờ lại chính những quyết định đó.</p>
@@ -4282,9 +4483,11 @@ Session 2: Claude reviews the code
     <li><strong>Missing integration issues (bỏ lỡ vấn đề tích hợp)</strong> — Không thể thấy được các vấn đề xuyên-file khi chỉ review từng file một trong một vòng duy nhất</li>
   </ol>
 </div>
+</details>
 
-<div class="subsec">
-  <h4>4.7 Thinking, Effort, and the Current Request Surface — Thinking, Effort, và bề mặt request hiện tại</h4>
+<details class="subsec" data-toc="4.7" open>
+  <summary><h4>4.7 Thinking, Effort, and the Current Request Surface — Thinking, Effort, và bề mặt request hiện tại</h4></summary>
+  <div class="ss-body">
 
   <p>Hình dạng của request khi prompt Claude đã thay đổi đáng kể qua các thế hệ model từ 4.6 → 5. Nhiều tham số mà tài liệu cũ coi là tiêu chuẩn giờ trả về lỗi <strong>400</strong> trên các model hiện tại.</p>
 
@@ -4322,9 +4525,11 @@ Session 2: Claude reviews the code
   <h5>Mid-Conversation System Messages — Tin nhắn hệ thống giữa cuộc hội thoại</h5>
   <p>Trên Claude Opus 5, Opus 4.8, và Fable 5 (không áp dụng cho Sonnet 5, không cần beta header) bạn có thể thêm <code>{"role": "system", "content": "..."}</code> vào <strong>mảng <code>messages</code></strong> thay vì chỉnh sửa field <code>system</code> ở cấp top-level. Đây là kênh operator an toàn trước prompt-injection, và — vì nó không đụng vào phần prefix đã được cache — cũng là kênh rẻ nhất. Các ràng buộc: nó phải theo sau một message của <code>user</code> (hoặc một message của assistant kết thúc bằng server-tool use), không thể là <code>messages[0]</code>, và phải là message cuối cùng hoặc được theo sau bởi một lượt của assistant.</p>
 </div>
+</details>
 
-<div class="subsec">
-  <h4>4.8 Prompt Caching — Cache hoá prompt</h4>
+<details class="subsec" data-toc="4.8" open>
+  <summary><h4>4.8 Prompt Caching — Cache hoá prompt</h4></summary>
+  <div class="ss-body">
 
   <p>Caching là vấn đề về *cấu trúc* prompt, đó là lý do nó thuộc về phần này chứ không phải một cuốn sổ tay vận hành (ops runbook).</p>
 
@@ -4344,6 +4549,7 @@ Session 2: Claude reviews the code
 
   <p><strong>Tương tác với tool search:</strong> các tool bị deferred (trì hoãn tải) sẽ bị loại khỏi phần prefix của system prompt, và các tool được discover (phát hiện) sẽ được chèn thêm vào inline, vì vậy <code>defer_loading</code> *giữ nguyên* được cache. Một tool có <code>defer_loading: true</code> không thể đồng thời mang <code>cache_control</code> — hãy đặt breakpoint lên một tool không bị deferred.</p>
 </div>
+</details>
 
       </div>
       <!-- ===== /EXT D4 ===== -->
@@ -4353,8 +4559,9 @@ Session 2: Claude reviews the code
         <div class="ext-group-title">Củng cố Domain 5</div>
         <p class="ext-group-sub">"Context rot", pattern Case Facts Block, và cách xử lý mâu thuẫn dữ liệu — bổ sung chiều sâu cho D5.</p>
 
-<div class="subsec">
-  <h4>5.1 Conversation Context Management — Quản lý context của hội thoại</h4>
+<details class="subsec" data-toc="5.1" open>
+  <summary><h4>5.1 Conversation Context Management — Quản lý context của hội thoại</h4></summary>
+  <div class="ss-body">
 
   <h5>The Context Window Is Finite — Context window là hữu hạn</h5>
   <p>Claude có một context window giới hạn. Mỗi message, mỗi tool result, và system prompt đều ngốn token. Hội thoại càng dài thì càng dễ bị suy giảm chất lượng vì thông tin cũ bị nén lại hoặc rơi mất luôn.</p>
@@ -4430,9 +4637,11 @@ Session 2: Claude reviews the code
     <tr><td>Auto-memory (MEMORY.md)</td><td>Trích dẫn và con số chính xác từ context ban đầu</td></tr>
   </table></div>
 </div>
+</details>
 
-<div class="subsec">
-  <h4>5.2 Escalation Patterns — Các mẫu hình leo thang (escalate) lên người thật</h4>
+<details class="subsec" data-toc="5.2" open>
+  <summary><h4>5.2 Escalation Patterns — Các mẫu hình leo thang (escalate) lên người thật</h4></summary>
+  <div class="ss-body">
 
   <h5>When to Escalate Immediately — Khi nào nên escalate ngay lập tức</h5>
   <div class="table-wrap"><table>
@@ -4488,9 +4697,11 @@ Actions taken by agent:
 Recommended action: Manual approval for full refund + replacement
 Urgency: Standard (customer is frustrated but not at risk of churn)</code></pre>
 </div>
+</details>
 
-<div class="subsec">
-  <h4>5.3 Error Propagation — Lan truyền lỗi</h4>
+<details class="subsec" data-toc="5.3" open>
+  <summary><h4>5.3 Error Propagation — Lan truyền lỗi</h4></summary>
+  <div class="ss-body">
 
   <h5>Structured Error Context — Context lỗi có cấu trúc</h5>
   <p>Khi lỗi xảy ra, hãy lan truyền nó kèm đầy đủ context:</p>
@@ -4552,9 +4763,11 @@ Step 3: ABORT ENTIRE WORKFLOW</code></pre>
     <li>Có retry được hay không</li>
   </ul>
 </div>
+</details>
 
-<div class="subsec">
-  <h4>5.4 Large Codebase Context Management — Quản lý context cho codebase lớn</h4>
+<details class="subsec" data-toc="5.4" open>
+  <summary><h4>5.4 Large Codebase Context Management — Quản lý context cho codebase lớn</h4></summary>
+  <div class="ss-body">
 
   <h5>Context Degradation in Extended Sessions — Suy giảm context trong session kéo dài</h5>
   <p>Trong các session dài, độ tin cậy của Claude bị suy giảm:</p>
@@ -4610,9 +4823,11 @@ manifest = {
 
 # On resume, coordinator loads manifest and picks up where it left off</code></pre>
 </div>
+</details>
 
-<div class="subsec">
-  <h4>5.5 Human Review Workflows — Quy trình con người review lại</h4>
+<details class="subsec" data-toc="5.5" open>
+  <summary><h4>5.5 Human Review Workflows — Quy trình con người review lại</h4></summary>
+  <div class="ss-body">
 
   <h5>Stratified Random Sampling — Lấy mẫu ngẫu nhiên phân tầng</h5>
   <p>Đừng chỉ lấy mẫu ngẫu nhiên đều từ toàn bộ output. Hãy phân tầng (stratify) theo mức độ rủi ro hoặc theo category:</p>
@@ -4663,9 +4878,11 @@ Handwritten Notes:
 
   <p>Cách này cho thấy rõ nơi hệ thống thực sự cần cải thiện, thay vì bị che khuất sau một con số tổng hợp.</p>
 </div>
+</details>
 
-<div class="subsec">
-  <h4>5.6 Information Provenance — Nguồn gốc thông tin (provenance)</h4>
+<details class="subsec" data-toc="5.6" open>
+  <summary><h4>5.6 Information Provenance — Nguồn gốc thông tin (provenance)</h4></summary>
+  <div class="ss-body">
 
   <h5>Claim-Source Mappings — Ánh xạ giữa claim và nguồn</h5>
   <p>Khi subagent đưa ra các phát hiện (findings), chúng nên xuất ra provenance có cấu trúc:</p>
@@ -4745,9 +4962,11 @@ Handwritten Notes:
     </li>
   </ol>
 </div>
+</details>
 
-<div class="subsec">
-  <h4>5.7 Server-Side Context Management — Quản lý context phía server</h4>
+<details class="subsec" data-toc="5.7" open>
+  <summary><h4>5.7 Server-Side Context Management — Quản lý context phía server</h4></summary>
+  <div class="ss-body">
 
   <p>Mục 5.1 và 5.4 nói về quản lý context như là việc mà <em>bạn</em> tự làm — case-facts block, scratchpad, cắt gọn (trimming), giao việc cho subagent. Giờ đây API cung cấp ba cơ chế phía server (server-side) làm một phần công việc này giúp bạn. Chúng bổ trợ cho nhau chứ không phải để thay thế nhau, và biết cơ chế nào giải quyết vấn đề nào mới là mấu chốt.</p>
 
@@ -4807,9 +5026,11 @@ Handwritten Notes:
     <tr><td>Các fact tuyệt đối không được diễn giải lại (paraphrase)</td><td>Case-facts block (§5.1) — không cơ chế nào bảo vệ con số chính xác tốt hơn việc ghi lại nguyên văn</td></tr>
   </table></div>
 </div>
+</details>
 
-<div class="subsec">
-  <h4>5.8 Bounding and Recovering Long Runs — Giới hạn và phục hồi cho các run dài</h4>
+<details class="subsec" data-toc="5.8" open>
+  <summary><h4>5.8 Bounding and Recovering Long Runs — Giới hạn và phục hồi cho các run dài</h4></summary>
+  <div class="ss-body">
 
   <h5>Task Budgets vs max_tokens</h5>
   <p><code>max_tokens</code> là một ngưỡng trần mà model không nhìn thấy được; khi chạm ngưỡng này, output sẽ bị cắt cụt giữa chừng. Một <strong>task budget</strong> (<code>output_config.task_budget</code>, beta <code>task-budgets-2026-03-13</code>, tối thiểu 20,000) là một ngưỡng trần mà model <em>nhìn thấy được</em>, nên nó sẽ tự điều tiết nhịp độ (pace) và hoàn thành công việc gọn gàng. Có sẵn trên Claude Opus 5, Fable 5, Sonnet 5, và Opus 4.8/4.7. Budget này tính cả phần Claude tạo ra lẫn tool result nó đọc trong turn hiện tại — chứ không tính toàn bộ lịch sử bạn gửi lại. Trong một vòng lặp bình thường, hãy để nguyên <code>remaining</code> không set; chỉ truyền giá trị này khi bạn tự viết lại hoặc tự compact lịch sử, khiến server không còn cách nào tự suy ra được mức đã tiêu trước đó.</p>
@@ -4818,9 +5039,11 @@ Handwritten Notes:
   <h5>Refusals Are a Reliability Concern, Not Just a Safety One — Refusal là vấn đề về độ tin cậy, không chỉ là vấn đề an toàn</h5>
   <p>Một <code>refusal</code> (từ chối trả lời) vẫn trả về HTTP 200 kèm <code>stop_reason: "refusal"</code> và một <code>stop_details.category</code>. Đoạn code nào chỉ đọc <code>content</code> mà không kiểm tra <code>stop_reason</code> sẽ coi một refusal như là một câu trả lời rỗng nhưng thành công — đây là cùng một loại bug với việc coi một lượt tìm kiếm thất bại là "không có kết quả" (§5.3). Với các production path, hãy bật server-side fallback (<code>betas=["server-side-fallback-2026-07-01"]</code>, <code>fallbacks="default"</code>) để request được định tuyến lại (re-route) theo category thay vì bị bỏ rơi. Xem thêm Domain 1 §1.1.</p>
 </div>
+</details>
 
       </div>
       <!-- ===== /EXT D5 ===== -->          </div><!-- /ext-content -->
+          <nav class="ext-sidenav" id="extSideNav" aria-label="Mục lục trang"></nav>
         </div><!-- /ext-layout -->
       </div><!-- /mode-deep -->
 
@@ -4831,18 +5054,41 @@ Handwritten Notes:
     </section>
     <!-- ================= /STEP 2 ================= -->
 
-    <!-- ============ STEP 3 · PRACTICE (quiz + tips + mock exams) ==== -->
+    <!-- ==== STEP 3 · PRACTICE: two flow sub-pages (quiz, real-exam drills)
+           + two reference sub-pages (tips, resources) ==== -->
     <section id="panel-practice" class="panel" role="tabpanel" aria-labelledby="tab-practice">
       <div class="panel-head">
         <div class="step-badge">Bước 3 · Luyện đề</div>
         <h1 class="section-title">Luyện đề</h1>
-        <p class="section-sub">Làm <strong>Quiz 77 câu</strong> song song khi học từng domain → đọc <strong>Mẹo làm bài</strong> để loại đáp án nhanh → <strong>thi thử</strong> trên 1 trong 3 trang tới khi đạt ≥ 800 hai lần.</p>
+        <p class="section-sub">Bước này chỉ có <strong>2 việc phải làm</strong>: <strong>Quiz 77 câu</strong> làm song song trong lúc học lý thuyết ở bước 2, xong thì dồn sức vào <strong>Ôn luyện đề thật</strong> — đây mới là phần kéo tỷ lệ đậu lên cao nhất. Hai mục còn lại là <strong>tài liệu tra cứu</strong>, không phải bước bắt buộc — mở ra khi nào cần.</p>
+      </div>
+
+      <!-- Two flow cards + a reference shelf: the sub-nav alone never made clear
+           which of the four sub-pages you actually have to *do*. -->
+      <div class="pflow">
+        <button class="pflow-card" data-goto="practice" data-practice="quiz">
+          <span class="pflow-tag">Việc 1 · làm song song với lý thuyết</span>
+          <b>❓ Quiz 77 câu</b>
+          <span>Bổ trợ cho bước 2: học xong domain nào làm ngay quiz của domain đó để chốt lại kiến thức vừa đọc. Không phải đề thi thử.</span>
+        </button>
+        <span class="pflow-arrow" aria-hidden="true">→</span>
+        <button class="pflow-card key" data-goto="practice" data-practice="mock">
+          <span class="pflow-tag">Việc 2 · quan trọng nhất</span>
+          <b>🏁 Ôn luyện đề thật</b>
+          <span>Làm trọn đề 60 câu · 120 phút theo đúng format thật. Làm nhiều đề là cách tăng tỷ lệ đậu nhanh nhất.</span>
+        </button>
+      </div>
+      <div class="pflow-aside">
+        <span>Tra cứu bất cứ lúc nào — không nằm trong luồng học:</span>
+        <button class="pflow-chip" data-goto="practice" data-practice="tips">💡 Mẹo làm bài</button>
+        <button class="pflow-chip" data-goto="practice" data-practice="res">📚 Tài liệu tham khảo</button>
       </div>
 
       <nav class="practice-nav" id="practiceNav" role="tablist" aria-label="Nội dung luyện tập">
-        <button class="pr-btn" role="tab" data-practice="quiz" aria-selected="true"><strong>1 · ❓ Quiz 77 câu</strong><small>Theo 5 domain · giải thích tiếng Việt</small></button>
-        <button class="pr-btn" role="tab" data-practice="tips" aria-selected="false" tabindex="-1"><strong>2 · 💡 Mẹo làm bài</strong><small>Quy tắc loại trừ + cheat sheet</small></button>
-        <button class="pr-btn" role="tab" data-practice="mock" aria-selected="false" tabindex="-1"><strong>3 · 🏁 Thi thử</strong><small>3 trang mock · mục tiêu ≥ 800</small></button>
+        <button class="pr-btn" role="tab" data-practice="quiz" aria-selected="true"><strong>① ❓ Quiz 77 câu</strong><small>Song song với lý thuyết</small></button>
+        <button class="pr-btn key" role="tab" data-practice="mock" aria-selected="false" tabindex="-1"><strong>② 🏁 Ôn luyện đề thật</strong><small>Quan trọng nhất · mục tiêu ≥ 800</small></button>
+        <button class="pr-btn ref" role="tab" data-practice="tips" aria-selected="false" tabindex="-1"><strong>💡 Mẹo làm bài</strong><small>Tra cứu · quy tắc loại trừ</small></button>
+        <button class="pr-btn ref" role="tab" data-practice="res" aria-selected="false" tabindex="-1"><strong>📚 Tài liệu tham khảo</strong><small>Tra cứu · docs &amp; khoá học</small></button>
       </nav>
 
       <!-- ===== Quiz: one question on screen at a time, palette on the side ===== -->
@@ -4885,11 +5131,67 @@ Handwritten Notes:
         </div>
       </div><!-- /pr-quiz -->
 
+      <!-- ===== Real-exam drills: pick one site, log scores until 2 × ≥ 800 ===== -->
+      <div class="practice-panel" id="pr-mock">
+        <div class="eyebrow">Việc 2 · phần quan trọng nhất <span class="src-tag exp">Người đã thi</span></div>
+        <h2 class="section-title" style="font-size:20px;">Ôn luyện đề thật — chọn 1 trang rồi làm cho kỹ</h2>
+        <p class="section-sub">Đây là phần <strong>kéo tỷ lệ đậu lên cao nhất</strong>. Đề bám sát format thật (60 câu · 120 phút), làm sai câu nào là lộ ngay chỗ mình còn hổng — hiệu quả hơn nhiều so với đọc lại lý thuyết. Không cần chạy hết cả 3 trang: chọn 1 trang, làm đi làm lại tới khi <strong>2 lần đạt ≥ 800</strong> (điểm đậu thật chỉ 720/1000, nên 800 là đã dư an toàn).</p>
+
+        <div class="mock-grid">
+          <article class="mock-card top">
+            <div class="mock-top"><span class="mock-rank">01</span><span class="badge vi">🇻🇳 Khuyên dùng</span></div>
+            <h3>hoccungsushi.com</h3>
+            <p>Trang nên làm chính: format giống đề thật, và <strong>từng câu hỏi lẫn từng đáp án đều có tiếng Việt</strong> — đọc nhanh hơn hẳn, đỡ mất điểm oan vì hiểu sai đề.</p>
+            <a class="btn btn-primary mock-go" href="https://hoccungsushi.com/cert/cca-f" target="_blank" rel="noopener">Mở /cert/cca-f ↗</a>
+          </article>
+          <article class="mock-card">
+            <div class="mock-top"><span class="mock-rank">02</span><span class="badge">⭐ Sát đề thật nhất</span></div>
+            <h3>claudecertificationguide.com</h3>
+            <p>Gần nhất với đề thi thật, nhưng chỉ có tiếng Anh. Làm thêm trang này để quen với cách diễn đạt nguyên gốc của đề.</p>
+            <a class="btn mock-go" href="https://claudecertificationguide.com/mock-exam" target="_blank" rel="noopener">Mở /mock-exam ↗</a>
+          </article>
+          <article class="mock-card">
+            <div class="mock-top"><span class="mock-rank">03</span><span class="badge ext">Câu mở rộng CI/CD</span></div>
+            <h3>viehub.io.vn</h3>
+            <p>Gồm một số câu mở rộng, giống phần thi thật ở các câu về CI/CD Pipeline. Làm thêm nếu còn thời gian.</p>
+            <a class="btn mock-go" href="https://viehub.io.vn/hoc-tap/ccaf-luyen-thi" target="_blank" rel="noopener">Mở /ccaf-luyen-thi ↗</a>
+          </article>
+        </div>
+
+        <div class="card mock-tracker">
+          <div class="mt-head">
+            <div>
+              <h3>📈 Nhật ký luyện đề</h3>
+              <p>Ghi điểm sau mỗi lần làm đề để biết khi nào sẵn sàng. Chỉ lưu trên trình duyệt của bạn.</p>
+            </div>
+            <div class="mt-goal"><span class="goal-slot"></span><span class="goal-slot"></span><strong id="mockGoalText">0/2 lần ≥ 800</strong></div>
+          </div>
+          <form class="mt-form" id="mockForm">
+            <label>Trang
+              <select id="mockSite">
+                <option>hoccungsushi.com</option>
+                <option>claudecertificationguide.com</option>
+                <option>viehub.io.vn</option>
+                <option>Khác</option>
+              </select>
+            </label>
+            <label>Điểm (100–1000)
+              <input id="mockScore" type="number" min="100" max="1000" step="1" inputmode="numeric" required placeholder="vd: 820">
+            </label>
+            <button class="btn btn-primary" type="submit">+ Lưu điểm</button>
+          </form>
+          <ul class="mock-list" id="mockList"></ul>
+          <p class="mock-empty" id="mockEmpty">Chưa ghi lần làm đề nào.</p>
+          <button class="btn btn-primary" id="mockReady" data-goto="examday" hidden>🎉 Đủ điều kiện — sang bước 4: Đăng ký thi →</button>
+          <p class="tip-note">Câu nào làm sai → xem nó thuộc domain nào → quay lại <button class="linkish" data-goto="learn">Học 5 domain</button>, hoặc mở <button class="linkish" data-goto="practice" data-practice="tips">Mẹo làm bài</button> nếu bạn sai vì phân vân giữa 2 đáp án.</p>
+        </div>
+      </div><!-- /pr-mock -->
+
       <!-- ===== Tips: field-tested elimination rules first, guide cheat sheet after ===== -->
       <div class="practice-panel" id="pr-tips">
-        <div class="eyebrow">Kinh nghiệm làm bài <span class="src-tag exp">Người đã thi</span></div>
+        <div class="eyebrow">Tra cứu — không phải bước bắt buộc <span class="src-tag exp">Người đã thi</span></div>
         <h2 class="section-title" style="font-size:20px;">Mẹo loại trừ đáp án</h2>
-        <p class="section-sub">Đề CCAR-F hay có 2 đáp án “nghe đều hợp lý”. Mấy quy tắc dưới đây giúp gạch nhanh đáp án sai. Chip <span class="ref-chip quiz-chip" aria-hidden="true">#31</span> mở câu quiz minh họa.</p>
+        <p class="section-sub">Phần này <strong>không nằm trong luồng học</strong> — không cần đọc trước khi làm đề. Mở ra khi bạn thấy mình hay phân vân giữa 2 đáp án “nghe đều hợp lý”, hoặc đọc lướt lại đúng 1 lần vào tối trước ngày thi. Chip <span class="ref-chip quiz-chip" aria-hidden="true">#31</span> mở câu quiz minh họa.</p>
 
         <div class="card tip-hero">
           <h3>🧭 Luồng chọn đáp án — luôn ưu tiên cách đơn giản nhất</h3>
@@ -4982,8 +5284,7 @@ Handwritten Notes:
         <div class="eyebrow" style="margin-top:30px;">Cheat sheet <span class="src-tag">Tổng hợp từ Exam Guide</span></div>
         <p class="section-sub">Đọc lại ngay trước ngày thi — thấy đáp án nào rơi vào anti-pattern thì loại luôn.</p>
 
-      <div class="cheat-card">
-        <h3>⚠️ 10 Anti-pattern hay bị gài làm đáp án sai</h3>
+      <details class="cheat-card" data-toc="10 Anti-pattern hay bị gài làm đáp án sai" open><summary><h3>⚠️ 10 Anti-pattern hay bị gài làm đáp án sai</h3></summary>
         <p style="font-size:13px; color:var(--text-dim); margin-bottom:12px;">Danh sách này khớp gần như 1-1 với style câu hỏi trong Exam Guide chính thức — thấy đáp án nào rơi vào đây thì loại ngay.</p>
         <ol class="antipattern-list">
           <li>Parse ngôn ngữ tự nhiên để đoán khi nào dừng loop, thay vì check <code>stop_reason</code></li>
@@ -4997,10 +5298,9 @@ Handwritten Notes:
           <li>Để chính session vừa generate code tự review lại code đó (mang theo bias lý luận cũ)</li>
           <li>Dùng accuracy tổng (aggregate) để kết luận ổn, trong khi che giấu tỉ lệ lỗi cao ở 1 loại tài liệu/field cụ thể</li>
         </ol>
-      </div>
+      </details>
 
-      <div class="cheat-card">
-        <h3>🧭 Bảng quyết định nhanh (Key Decision Frameworks)</h3>
+      <details class="cheat-card" data-toc="Bảng quyết định nhanh (Key Decision Frameworks)" open><summary><h3>🧭 Bảng quyết định nhanh (Key Decision Frameworks)</h3></summary>
         <p style="font-size:13px; color:var(--text-dim); margin-bottom:12px;">Kiểu câu hỏi "chọn A hay B" — thấy tình huống khớp cột nào thì chọn hướng đó.</p>
         <table class="fw-table">
           <tr><td>Enforcement</td><td><b class="good">Programmatic hooks</b> — khi liên quan tài chính/an toàn &nbsp;·&nbsp; <b class="alt">Prompt-based</b> — chỉ hợp best-effort, không chắc kèo</td></tr>
@@ -5012,10 +5312,9 @@ Handwritten Notes:
           <tr><td>Code review</td><td><b class="good">Multi-pass</b> — PR lớn, nhiều file &nbsp;·&nbsp; <b class="alt">Single-pass</b> — PR nhỏ, gọn</td></tr>
           <tr><td>Truyền context</td><td><b class="good">Luôn tường minh</b> trong prompt subagent &nbsp;·&nbsp; Không bao giờ trông chờ auto-inherit</td></tr>
         </table>
-      </div>
+      </details>
 
-      <div class="cheat-card">
-        <h3>🧩 6 pattern kinh điển của "Building Effective Agents"</h3>
+      <details class="cheat-card" data-toc="6 pattern kinh điển của "Building Effective Agents"" open><summary><h3>🧩 6 pattern kinh điển của "Building Effective Agents"</h3></summary>
         <p style="font-size:13px; color:var(--text-dim); margin-bottom:6px;">Bài blog nền tảng của Anthropic (12/2024) — nhiều khả năng chính là nguồn gốc ý tưởng cho cả Domain 1. Phân biệt gốc: <strong>Workflow</strong> = code định sẵn đường đi cố định; <strong>Agent</strong> = model tự quyết định đường đi dựa trên phản hồi môi trường.</p>
         <div class="pattern-grid">
           <div class="pattern-card"><h4>Prompt Chaining</h4><p>Chia task thành các bước LLM tuần tự, bước sau xử lý output bước trước, có "cổng kiểm tra" (gate) giữa chừng. Đánh đổi latency lấy độ chính xác.</p></div>
@@ -5026,64 +5325,119 @@ Handwritten Notes:
           <div class="pattern-card"><h4>Autonomous Agents</h4><p>Vòng lặp mở, agent tự lên kế hoạch + hành động, dùng kết quả tool/code làm "ground truth" để tự đánh giá tiến độ, đến khi đạt điều kiện dừng.</p></div>
         </div>
         <p style="font-size:12.6px; color:var(--text-faint); margin-top:12px;">Nguyên tắc vàng của bài: "chỉ tăng độ phức tạp khi nó thực sự cải thiện kết quả" — và <strong>Agent-Computer Interface (ACI)</strong>: đầu tư viết tool description kỹ như viết docstring cho 1 dev junior, vì "nếu 1 kỹ sư con người còn không chắc nên dùng tool nào, thì đừng mong AI làm tốt hơn."</p>
-      </div>
+      </details>
       </div><!-- /pr-tips -->
 
-      <!-- ===== Mock exams: pick one site, log scores until 2 × ≥ 800 ===== -->
-      <div class="practice-panel" id="pr-mock">
-        <div class="eyebrow">Luyện đề <span class="src-tag exp">Người đã thi</span></div>
-        <h2 class="section-title" style="font-size:20px;">Thi thử như thật — chọn 1 trong 3 trang</h2>
-        <p class="section-sub">Không cần luyện hết cả 3. Chọn 1 trang, làm trọn đề như thi thật (60 câu · 120 phút). Thi thử <strong>2 lần trên 800</strong> là có thể an tâm đi thi — điểm đậu thật là 720/1000.</p>
+      <!-- ===== Reference: official Anthropic material, mapped onto the 5 domains ===== -->
+      <div class="practice-panel" id="pr-res">
+        <div class="eyebrow">Tra cứu — không phải bước bắt buộc <span class="src-tag">Nguồn chính thức Anthropic</span></div>
+        <h2 class="section-title" style="font-size:20px;">Tài liệu tham khảo thêm</h2>
+        <p class="section-sub"><strong>Không cần đọc hết</strong> — học theo Exam Guide trên trang này rồi luyện đề là đủ thi. Danh sách dưới đây dành cho lúc bạn làm đề sai nhiều ở một domain và muốn đọc thẳng nguồn gốc. Mỗi mục có gắn nhãn domain tương ứng để bạn nhảy đúng chỗ. <a href="https://claudecertificationguide.com/resources" target="_blank" rel="noopener">Danh sách gốc ↗</a></p>
 
-        <div class="mock-grid">
-          <article class="mock-card top">
-            <div class="mock-top"><span class="mock-rank">01</span><span class="badge">⭐ Sát đề thật nhất</span></div>
-            <h3>claudecertificationguide.com</h3>
-            <p>Gần nhất với đề thi thật — ôn kĩ trang này là được.</p>
-            <a class="btn btn-primary mock-go" href="https://claudecertificationguide.com/mock-exam" target="_blank" rel="noopener">Mở /mock-exam ↗</a>
-          </article>
-          <article class="mock-card">
-            <div class="mock-top"><span class="mock-rank">02</span><span class="badge vi">🇻🇳 Hỗ trợ tiếng Việt</span></div>
-            <h3>hoccungsushi.com</h3>
-            <p>Cũng có format giống đề thi thật, ôn kĩ là ok — hỗ trợ tiếng Việt.</p>
-            <a class="btn mock-go" href="https://hoccungsushi.com/cert/cca-f" target="_blank" rel="noopener">Mở /cert/cca-f ↗</a>
-          </article>
-          <article class="mock-card">
-            <div class="mock-top"><span class="mock-rank">03</span><span class="badge ext">Câu mở rộng CI/CD</span></div>
-            <h3>viehub.io.vn</h3>
-            <p>Gồm một số câu mở rộng, giống phần thi thật ở các câu về CI/CD Pipeline.</p>
-            <a class="btn mock-go" href="https://viehub.io.vn/hoc-tap/ccaf-luyen-thi" target="_blank" rel="noopener">Mở /ccaf-luyen-thi ↗</a>
-          </article>
-        </div>
-
-        <div class="card mock-tracker">
-          <div class="mt-head">
-            <div>
-              <h3>📈 Nhật ký thi thử</h3>
-              <p>Ghi điểm sau mỗi lần thi thử để biết khi nào sẵn sàng. Chỉ lưu trên trình duyệt của bạn.</p>
-            </div>
-            <div class="mt-goal"><span class="goal-slot"></span><span class="goal-slot"></span><strong id="mockGoalText">0/2 lần ≥ 800</strong></div>
+        <div class="res-group">
+          <h3 class="res-head">📘 Tài liệu chính thức</h3>
+          <div class="res-list">
+            <a class="res-item" href="https://docs.anthropic.com" target="_blank" rel="noopener">
+              <span class="res-tag">Nền tảng chung</span>
+              <strong>Claude API Documentation</strong>
+              <span>Toàn bộ API reference, kèm guide và tutorial.</span>
+              <em>docs.anthropic.com ↗</em>
+            </a>
+            <a class="res-item" href="https://code.claude.com" target="_blank" rel="noopener">
+              <span class="res-tag">Domain 3</span>
+              <strong>Claude Code Documentation</strong>
+              <span>Config, hook, tích hợp MCP và các workflow dùng hằng ngày — đúng phần Domain 3 hay hỏi.</span>
+              <em>code.claude.com ↗</em>
+            </a>
+            <a class="res-item" href="https://platform.claude.com/docs/en/agent-sdk/overview" target="_blank" rel="noopener">
+              <span class="res-tag">Domain 1</span>
+              <strong>Agent SDK Overview</strong>
+              <span>Cách build agent chạy production trên Claude Agent SDK.</span>
+              <em>platform.claude.com/docs/en/agent-sdk/overview ↗</em>
+            </a>
+            <a class="res-item" href="https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/overview" target="_blank" rel="noopener">
+              <span class="res-tag">Domain 4</span>
+              <strong>Prompt Engineering Guide</strong>
+              <span>Kỹ thuật prompt do chính Anthropic viết — nguồn gốc của phần lớn câu Domain 4.</span>
+              <em>docs.anthropic.com · prompt-engineering ↗</em>
+            </a>
           </div>
-          <form class="mt-form" id="mockForm">
-            <label>Trang
-              <select id="mockSite">
-                <option>claudecertificationguide.com</option>
-                <option>hoccungsushi.com</option>
-                <option>viehub.io.vn</option>
-                <option>Khác</option>
-              </select>
-            </label>
-            <label>Điểm (100–1000)
-              <input id="mockScore" type="number" min="100" max="1000" step="1" inputmode="numeric" required placeholder="vd: 820">
-            </label>
-            <button class="btn btn-primary" type="submit">+ Lưu điểm</button>
-          </form>
-          <ul class="mock-list" id="mockList"></ul>
-          <p class="mock-empty" id="mockEmpty">Chưa có lần thi thử nào.</p>
-          <button class="btn btn-primary" id="mockReady" data-goto="examday" hidden>🎉 Đủ điều kiện — sang bước 4: Đăng ký thi →</button>
-          <p class="tip-note">Câu nào sai trong đề thi thử → xem nó thuộc domain nào → quay lại <button class="linkish" data-goto="learn">Học 5 domain</button> hoặc <button class="linkish" data-goto="practice" data-practice="tips">Mẹo làm bài</button>.</p>
         </div>
-      </div><!-- /pr-mock -->
+
+        <div class="res-group">
+          <h3 class="res-head">💻 Repo GitHub</h3>
+          <div class="res-list">
+            <a class="res-item" href="https://github.com/modelcontextprotocol" target="_blank" rel="noopener">
+              <span class="res-tag">Domain 2</span>
+              <strong>Model Context Protocol</strong>
+              <span>Bản spec MCP, kèm SDK chính thức và các server mẫu.</span>
+              <em>github.com/modelcontextprotocol ↗</em>
+            </a>
+            <a class="res-item" href="https://github.com/anthropics/claude-agent-sdk-python" target="_blank" rel="noopener">
+              <span class="res-tag">Domain 1</span>
+              <strong>Claude Agent SDK (Python)</strong>
+              <span>Mọi thứ cần để build agent Claude bằng Python.</span>
+              <em>github.com/anthropics/claude-agent-sdk-python ↗</em>
+            </a>
+            <a class="res-item" href="https://github.com/anthropics/anthropic-cookbook" target="_blank" rel="noopener">
+              <span class="res-tag">Domain 1–5</span>
+              <strong>Anthropic Cookbook</strong>
+              <span>Code mẫu và pattern chạy được thật. Đáng lướt qua một lượt trước khi build bất cứ thứ gì.</span>
+              <em>github.com/anthropics/anthropic-cookbook ↗</em>
+            </a>
+          </div>
+        </div>
+
+        <div class="res-group">
+          <h3 class="res-head">🎓 Khoá học miễn phí (Anthropic Skilljar)</h3>
+          <div class="res-list">
+            <a class="res-item" href="https://anthropic.skilljar.com/claude-101" target="_blank" rel="noopener">
+              <span class="res-tag">Nhập môn</span>
+              <strong>Claude 101</strong>
+              <span>Bản nhập môn nhẹ nhàng: Claude làm được gì và người ta dùng nó thế nào.</span>
+              <em>anthropic.skilljar.com/claude-101 ↗</em>
+            </a>
+            <a class="res-item" href="https://anthropic.skilljar.com/claude-with-the-anthropic-api" target="_blank" rel="noopener">
+              <span class="res-tag">Domain 2 · 5</span>
+              <strong>Building with Claude API</strong>
+              <span>Thực hành tích hợp API và tool use.</span>
+              <em>anthropic.skilljar.com/claude-with-the-anthropic-api ↗</em>
+            </a>
+            <a class="res-item" href="https://anthropic.skilljar.com/introduction-to-model-context-protocol" target="_blank" rel="noopener">
+              <span class="res-tag">Domain 2</span>
+              <strong>Introduction to MCP</strong>
+              <span>MCP là gì, sinh ra để giải quyết vấn đề gì, và implement ra sao.</span>
+              <em>anthropic.skilljar.com/introduction-to-model-context-protocol ↗</em>
+            </a>
+            <a class="res-item" href="https://anthropic.skilljar.com/claude-code-in-action" target="_blank" rel="noopener">
+              <span class="res-tag">Domain 3</span>
+              <strong>Claude Code in Action</strong>
+              <span>Workflow và cấu hình Claude Code dùng thực tế hằng ngày.</span>
+              <em>anthropic.skilljar.com/claude-code-in-action ↗</em>
+            </a>
+          </div>
+        </div>
+
+        <div class="res-group">
+          <h3 class="res-head">📝 Engineering Blog</h3>
+          <div class="res-list">
+            <a class="res-item" href="https://www.anthropic.com/engineering/building-agents-with-the-claude-agent-sdk" target="_blank" rel="noopener">
+              <span class="res-tag">Domain 1</span>
+              <strong>Building Agents with Claude Agent SDK</strong>
+              <span>Pattern kiến trúc agent, viết bởi chính đội làm ra SDK.</span>
+              <em>anthropic.com/engineering ↗</em>
+            </a>
+            <a class="res-item" href="https://www.anthropic.com/engineering" target="_blank" rel="noopener">
+              <span class="res-tag">Domain 1 · 5</span>
+              <strong>Anthropic Engineering Blog</strong>
+              <span>Các bài kỹ thuật của kỹ sư Anthropic về cách Claude chạy trong thực tế — trong đó có “Building Effective Agents”, bài gốc của 6 pattern ở mục Mẹo làm bài.</span>
+              <em>anthropic.com/engineering ↗</em>
+            </a>
+          </div>
+        </div>
+
+        <p class="tip-note">Đọc xong thấy vẫn mơ hồ chỗ nào? Quay lại <button class="linkish" data-goto="learn">Học 5 domain</button> để đối chiếu với phần Đào sâu, rồi kiểm tra lại bằng <button class="linkish" data-goto="practice" data-practice="mock">Ôn luyện đề thật</button>.</p>
+      </div><!-- /pr-res -->
     </section>
     <!-- ================= /STEP 3 ================= -->
 
@@ -5113,7 +5467,7 @@ Handwritten Notes:
         </div>
       </div>
 
-      <div class="eyebrow">Cách đăng ký từng bước <span class="src-tag exp">Người đã thi</span></div>
+      <div class="eyebrow" data-toc="Đăng ký">Cách đăng ký từng bước <span class="src-tag exp">Người đã thi</span></div>
       <div class="card reg-card">
         <div class="phase">
           <div class="phase-title"><span class="phase-tag">A</span>Tạo tài khoản &amp; thanh toán</div>
@@ -5159,36 +5513,30 @@ Handwritten Notes:
         </div>
       </div>
 
-      <div class="eyebrow" style="margin-top:28px;">Quy chế chính thức <span class="src-tag">Exam Guide §10–16</span></div>
+      <div class="eyebrow" data-toc="Quy chế" style="margin-top:28px;">Quy chế chính thức <span class="src-tag">Exam Guide §10–16</span></div>
       <p class="section-sub">Tóm tắt từ Exam Guide — không cần “học”, chỉ cần biết để khỏi mất tiền oan.</p>
 
-      <div class="rules-card">
-        <h3>📐 Cách chấm điểm</h3>
+      <details class="rules-card" data-toc="Cách chấm điểm" open><summary><h3>📐 Cách chấm điểm</h3></summary>
         <p>Đề thi CCAR-F chấm theo <strong>chuẩn cố định (criterion-referenced)</strong> — so bạn với 1 mốc chuẩn, không so với thí sinh khác. Đậu là vì bạn chứng minh đủ kiến thức & kỹ năng theo blueprint, không phải vì "vượt qua bao nhiêu % người khác".</p>
         <p>Điểm chuẩn 720 được xác lập qua nghiên cứu chuẩn hóa chính thức, chuyên gia đánh giá mức hiệu suất tối thiểu cần có. Điểm report theo thang <strong>100–1.000</strong>. Kết quả gồm Pass/Fail + scaled score, kèm % đúng theo từng domain (chỉ để tham khảo, không dùng để tính đậu/rớt).</p>
-      </div>
+      </details>
 
       <div class="grid-2">
-        <div class="rules-card">
-          <h3>🪪 Giấy tờ</h3>
+        <details class="rules-card" data-toc="Giấy tờ" open><summary><h3>🪪 Giấy tờ</h3></summary>
           <p>Phải mang giấy tờ tùy thân có ảnh do chính phủ cấp, còn hạn. Tên trên giấy tờ phải khớp <em>chính xác</em> tên đăng ký. Cần sửa tên thì liên hệ <code>certifications-support@anthropic.com</code> <strong>trước</strong> khi đặt lịch.</p>
-        </div>
-        <div class="rules-card">
-          <h3>♿ Hỗ trợ đặc biệt</h3>
+        </details>
+        <details class="rules-card" data-toc="Hỗ trợ đặc biệt" open><summary><h3>♿ Hỗ trợ đặc biệt</h3></summary>
           <p>Có hỗ trợ hợp lý cho thí sinh có nhu cầu/khuyết tật đã chứng minh được, theo luật hiện hành. Phải xin và được Pearson VUE duyệt <strong>trước</strong> khi đặt lịch — đừng đặt lịch trước khi được duyệt.</p>
-        </div>
-        <div class="rules-card">
-          <h3>🔁 Chính sách thi lại</h3>
+        </details>
+        <details class="rules-card" data-toc="Chính sách thi lại" open><summary><h3>🔁 Chính sách thi lại</h3></summary>
           <p>Rớt thì phải chờ: <strong>14 ngày</strong> sau lần 1, <strong>30 ngày</strong> sau lần 2, <strong>90 ngày</strong> sau lần 3. Tối đa <strong>4 lần thi/12 tháng</strong>. Rớt đề này không ảnh hưởng đăng ký đề khác. Mỗi lần thi đều mất phí riêng.</p>
-        </div>
-        <div class="rules-card">
-          <h3>🚫 No-show / trễ giờ</h3>
+        </details>
+        <details class="rules-card" data-toc="No-show / trễ giờ" open><summary><h3>🚫 No-show / trễ giờ</h3></summary>
           <p>Không tới thi theo lịch, hoặc tới trễ quá giờ cho phép, thì mất phí thi và phải đăng ký lại từ đầu.</p>
-        </div>
+        </details>
       </div>
 
-      <div class="rules-card">
-        <h3>🎥 Quy tắc trong lúc thi</h3>
+      <details class="rules-card" data-toc="Quy tắc trong lúc thi" open><summary><h3>🎥 Quy tắc trong lúc thi</h3></summary>
         <p>Thi trong môi trường chuẩn hóa, có giám sát (online hoặc tại test center). Trong lúc thi phải:</p>
         <ul>
           <li>Luôn trong tầm nhìn của giám thị/webcam (nếu thi online) suốt buổi thi</li>
@@ -5198,43 +5546,31 @@ Handwritten Notes:
         </ul>
         <p style="margin-top:10px;">Vật dụng cấm: điện thoại, smartwatch, tai nghe, tài liệu học, thiết bị ghi âm/hình. Vật dụng được phép (nếu có) do Pearson VUE quy định, vd giấy nháp do giám thị cấp.</p>
         <p style="margin-top:10px; color:var(--danger); font-weight:600;">Gian lận, cố truy cập tài nguyên cấm, hoặc tiết lộ nội dung đề đều có thể dẫn tới hủy kết quả, thu hồi chứng chỉ, và cấm thi vĩnh viễn.</p>
-      </div>
+      </details>
 
-      <div class="rules-card">
-        <h3>🔒 Bảo mật đề thi (NDA)</h3>
+      <details class="rules-card" data-toc="Bảo mật đề thi (NDA)" open><summary><h3>🔒 Bảo mật đề thi (NDA)</h3></summary>
         <p>Trước khi thi phải đồng ý thỏa thuận bảo mật (NDA). Đồng ý nghĩa là bạn cam kết: toàn bộ nội dung đề (câu hỏi, đáp án, kịch bản) là tài sản độc quyền của Anthropic, và bạn không được tiết lộ/sao chép/phát tán bất kỳ phần nào. Không đồng ý = buổi thi kết thúc luôn, không hoàn phí.</p>
-      </div>
+      </details>
 
-      <div class="rules-card">
-        <h3>♻️ Duy trì & gia hạn chứng chỉ</h3>
+      <details class="rules-card" data-toc="Duy trì & gia hạn chứng chỉ" open><summary><h3>♻️ Duy trì & gia hạn chứng chỉ</h3></summary>
         <p>Chứng chỉ có hiệu lực <strong>12 tháng</strong> kể từ ngày cấp. Vì công nghệ đổi nhanh nên chứng chỉ có giới hạn thời gian để đảm bảo người giữ luôn cập nhật.</p>
         <p>Gia hạn đúng hạn: ôn lại phần nào đã thay đổi, làm bài đánh giá miễn phí, không giám thị trên Anthropic Partner Academy — <strong>miễn phí</strong>. Để hết hạn thì phải thi lại full đề, đóng full phí. Nếu nội dung đề đổi nhiều, Anthropic có thể yêu cầu thi lại full thay vì chỉ làm bài gia hạn.</p>
-      </div>
+      </details>
 
-      <div class="rules-card">
-        <h3>💬 Hỗ trợ, khiếu nại & quyền riêng tư</h3>
+      <details class="rules-card" data-toc="Hỗ trợ, khiếu nại & quyền riêng tư" open><summary><h3>💬 Hỗ trợ, khiếu nại & quyền riêng tư</h3></summary>
         <p>Sửa tên đăng ký: <code>certifications-support@anthropic.com</code>. Các câu hỏi khác (đăng ký, đặt lịch, hỗ trợ đặc biệt, kết quả): liên hệ Pearson VUE support.</p>
         <p>Khiếu nại trong vòng 14 ngày kể từ khi được thông báo quyết định (hoặc 14 ngày từ ngày thi nếu khiếu nại về kết quả), gửi qua Pearson VUE support. Kết quả standard-setting và nội dung từng câu hỏi <strong>không</strong> được khiếu nại.</p>
         <p>Dữ liệu cá nhân thu thập lúc đăng ký & thi được xử lý theo chính sách riêng tư của Anthropic, Pearson VUE, và luật bảo vệ dữ liệu hiện hành.</p>
-      </div>
+      </details>
     </section>
     <!-- ================= /STEP 4 ================= -->
 
   </main>
+  </div><!-- /layout -->
 
-  <footer class="note">Nội dung dịch &amp; tổng hợp từ <a href="CCAF-Exam-Guide.pdf" target="_blank" rel="noopener">Exam Guide chính thức</a> (v1.0, hiệu lực 07/2026) · Quiz từ <a href="CCAF-Quiz.pdf" target="_blank" rel="noopener">CCAF-Quiz.pdf</a> · Mẹo &amp; thi thử từ kinh nghiệm người đã thi. Dùng để ôn tập, không thay thế bản chính thức · <a href="CCA-F-Study-ja.html" hreflang="ja" lang="ja" data-lang="ja">日本語版</a>. Chúc thi tốt 🍀</footer>
+  <footer class="note">Nội dung dịch &amp; tổng hợp từ <a href="CCAF-Exam-Guide.pdf" target="_blank" rel="noopener">Exam Guide chính thức</a> (v1.0, hiệu lực 07/2026) · Quiz từ <a href="CCAF-Quiz.pdf" target="_blank" rel="noopener">CCAF-Quiz.pdf</a> · Mẹo làm bài &amp; danh sách trang luyện đề từ kinh nghiệm người đã thi. Dùng để ôn tập, không thay thế bản chính thức · <a href="CCA-F-Study-ja.html" hreflang="ja" lang="ja" data-lang="ja">日本語版</a>. Chúc thi tốt 🍀</footer>
 
 </div>
-
-  <!-- Mobile primary navigation. Same four steps as the desktop rail, plus the
-       lookup drawer, placed where a thumb reaches. -->
-  <nav class="bottomnav" id="bottomNav" aria-label="Lộ trình ôn thi">
-    <button class="bn-btn" data-tab="start"    aria-current="true"><span class="bn-ico">1</span>Bắt đầu</button>
-    <button class="bn-btn" data-tab="learn"    aria-current="false"><span class="bn-ico">2</span>Học</button>
-    <button class="bn-btn" data-tab="practice" aria-current="false"><span class="bn-ico">3</span>Luyện</button>
-    <button class="bn-btn" data-tab="examday"  aria-current="false"><span class="bn-ico">4</span>Đi thi</button>
-    <button class="bn-btn" data-open-lookup aria-label="Tra cứu thuật ngữ"><span class="bn-ico">🔍</span>Tra cứu</button>
-  </nav>
 
   <button class="totop" id="toTop" aria-label="Lên đầu trang">↑</button>
 
@@ -5586,26 +5922,21 @@ Handwritten Notes:
   var STEP = {
     start:    { n:"1", label:"Bắt đầu",       sub:"Hiểu kỳ thi" },
     learn:    { n:"2", label:"Học 5 domain",  sub:"Lý thuyết + quiz" },
-    practice: { n:"3", label:"Luyện đề",      sub:"Quiz · mẹo · thi thử" },
+    practice: { n:"3", label:"Luyện đề",      sub:"Quiz + ôn đề thật" },
     examday:  { n:"4", label:"Đăng ký & thi", sub:"Từng bước + quy chế" }
   };
-  var PRACTICE = ["quiz", "tips", "mock"];
+  var PRACTICE = ["quiz", "mock", "tips", "res"];
   var PRACTICE_ALIAS = { cheat:"tips", drill:"quiz" };   // sub-pages renamed/removed in v3
 
-  var state = { tab:"start", domain:"1", mode:"checklist", practice:"quiz" };
+  var state = { tab:"start", domain:"1", mode:"deep", practice:"quiz" };
   var selfHash = 0;   // hashchange events this script caused itself
 
   var panels        = document.querySelectorAll(".panel");
-  var stepBtns      = document.querySelectorAll("#stepNav .step");
-  var bnBtns        = document.querySelectorAll("#bottomNav .bn-btn[data-tab]");
-  var dpBtns        = document.querySelectorAll("#domainPicker .dp-btn");
-  var modeBtns      = document.querySelectorAll("#modeSwitch .mode-btn");
   var prBtns        = document.querySelectorAll("#practiceNav .pr-btn");
   var domainPanels  = document.querySelectorAll(".domain-panel");
   var extPanels     = document.querySelectorAll(".ext-panel");
   var learnModes    = document.querySelectorAll(".learn-mode");
   var practicePanels= document.querySelectorAll(".practice-panel");
-  var extSectionNav = document.getElementById("extSectionNav");
   var topbar        = document.getElementById("topbar");
 
   /* ---------- keep --header-h honest so anchor jumps land correctly ----------
@@ -5620,6 +5951,24 @@ Handwritten Notes:
   if (window.ResizeObserver && topbar) new ResizeObserver(syncHeaderHeight).observe(topbar);
   window.addEventListener("resize", syncHeaderHeight);
   syncHeaderHeight();
+
+  /* ---------- keep --footer-h honest too ----------
+     The sticky side rails (.sidenav, .ext-sidenav, .qz-side) cap their own
+     height to "viewport minus header" so they never grow past the screen.
+     But the page footer sits *after* that whole layout, so near the very
+     bottom of the page the layout's box ends before a maxed-out rail would
+     be ready to let go - the rail's top then pokes out above the header
+     offset and the opaque sticky header covers it. Reserving the footer's
+     real height in that same max-height calc closes the gap. */
+  var footerEl = document.querySelector("footer.note");
+  function syncFooterHeight(){
+    if (!footerEl) return;
+    var h = Math.round(footerEl.getBoundingClientRect().height);
+    document.documentElement.style.setProperty("--footer-h", h + "px");
+  }
+  if (window.ResizeObserver && footerEl) new ResizeObserver(syncFooterHeight).observe(footerEl);
+  window.addEventListener("resize", syncFooterHeight);
+  syncFooterHeight();
 
   /* ---------- theme ---------- */
   var THEME_KEY = "ccaf-theme-v1";
@@ -5645,6 +5994,25 @@ Handwritten Notes:
   /* Chrome's smooth scrollIntoView quietly gives up on long distances (it lands
      ~200px short on this page), and it ignores scroll-margin in that case. So
      compute the target ourselves and re-assert once the animation settles. */
+  // Everything the header covers has to be subtracted from an anchor jump,
+  // otherwise the target lands underneath it and the reader sees the *next*
+  // section instead - which is exactly what the old chip TOC did.
+  function stickyOffset(){
+    var bar = document.getElementById("topbar");
+    return (bar ? Math.round(bar.getBoundingClientRect().height) : 0) + 16;
+  }
+
+  var scrollSettleTimer = 0;
+  function cancelScrollSettle(){
+    if (!scrollSettleTimer) return;
+    window.clearTimeout(scrollSettleTimer);
+    scrollSettleTimer = 0;
+  }
+  // any scroll the reader starts themselves outranks a pending re-assert
+  ["wheel", "touchstart", "keydown"].forEach(function(ev){
+    window.addEventListener(ev, cancelScrollSettle, { passive:true });
+  });
+
   function scrollToEl(el, center){
     if (!el) return;
     function target(){
@@ -5654,45 +6022,524 @@ Handwritten Notes:
       // viewport must align to the top *below* the sticky header instead.
       var off = (center && r.height < window.innerHeight - 24)
         ? (window.innerHeight - r.height) / 2
-        : margin;
+        : Math.max(margin, stickyOffset());
       return Math.round(window.scrollY + r.top - off);
     }
+    cancelScrollSettle();
     window.scrollTo({ top:target(), behavior:"smooth" });
-    window.setTimeout(function(){
+    // Smooth scrolling can undershoot when images or folds resize mid-flight,
+    // so re-assert once it has settled - but only ever for the LATEST target.
+    // Leaving this timer uncancelled made a quick second pick jump back to the
+    // first pick's position about half a second later.
+    scrollSettleTimer = window.setTimeout(function(){
+      scrollSettleTimer = 0;
       var t = target();
       if (Math.abs(t - window.scrollY) > 4) window.scrollTo({ top:t, behavior:"auto" });
     }, 650);
   }
 
-  /* ---------- deep-dive section TOC ---------- */
-  var tocIdCounter = 0;
-  function buildSectionNav(panelEl){
-    if (!extSectionNav) return;
-    extSectionNav.innerHTML = "";
-    if (!panelEl) return;
-    var headings = panelEl.querySelectorAll(".subsec > h4");
-    var tocBtns = [];
-    headings.forEach(function(h){
-      if (!h.id) { tocIdCounter++; h.id = "toc-sec-" + tocIdCounter; }
-      var fullText = h.textContent.trim();
-      var label = fullText, sub = "";
-      // Headings read "1.1 The Agentic Loop Lifecycle — Vòng đời...".
-      // Number becomes the bold label, English title the caption.
-      var m = fullText.match(/^(\d+\.\d+)\s+(.+?)(?:\s+—\s+.+)?$/);
-      if (m) { label = m[1]; sub = m[2]; }
-      var btn = document.createElement("button");
-      btn.className = "toc-btn";
-      btn.type = "button";
-      btn.innerHTML = "<strong>" + label + "</strong>" + (sub ? "<small>" + sub + "</small>" : "");
-      btn.addEventListener("click", function(){
-        scrollToEl(h);
-        tocBtns.forEach(function(b){ b.classList.remove("active"); });
-        btn.classList.add("active");
+  /* ==================================================================
+     Progressive disclosure plumbing.
+
+     Two jobs. (1) Every collapsed row gets a "peek" line, so skimming the
+     closed list still teaches you something. The peek is built from the
+     headings already inside the row - never authored twice, so it cannot
+     drift from the content it previews. (2) One sticky table of contents
+     serves all four steps: it lists whatever [data-toc] elements are
+     currently visible, which makes it follow domain / mode / sub-page
+     switches for free.
+     ================================================================== */
+
+  // "How the Loop Works - Loop hoat dong the nao" -> the half after the dash
+  function localHalf(text){
+    var t = (text || "").trim();
+    var i = t.indexOf(" — ");
+    return (i > -1 ? t.slice(i + 3) : t).trim();
+  }
+
+  function decorate(row, labels, countText){
+    var summary = row.querySelector(":scope > summary");
+    if (!summary || summary.querySelector(".ss-chev")) return;
+
+    var chev = document.createElement("span");
+    chev.className = "ss-chev";
+    chev.setAttribute("aria-hidden", "true");
+
+    var main = document.createElement("span");
+    main.className = "ss-main";
+    var heading = summary.querySelector("h3, h4");
+    if (heading) main.appendChild(heading);
+    if (labels.length) {
+      var peek = document.createElement("span");
+      peek.className = "ss-peek";
+      peek.textContent = labels.slice(0, 4).join(" · ") + (labels.length > 4 ? " …" : "");
+      main.appendChild(peek);
+    }
+
+    summary.insertBefore(main, summary.firstChild);
+    summary.insertBefore(chev, summary.firstChild);
+
+    if (countText) {
+      var badge = document.createElement("span");
+      badge.className = "ss-count";
+      badge.textContent = countText;
+      summary.appendChild(badge);
+    }
+  }
+
+  (function decorateAllRows(){
+    document.querySelectorAll("details.subsec").forEach(function(row){
+      var labels = Array.prototype.map.call(
+        row.querySelectorAll(".ss-body h5"),
+        function(h){ return localHalf(h.textContent); });
+      decorate(row, labels, labels.length ? labels.length + " mục" : "");
+    });
+
+    // rules + cheat sheets: the author's own opening sentence is the peek
+    document.querySelectorAll("details.rules-card, details.cheat-card").forEach(function(row){
+      var p = row.querySelector(":scope > p");
+      var t = p ? p.textContent.trim().replace(/\s+/g, " ") : "";
+      var cut = t.search(/。|\.\s/);
+      if (cut > -1) t = t.slice(0, cut + 1);
+      if (t.length > 110) t = t.slice(0, 108).trim() + "…";
+      decorate(row, t ? [t] : [], "");
+    });
+
+    // checklist rows: say how much is behind the fold, not what it says
+    document.querySelectorAll("details.task-card").forEach(function(row){
+      var summary = row.querySelector(":scope > summary");
+      if (!summary || summary.querySelector(".ss-chev")) return;
+      var cols = row.querySelectorAll(".task-col"), bits = [];
+      if (cols[0]) bits.push(cols[0].querySelectorAll("li").length + " phải nắm");
+      if (cols[1]) bits.push(cols[1].querySelectorAll("li").length + " phải làm được");
+      var head = summary.querySelector(".task-head-text");
+      if (head && bits.length) {
+        var peek = document.createElement("span");
+        peek.className = "ss-peek";
+        peek.textContent = bits.join(" · ");
+        head.appendChild(peek);
+      }
+      var chev = document.createElement("span");
+      chev.className = "ss-chev";
+      chev.setAttribute("aria-hidden", "true");
+      var hd = summary.querySelector(".task-head");
+      if (hd) hd.appendChild(chev);
+    });
+  })();
+
+  /* The checkbox sits inside the <summary>. Left alone, one click would both
+     tick the task and unfold the card; swallowing the click on the input
+     keeps the two gestures separate. */
+  document.querySelectorAll("details.task-card .task-check").forEach(function(cb){
+    cb.addEventListener("click", function(e){ e.stopPropagation(); });
+  });
+
+  /* These four kinds of <details> ship permanently open (see the `open`
+     attribute in the markup) and are no longer meant to be collapsible —
+     block the browser's native "click the summary to toggle" behavior so a
+     stray click can never close one. Interactive controls inside a summary
+     (the task-card checkbox) are left alone so they keep working normally. */
+  document.addEventListener("click", function(e){
+    if (e.target.closest("input, button, a, select, textarea")) return;
+    var summary = e.target.closest(
+      "details.subsec > summary, details.task-card > summary, " +
+      "details.cheat-card > summary, details.rules-card > summary");
+    if (summary) e.preventDefault();
+  }, true);
+
+
+  /* ==================================================================
+     The index rail.
+
+     One nested list of every landmark on the site, built once from the
+     DOM so it can never disagree with the content. Picking a section
+     shows that section - it does not toggle a fold - which is what the
+     old chip strip got wrong.
+     ================================================================== */
+
+  var sideNav      = document.getElementById("sideNav");
+  var sideNavList  = document.getElementById("sideNavList");
+  var sideLayout   = document.getElementById("layout");
+  var extSideNav   = document.getElementById("extSideNav");
+
+  function setSideNav(open){
+    if (!sideLayout) return;
+    sideLayout.classList.toggle("sn-closed", !open);
+    document.querySelectorAll("#sideNavOpen, #sideNavOpenMobile").forEach(function(btn){
+      btn.setAttribute("aria-expanded", open ? "true" : "false");
+    });
+    // as a drawer it covers the page, so the page must not scroll behind it
+    var lock = open && sideNavIsDrawer();
+    document.body.classList.toggle("sn-locked", lock);
+    document.documentElement.classList.toggle("sn-locked", lock);
+  }
+  function sideNavIsDrawer(){ return window.matchMedia("(max-width:1080px)").matches; }
+  function closeDrawerIfNeeded(){ if (sideNavIsDrawer()) setSideNav(false); }
+
+  // "1.1 The Agentic Loop Lifecycle - Vong doi cua agentic loop" -> "Vong doi..."
+  function railTitle(h4){
+    var t = localHalf(h4.textContent.trim());
+    return t.replace(/^\d+\.\d+\s*/, "");
+  }
+
+  function mkItem(parent, num, label){
+    var b = document.createElement("button");
+    b.type = "button";
+    b.className = "sn-item";
+    var n = document.createElement("span"); n.className = "sn-n"; n.textContent = num;
+    var t = document.createElement("span"); t.className = "sn-t"; t.textContent = label;
+    b.appendChild(n); b.appendChild(t);
+    parent.appendChild(b);
+    return b;
+  }
+
+  /* "On this page" — the right-hand rail for step 2's deep-dive mode. Lists
+     the current domain's subsections only, so it stays short and always
+     agrees with whatever the reader is actually looking at. */
+  function buildExtSideNav(){
+    if (!extSideNav) return;
+    extSideNav.innerHTML = "";
+    if (state.tab !== "learn") return;
+
+    if (state.mode === "deep") {
+      var panel = document.getElementById("ext-" + state.domain);
+      if (!panel) return;
+      var rows = panel.querySelectorAll(":scope > details.subsec[data-toc]");
+      if (!rows.length) return;
+
+      extSideNavTitle();
+      rows.forEach(function(row){
+        var h4 = row.querySelector(":scope > summary h4");
+        if (!h4) return;
+        var sec = row.dataset.toc || "";
+        var btn = mkTocBtn(sec, railTitle(h4), sec);
+        btn.addEventListener("click", function(){
+          markLearnActive(sec);
+          pinRail();
+          railJump(row);
+        });
+        extSideNav.appendChild(btn);
       });
-      tocBtns.push(btn);
-      extSectionNav.appendChild(btn);
+      return;
+    }
+
+    if (state.mode === "checklist") {
+      // Checklist merges every domain onto one page - list all 5 as jump
+      // targets instead of the per-subsection list deep mode uses.
+      extSideNavTitle();
+      for (var n = 1; n <= 5; n++) {
+        (function(d){
+          var panel = document.getElementById("domain-" + d);
+          var h3 = panel ? panel.querySelector(".domain-intro h3") : null;
+          if (!panel || !h3) return;
+          var raw = h3.textContent.trim(), dot = raw.indexOf(" · ");
+          var name = dot > -1 ? raw.slice(dot + 3) : raw;
+          panel.dataset.railId = "d" + d;
+          var btn = mkTocBtn("D" + d, name, "d" + d);
+          btn.addEventListener("click", function(){
+            markExtActive("d" + d);
+            pinRail();
+            railJump(panel);
+          });
+          extSideNav.appendChild(btn);
+        })(String(n));
+      }
+    }
+  }
+
+  function extSideNavTitle(){
+    var title = document.createElement("div");
+    title.className = "ext-sidenav-title";
+    title.textContent = "Trên trang này";
+    extSideNav.appendChild(title);
+  }
+
+  function mkTocBtn(code, label, sec){
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "toc-btn";
+    btn.dataset.sec = sec;
+    var strong = document.createElement("strong"); strong.textContent = code;
+    var small  = document.createElement("small");  small.textContent = label;
+    btn.appendChild(strong); btn.appendChild(small);
+    return btn;
+  }
+
+  function markExtActive(sec){
+    if (!extSideNav) return;
+    extSideNav.querySelectorAll(".toc-btn.active").forEach(function(x){ x.classList.remove("active"); });
+    if (sec == null) return;
+    var btn = extSideNav.querySelector('.toc-btn[data-sec="' + sec + '"]');
+    if (btn) btn.classList.add("active");
+  }
+
+  function buildSideNav(){
+    if (!sideNavList) return;
+    sideNavList.innerHTML = "";
+
+    PATH.forEach(function(tab, i){
+      var g = document.createElement("div");
+      g.className = "sn-group";
+      g.dataset.tab = tab;
+
+      var head = document.createElement("button");
+      head.type = "button";
+      head.className = "sn-step";
+      var num = document.createElement("span"); num.className = "sn-num"; num.textContent = STEP[tab].n;
+      var lab = document.createElement("span"); lab.className = "sn-label"; lab.textContent = STEP[tab].label;
+      var car = document.createElement("span"); car.className = "sn-caret"; car.textContent = "▶";
+      head.appendChild(num); head.appendChild(lab); head.appendChild(car);
+      head.addEventListener("click", function(){
+        var already = state.tab === tab;
+        if (already) g.classList.toggle("open");
+        else { g.classList.add("open"); go(tab); }
+        closeDrawerIfNeeded();
+      });
+      g.appendChild(head);
+
+      var items = document.createElement("div");
+      items.className = "sn-items";
+      g.appendChild(items);
+
+      if (tab === "learn") buildLearnBranch(items);
+      else if (tab === "practice") buildPracticeBranch(items);
+      else buildLandmarkBranch(items, tab);
+
+      sideNavList.appendChild(g);
+    });
+    syncSideNav();
+  }
+
+  // steps 1 and 4 are long scrolling pages: the rail jumps to a landmark
+  function buildLandmarkBranch(items, tab){
+    var panel = document.getElementById("panel-" + tab);
+    var n = 0;
+    panel.querySelectorAll("[data-toc]").forEach(function(el){
+      n++;
+      var b = mkItem(items, n + ".", el.dataset.toc);
+      b.dataset.anchor = "1";
+      b.addEventListener("click", function(){
+        if (state.tab !== tab) go(tab, null, { keepScroll:true });
+        if (el.tagName === "DETAILS") el.open = true;
+        markActive(b);
+        pinRail();
+        closeDrawerIfNeeded();
+        railJump(el);
+      });
+      el.dataset.railId = String(n);
+      b.dataset.landmark = String(n);
+      b.dataset.tab = tab;
     });
   }
+
+  // step 3 is four sub-pages
+  function buildPracticeBranch(items){
+    var n = 0;
+    document.querySelectorAll("#practiceNav .pr-btn").forEach(function(btn){
+      n++;
+      // strip the leading marker glyphs ("(1)", "?", "flag") so every row reads alike
+      var label = (btn.querySelector("strong") || btn).textContent
+                    .replace(/^[^0-9A-Za-zÀ-ỹ぀-鿿]+/, "").trim();
+      var b = mkItem(items, n + ".", label);
+      b.dataset.practice = btn.dataset.practice;
+      b.addEventListener("click", function(){
+        go("practice", { practice: btn.dataset.practice });
+        closeDrawerIfNeeded();
+      });
+    });
+  }
+
+  // step 2: domain -> section, and picking a section *shows* that section
+  // step 2's left rail only goes one level deep now (D1 → D5 + a Checklist
+  // link under each) - the subsection-by-subsection jump list lives in the
+  // right "On this page" rail instead, so it isn't duplicated on both sides.
+  function buildLearnBranch(items){
+    for (var n = 1; n <= 5; n++) {
+      (function(d){
+        var h3 = document.querySelector("#domain-" + d + " .domain-intro h3");
+        var raw = h3 ? h3.textContent.trim() : ("Domain " + d);
+        var dot = raw.indexOf(" · ");
+
+        var sub = document.createElement("div");
+        sub.className = "sn-sub open";
+        sub.dataset.domain = d;
+
+        var head = document.createElement("button");
+        head.type = "button";
+        head.className = "sn-dom";
+        var code = document.createElement("span"); code.className = "sn-code";
+        code.textContent = "D" + d;
+        var nm = document.createElement("span"); nm.className = "sn-t";
+        nm.textContent = dot > -1 ? raw.slice(dot + 3) : raw;
+        head.appendChild(code); head.appendChild(nm);
+        head.addEventListener("click", function(){
+          go("learn", { domain:d, mode:"deep" });
+          closeDrawerIfNeeded();
+        });
+        sub.appendChild(head);
+
+        // still tag every subsection row with a rail id - the right-hand
+        // "On this page" rail and the scroll-spy that drives it both need it
+        var ext = document.getElementById("ext-" + d);
+        if (ext) ext.querySelectorAll("details.subsec[data-toc]").forEach(function(row){
+          row.dataset.railId = row.dataset.toc || "";
+        });
+
+        items.appendChild(sub);
+      })(String(n));
+    }
+
+    // Checklist covers all 30 task statements across every domain on one
+    // page (see applyState), so it gets a single standalone entry here -
+    // not nested under any one domain.
+    var clBtn = mkItem(items, "📋", "Checklist");
+    clBtn.dataset.checklist = "all";
+    clBtn.addEventListener("click", function(){
+      go("learn", { mode:"checklist" });
+      closeDrawerIfNeeded();
+    });
+  }
+
+  function markActive(btn){
+    if (!sideNavList) return;
+    sideNavList.querySelectorAll(".sn-item.on").forEach(function(x){ x.classList.remove("on"); });
+    if (btn) btn.classList.add("on");
+  }
+
+  /* Subsection-level detail now lives only in the right "On this page" rail
+     (the left rail stops at the domain level) - kept as its own function so
+     every place that jumps to a subsection agrees on how to light it up. */
+  function markLearnActive(sec){
+    markExtActive(sec);
+  }
+
+  function syncSideNav(){
+    if (!sideNavList) return;
+    sideNavList.querySelectorAll(".sn-group").forEach(function(g){
+      var on = g.dataset.tab === state.tab;
+      g.classList.toggle("on", on);
+      if (on) g.classList.add("open");
+    });
+    sideNavList.querySelectorAll(".sn-sub").forEach(function(s){
+      var on = state.tab === "learn" && s.dataset.domain === state.domain;
+      s.classList.toggle("on", on);
+      if (on) s.classList.add("open");
+    });
+    // Whatever step we are on owns the highlight; leaving another step's mark
+    // lit was why picking a section in step 2 still showed a step-1 landmark.
+    if (state.tab === "practice") {
+      markActive(sideNavList.querySelector('.sn-item[data-practice="' + state.practice + '"]'));
+    } else if (state.tab === "learn" && state.mode === "checklist") {
+      markActive(sideNavList.querySelector('.sn-item[data-checklist="all"]'));
+      window.requestAnimationFrame(syncRailScroll);
+    } else {
+      markActive(null);                       // the scroll spy owns these (deep mode) or nothing to mark
+      window.requestAnimationFrame(syncRailScroll);
+    }
+    buildExtSideNav();
+  }
+
+  /* An explicit pick owns the highlight for a moment. Without this the
+     programmatic scroll fires scroll events, the spy runs, and the reader
+     never sees the row they just clicked light up. */
+  var railPinUntil = 0;
+  function pinRail(){ railPinUntil = (window.performance ? performance.now() : Date.now()) + 1200; }
+  function railPinned(){ return (window.performance ? performance.now() : Date.now()) < railPinUntil; }
+
+  // on long pages the rail follows the reader
+  function syncRailScroll(){
+    if (railPinned()) return;
+    var tab = state.tab;
+    if (tab === "learn") {
+      if (state.mode === "deep") markLearnActiveFromScroll();
+      else if (state.mode === "checklist") markChecklistActiveFromScroll();
+      return;
+    }
+    if (!sideNavList || (tab !== "start" && tab !== "examday")) return;
+    var panel = document.getElementById("panel-" + tab);
+    var line = stickyOffset() + 60, current = null, bestTop = -Infinity;
+    panel.querySelectorAll("[data-toc]").forEach(function(el){
+      var top = el.getBoundingClientRect().top;
+      // Strictly greater, so when two landmarks share a grid row (same top)
+      // the FIRST one wins. Keeping the last match meant the right-hand
+      // column always stole the highlight from the left-hand one.
+      if (top <= line && top > bestTop) { bestTop = top; current = el.dataset.railId; }
+    });
+    if (!current) return;
+    markActive(sideNavList.querySelector('.sn-item[data-tab="' + tab + '"][data-landmark="' + current + '"]'));
+  }
+
+  // same idea as above, but for step 2's subsections - drives both the left
+  // rail's current section AND the right "On this page" rail together
+  function markLearnActiveFromScroll(){
+    var panel = document.getElementById("ext-" + state.domain);
+    if (!panel) return;
+    var line = stickyOffset() + 60, current = null, bestTop = -Infinity;
+    panel.querySelectorAll(":scope > details.subsec[data-toc]").forEach(function(el){
+      var top = el.getBoundingClientRect().top;
+      if (top <= line && top > bestTop) { bestTop = top; current = el.dataset.railId; }
+    });
+    markLearnActive(current);
+  }
+
+  // same idea, but for the merged Checklist page - which domain section is
+  // at the top drives the right rail (the left rail's single Checklist
+  // entry doesn't need a per-domain highlight, it's already the whole page)
+  function markChecklistActiveFromScroll(){
+    var panel = document.getElementById("mode-checklist");
+    if (!panel) return;
+    var line = stickyOffset() + 60, current = null, bestTop = -Infinity;
+    panel.querySelectorAll(".domain-panel").forEach(function(el){
+      var top = el.getBoundingClientRect().top;
+      if (top <= line && top > bestTop) { bestTop = top; current = el.dataset.railId; }
+    });
+    markExtActive(current);
+  }
+
+  /* One jump timer for the whole rail: on phones the scroll waits for the
+     drawer to slide shut, and a second pick must replace that wait, not queue
+     behind it. */
+  var railJumpTimer = 0;
+  function railJump(el){
+    if (railJumpTimer) window.clearTimeout(railJumpTimer);
+    railJumpTimer = window.setTimeout(function(){
+      railJumpTimer = 0;
+      scrollToEl(el);
+    }, sideNavIsDrawer() ? 220 : 0);
+  }
+
+  var railTick = 0;
+  window.addEventListener("scroll", function(){
+    if (railTick) return;
+    railTick = window.requestAnimationFrame(function(){ railTick = 0; syncRailScroll(); });
+  }, { passive:true });
+
+  (function initSideNav(){
+    buildSideNav();
+    setSideNav(!sideNavIsDrawer());
+    document.querySelectorAll("#sideNavOpen, #sideNavOpenMobile").forEach(function(open){
+      open.addEventListener("click", function(){
+        setSideNav(sideLayout.classList.contains("sn-closed"));
+      });
+    });
+    var close = document.getElementById("sideNavCollapse");
+    if (close) close.addEventListener("click", function(){ setSideNav(false); });
+    var back = document.getElementById("sideNavBackdrop");
+    if (back) back.addEventListener("click", function(){ setSideNav(false); });
+
+    // Crossing the drawer breakpoint (resize, rotate, restored window) must
+    // re-apply that layout's default, not strand the rail in the other mode.
+    var wasDrawer = sideNavIsDrawer();
+    window.addEventListener("resize", function(){
+      var now = sideNavIsDrawer();
+      if (now === wasDrawer) return;
+      wasDrawer = now;
+      setSideNav(!now);
+    });
+    document.addEventListener("keydown", function(e){
+      if (e.key === "Escape" && sideNavIsDrawer()) setSideNav(false);
+    });
+  })();
 
   /* ---------- state -> DOM ---------- */
   function setSelected(list, matchFn){
@@ -5708,18 +6555,14 @@ Handwritten Notes:
     opts = opts || {};
 
     panels.forEach(function(p){ p.classList.toggle("active", p.id === "panel-" + state.tab); });
-    setSelected(stepBtns, function(b){ return b.dataset.tab === state.tab; });
-    bnBtns.forEach(function(b){
-      b.setAttribute("aria-current", b.dataset.tab === state.tab ? "true" : "false");
-    });
 
     // step 2
-    setSelected(dpBtns,   function(b){ return b.dataset.domain === state.domain; });
-    setSelected(modeBtns, function(b){ return b.dataset.mode === state.mode; });
-    domainPanels.forEach(function(p){ p.classList.toggle("active", p.id === "domain-" + state.domain); });
+    // Checklist is one merged page (all 5 domains shown together, see the
+    // Checklist rail entry), so unlike the deep-dive ext-panels these don't
+    // get filtered down to the current domain.
+    domainPanels.forEach(function(p){ p.classList.add("active"); });
     extPanels.forEach(function(p){ p.classList.toggle("active", p.id === "ext-" + state.domain); });
     learnModes.forEach(function(m){ m.classList.toggle("active", m.id === "mode-" + state.mode); });
-    if (state.mode === "deep") buildSectionNav(document.getElementById("ext-" + state.domain));
     updateDomainCta();
 
     // step 3
@@ -5727,9 +6570,26 @@ Handwritten Notes:
     practicePanels.forEach(function(p){ p.classList.toggle("active", p.id === "pr-" + state.practice); });
 
     renderFooters();
+    syncSideNav();
+    renderCrumb();
     if (!opts.keepScroll) window.scrollTo({ top:0, behavior:"auto" });
     if (!opts.noHash) writeHash();
     markScrollableTables();
+  }
+
+  /* Phones only: row 2 of the header shows a short "where am I" trail
+     instead of repeating the 4-step tabs or a fixed bottom bar. */
+  function renderCrumb(){
+    var el = document.getElementById("crumbTrail");
+    if (!el) return;
+    var parts = [STEP[state.tab].label];
+    if (state.tab === "learn") {
+      parts.push(state.mode === "checklist" ? "Checklist" : "D" + state.domain);
+    } else if (state.tab === "practice") {
+      var strong = document.querySelector('#practiceNav .pr-btn[data-practice="' + state.practice + '"] strong');
+      if (strong) parts.push(strong.textContent.replace(/^[^0-9A-Za-zÀ-ỹ]+/, "").trim());
+    }
+    el.textContent = parts.join(" › ");
   }
 
   function writeHash(){
@@ -5791,10 +6651,6 @@ Handwritten Notes:
     });
   }
 
-  wire(stepBtns, function(b){ go(b.dataset.tab); });
-  wire(bnBtns,   function(b){ go(b.dataset.tab); });
-  wire(dpBtns,   function(b){ state.domain = b.dataset.domain; applyState(); });
-  wire(modeBtns, function(b){ state.mode   = b.dataset.mode;   applyState(); });
   wire(prBtns,   function(b){ state.practice = b.dataset.practice; applyState(); });
 
   // data-goto="tab" [data-practice="sub-page"] [data-scroll="element id"]
@@ -5853,24 +6709,8 @@ Handwritten Notes:
   function renderProgress(){
     // Source of truth is the DOM (checkbox.checked), not localStorage — keeps
     // the UI correct even if storage is unavailable (private mode, sandbox...).
-    var doneTotal = 0, byDomain = {};
-    checkboxes.forEach(function(cb){
-      var card = cb.closest(".task-card");
-      var d = card ? card.dataset.domain : null;
-      if (!d) return;
-      byDomain[d] = byDomain[d] || { done:0, total:0 };
-      byDomain[d].total++;
-      if (cb.checked) { byDomain[d].done++; doneTotal++; }
-    });
-
-    dpBtns.forEach(function(btn){
-      var info = byDomain[btn.dataset.domain] || { done:0, total:0 };
-      var pct = info.total ? Math.round((info.done / info.total) * 100) : 0;
-      var bar = btn.querySelector(".dp-bar i");
-      if (bar) bar.style.width = pct + "%";
-      var count = btn.querySelector("[data-dp-count]");
-      if (count) count.textContent = info.done + "/" + info.total;
-    });
+    var doneTotal = 0;
+    checkboxes.forEach(function(cb){ if (cb.checked) doneTotal++; });
 
     var pct = totalTasks ? Math.round((doneTotal / totalTasks) * 100) : 0;
     var ringBar = document.getElementById("ringBar");
@@ -5901,16 +6741,6 @@ Handwritten Notes:
     });
   });
 
-  // The 20px checkbox alone was a poor pointer target: make the whole header row work.
-  document.querySelectorAll(".task-head").forEach(function(head){
-    head.addEventListener("click", function(e){
-      if (e.target.classList.contains("task-check")) return;
-      var cb = head.querySelector(".task-check");
-      if (!cb) return;
-      cb.checked = !cb.checked;
-      cb.dispatchEvent(new Event("change"));
-    });
-  });
 
   (function applyStoredChecks(){
     var s = loadJSON(PROGRESS_KEY);
@@ -6181,8 +7011,6 @@ Handwritten Notes:
   /* ---------- step 2: "làm quiz domain này" shortcuts ---------- */
   function updateDomainCta(){
     var d = state.domain, info = Quiz.domainInfo(d);
-    var modeBtn = document.getElementById("modeQuizBtn");
-    if (modeBtn) modeBtn.innerHTML = "❓ Quiz D" + d + "<small>" + info.total + " câu · đã làm " + info.done + "</small>";
     var title = document.getElementById("dqcTitle");
     if (title) title.textContent = "Học xong D" + d + "? Làm quiz để khóa kiến thức";
     var sub = document.getElementById("dqcSub");
@@ -6191,7 +7019,7 @@ Handwritten Notes:
     var btn = document.getElementById("dqcBtn");
     if (btn) btn.textContent = "❓ Làm quiz D" + d + " →";
   }
-  ["modeQuizBtn", "dqcBtn"].forEach(function(id){
+  ["dqcBtn"].forEach(function(id){
     var b = document.getElementById(id);
     if (b) b.addEventListener("click", function(){ Quiz.openDomain(state.domain); });
   });
@@ -6214,7 +7042,7 @@ Handwritten Notes:
       mockListEl.innerHTML = mocks.map(function(m, i){
         return '<li><span class="mock-score ' + (m.score >= 800 ? "pass" : "fail") + '">' + escHTML(m.score) + '</span>' +
                '<span class="mock-site">' + escHTML(m.site) + '</span><span class="mock-date">' + escHTML(m.date) + '</span>' +
-               '<button type="button" class="mock-del" data-i="' + i + '" aria-label="Xóa lần thi thử này">✕</button></li>';
+               '<button type="button" class="mock-del" data-i="' + i + '" aria-label="Xóa lần làm đề này">✕</button></li>';
       }).reverse().join("");
     }
     var empty = document.getElementById("mockEmpty");

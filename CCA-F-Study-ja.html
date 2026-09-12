@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="ja">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -75,11 +76,12 @@
   button{ font-family:inherit; }
   :focus-visible{ outline:2px solid var(--accent); outline-offset:2px; border-radius:4px; }
 
-  .app{ max-width:1280px; margin:0 auto; padding-bottom:64px; }
+  .app{ max-width:1472px; margin:0 auto; padding-bottom:64px; }
 
   /* ---------- Header ---------- */
   .topbar{ position:sticky; top:0; z-index:40; background:var(--bg); border-bottom:1px solid var(--border); }
   .topbar-inner{ display:flex; align-items:center; justify-content:space-between; gap:16px; padding:18px 20px 12px; }
+  .mobile-crumb{ display:none; }   /* phones only - see the max-width:860px block */
   .brand{ display:flex; align-items:center; gap:12px; }
   .brand-mark{
     font-family:var(--font-display); font-weight:700; font-size:20px; letter-spacing:.02em;
@@ -285,6 +287,10 @@
     position:sticky; top:172px; max-height:calc(100vh - 192px); overflow-y:auto; padding-bottom:4px;
   }
   .ext-sidenav:empty{ display:none; }
+  .ext-sidenav-title{
+    font-size:10.5px; font-weight:700; letter-spacing:.09em; text-transform:uppercase;
+    color:var(--text-faint); padding:0 2px 2px;
+  }
   .ext-sidenav .toc-btn{
     appearance:none; cursor:pointer; text-align:left; border:1px solid var(--border); background:var(--surface);
     border-radius:9px; padding:8px 11px; color:var(--text-dim); font-family:inherit;
@@ -300,17 +306,14 @@
   .ext-panel.active{ display:block; }
   .subsec h4, .cheat-card h3{ scroll-margin-top:184px; }
 
-  /* Wide screens: content column stays the same width as every other tab's
-     .content, and the side nav hangs out in the right margin (floated out
-     via a negative margin equal to its own width) instead of sharing width
-     with the content. Needs enough room past .app's 1280px box to not
-     collide with the viewport edge, hence the fairly high min-width. */
-  @media (min-width: 1780px){
-    .ext-layout{ display:block; position:relative; }
-    .ext-content{ width:100%; }
-    .ext-sidenav{
-      float:right; flex:none; width:220px; margin-right:-244px; margin-left:0;
-    }
+  /* By default .ext-layout is a plain two-column flex row (content + the
+     "On this page" rail), which is what wide screens show. In the awkward
+     middle band there is room for the content column plus the left MỤC LỤC
+     rail, but not a third column too — so the right rail steps aside and
+     the left rail + scroll-spy on this page still get you around. Below
+     that it switches to the horizontal chip strip (see max-width:900). */
+  @media (min-width: 901px) and (max-width: 1240px){
+    .ext-sidenav{ display:none; }
   }
 
   @media (max-width: 900px){
@@ -320,6 +323,8 @@
       overflow-x:auto; overflow-y:visible; max-height:none; scrollbar-width:none;
     }
     .ext-sidenav::-webkit-scrollbar{ display:none; }
+    /* the label doesn't fit as just another chip in the horizontal strip */
+    .ext-sidenav-title{ display:none; }
     .ext-sidenav .toc-btn{ flex:0 0 auto; min-width:150px; }
   }
   .ext-group-title{ font-size:15px; margin-bottom:4px; }
@@ -369,6 +374,7 @@
 
   :root{
     --header-h:120px;          /* kept in sync with the real sticky header by JS */
+    --footer-h:80px;           /* kept in sync with the real page footer by JS */
     --text-faint:#676f85;      /* was #8891a8 — 3.15:1 on white, failed WCAG AA */
   }
   @media (prefers-color-scheme: dark){
@@ -434,17 +440,6 @@
   .step[aria-selected="true"] .step-num{ background:var(--accent); color:var(--accent-ink); }
   .step[aria-selected="true"] .step-text strong{ color:var(--accent); }
 
-  /* ---------- Bottom nav (mobile only) ---------- */
-  .bottomnav{ display:none; }
-  .bn-btn{
-    appearance:none; cursor:pointer; font-family:inherit; background:transparent; border:none;
-    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px;
-    min-height:54px; padding:4px 2px; color:var(--text-faint); font-size:10.5px; font-weight:600;
-    border-radius:10px; line-height:1.2;
-  }
-  .bn-ico{ font-size:16px; line-height:1; font-family:var(--font-display); font-weight:700; }
-  .bn-btn[aria-current="true"]{ color:var(--accent); background:var(--accent-soft); }
-
   /* ---------- Panel head + step-by-step footer ---------- */
   .panel-head{ margin-bottom:18px; }
   .step-badge{
@@ -505,42 +500,6 @@
   .rd-track i{ display:block; height:100%; background:var(--accent); width:0%; transition:width .35s ease; }
   .rd-hint{ font-size:11.5px; color:var(--text-faint); margin-top:7px; }
 
-  /* ---------- Step 2: one domain picker driving both study modes ---------- */
-  .domain-picker{ display:grid; grid-template-columns:repeat(5,1fr); gap:9px; margin-bottom:18px; }
-  .dp-btn{
-    appearance:none; cursor:pointer; font-family:inherit; text-align:left; min-height:44px;
-    display:flex; flex-direction:column; gap:6px;
-    border:1px solid var(--border); background:var(--surface); border-radius:12px; padding:11px 12px;
-    color:var(--text-dim); transition:border-color .15s ease, background .15s ease;
-  }
-  .dp-top{ display:flex; align-items:center; justify-content:space-between; gap:8px; }
-  .dp-code{ font-family:var(--font-display); font-weight:700; font-size:15px; color:var(--text); }
-  .dp-weight{
-    font-size:11px; font-weight:700; color:var(--text-dim); background:var(--surface-2);
-    border:1px solid var(--border); border-radius:99px; padding:2px 8px; font-variant-numeric:tabular-nums;
-  }
-  .dp-name{ font-size:12.3px; font-weight:600; line-height:1.35; color:var(--text-dim); }
-  .dp-bar{ display:block; height:4px; border-radius:3px; background:var(--surface-2); overflow:hidden; margin-top:auto; }
-  .dp-bar i{ display:block; height:100%; width:0%; background:var(--text-faint); transition:width .3s ease; }
-  .dp-meta{ font-size:11px; color:var(--text-faint); font-variant-numeric:tabular-nums; }
-  .dp-btn:hover{ border-color:var(--accent); }
-  .dp-btn[aria-selected="true"]{ border-color:var(--accent); background:var(--accent-soft); }
-  .dp-btn[aria-selected="true"] .dp-code,
-  .dp-btn[aria-selected="true"] .dp-name{ color:var(--accent); }
-  .dp-btn[aria-selected="true"] .dp-bar i{ background:var(--accent); }
-
-  .mode-switch{
-    display:grid; grid-template-columns:1fr 1fr; gap:4px; width:100%; max-width:460px;
-    background:var(--surface-2); border:1px solid var(--border); border-radius:13px; padding:4px; margin-bottom:20px;
-  }
-  .mode-btn{
-    appearance:none; cursor:pointer; font-family:inherit; border:none; background:transparent;
-    border-radius:10px; padding:8px 12px; min-height:46px; color:var(--text-dim);
-    font-size:13px; font-weight:700; line-height:1.25;
-  }
-  .mode-btn small{ display:block; font-size:11px; font-weight:500; color:var(--text-faint); margin-top:1px; }
-  .mode-btn[aria-selected="true"]{ background:var(--surface); color:var(--accent); box-shadow:var(--shadow); }
-  .mode-btn[aria-selected="true"] small{ color:var(--accent); opacity:.8; }
 
   .learn-mode{ display:none; }
   .learn-mode.active{ display:block; }
@@ -550,9 +509,7 @@
     font-size:12.8px; color:var(--text-dim); margin-bottom:18px; line-height:1.55;
   }
 
-  /* whole header row toggles its checkbox — a 20px box alone is a poor target */
-  .task-head{ cursor:pointer; }
-  .task-head:hover{ background:var(--surface-2); }
+  .task-head{ cursor:default; }
 
   /* ---------- Step 3: practice sub-nav ---------- */
   .practice-nav{ display:grid; grid-template-columns:repeat(4,1fr); gap:9px; margin-bottom:22px; }
@@ -569,6 +526,260 @@
   .pr-btn[aria-selected="true"] strong{ color:var(--accent); }
   .practice-panel{ display:none; }
   .practice-panel.active{ display:block; }
+
+  /* ================================================================
+     Progressive disclosure. Nothing on this page is deleted - it is
+     closed. A closed row still has to teach you something, so every
+     summary carries a peek line built from the headings inside it.
+     ================================================================ */
+
+
+  /* ---------- always-open row look ----------
+     These four kinds of <details> ship permanently `open` and can no longer
+     be collapsed by the reader (JS blocks the native toggle) — so the row
+     just needs to read as a plain static card, not an interactive control. */
+  details.subsec, details.task-card, details.rules-card, details.cheat-card{ overflow:hidden; }
+  details.subsec > summary,
+  details.cheat-card > summary,
+  details.rules-card > summary{
+    list-style:none; cursor:default; display:flex; align-items:flex-start; gap:11px;
+  }
+  details.subsec > summary::-webkit-details-marker,
+  details.cheat-card > summary::-webkit-details-marker,
+  details.rules-card > summary::-webkit-details-marker,
+  details.task-card > summary::-webkit-details-marker{ display:none; }
+
+  /* no longer togglable, so no chevron to hint at it */
+  .ss-chev{ display:none; }
+
+  .ss-main{ flex:1; min-width:0; }
+  /* the peek line: what you would learn by opening this row */
+  .ss-peek{
+    display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+    margin-top:3px; font-size:12.4px; line-height:1.5; color:var(--text-faint);
+    font-weight:500; overflow-wrap:anywhere;
+  }
+  .ss-count{
+    flex:0 0 auto; margin-top:1px; font-size:11px; font-weight:700; white-space:nowrap;
+    padding:2px 8px; border-radius:99px; background:var(--surface-2); color:var(--text-faint);
+  }
+  details[open] > summary .ss-count{ background:var(--accent-soft); color:var(--accent); }
+
+  /* subsections sit in a flat list; the borders make the list readable when closed */
+  details.subsec{
+    border:1px solid var(--border); border-radius:var(--radius);
+    background:var(--surface); margin-bottom:8px; padding:13px 16px;
+  }
+  details.subsec > summary h4{ margin:0; font-size:15px; line-height:1.35; overflow-wrap:anywhere; }
+  details.subsec[open]{ background:var(--surface); border-color:var(--accent-soft-2); }
+  details.subsec[open] > summary{ padding-bottom:13px; margin-bottom:14px; border-bottom:1px solid var(--border); }
+  details.subsec[open] > summary .ss-peek{ display:none; }
+  .ss-body > :first-child{ margin-top:0; }
+  .ss-body > :last-child{ margin-bottom:0; }
+
+  /* ==================================================================
+     Index rail. A horizontal chip strip could not show hierarchy and
+     was unusable once a step had more than five landmarks, so the
+     table of contents became a real nested list down the left edge.
+     ================================================================== */
+  .layout{ display:flex; align-items:flex-start; }
+  .layout .content{ flex:1 1 auto; min-width:0; }
+
+  .sidenav{
+    flex:0 0 258px; width:258px; align-self:stretch;
+    position:sticky; top:var(--header-h);
+    /* The page footer (and .app's own bottom padding) sit *after* .layout, so
+       near the very bottom of the page .layout's box ends before the sticky
+       header would let go of this rail. Without reserving that trailing
+       space here too, a rail whose own content is tall enough to actually
+       need the full height gets pushed up until its top pokes out above the
+       header offset — and the opaque sticky header then covers it. */
+    max-height:calc(100vh - var(--header-h) - var(--footer-h) - 64px);
+    overflow-y:auto; overscroll-behavior:contain;
+    padding:20px 8px 40px 18px; border-right:1px solid var(--border);
+  }
+  .sidenav::-webkit-scrollbar{ width:8px; }
+  .sidenav::-webkit-scrollbar-thumb{ background:var(--surface-3); border-radius:4px; }
+  .layout.sn-closed .sidenav{
+    flex-basis:0; width:0; padding-left:0; padding-right:0;
+    border-right:none; overflow:hidden;
+  }
+
+  .sn-top{ display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:10px; padding-right:10px; }
+  .sn-title{ font-size:10.5px; font-weight:700; letter-spacing:.09em; text-transform:uppercase; color:var(--text-faint); }
+  .sn-collapse{
+    appearance:none; cursor:pointer; width:26px; height:26px; flex:0 0 auto; border-radius:7px;
+    border:1px solid var(--border); background:var(--surface); color:var(--text-faint); font-size:12px; line-height:1;
+  }
+  .sn-collapse:hover{ border-color:var(--accent); color:var(--accent); }
+
+  .sn-group + .sn-group{ margin-top:2px; }
+  .sn-step{
+    width:100%; appearance:none; cursor:pointer; text-align:left; border:none; background:transparent;
+    display:flex; align-items:center; gap:9px; padding:8px 9px; border-radius:9px;
+    font-family:var(--font-display); font-size:13.2px; font-weight:700; color:var(--text-dim);
+  }
+  .sn-step:hover{ background:var(--surface-2); color:var(--text); }
+  .sn-step .sn-num{
+    flex:0 0 auto; width:18px; height:18px; border-radius:6px; display:grid; place-items:center;
+    background:var(--surface-2); color:var(--text-faint); font-size:10.5px; font-variant-numeric:tabular-nums;
+  }
+  .sn-step .sn-label{ flex:1; min-width:0; }
+  .sn-step .sn-caret{ flex:0 0 auto; font-size:9px; color:var(--text-faint); transition:transform .18s ease; }
+  .sn-group.open > .sn-step .sn-caret{ transform:rotate(90deg); }
+  .sn-group.on > .sn-step{ color:var(--text); }
+  .sn-group.on > .sn-step .sn-num{ background:var(--accent); color:var(--accent-ink); }
+
+  .sn-items{ display:none; margin:1px 0 6px 18px; padding-left:9px; border-left:1px solid var(--border); }
+  .sn-group.open > .sn-items{ display:block; }
+
+  .sn-item{
+    width:100%; appearance:none; cursor:pointer; text-align:left; border:none; background:transparent;
+    display:flex; gap:8px; padding:6px 9px; border-radius:8px;
+    font-size:12.8px; line-height:1.45; color:var(--text-dim);
+  }
+  .sn-item:hover{ background:var(--surface-2); color:var(--text); }
+  .sn-item.on{ background:var(--accent-soft); color:var(--accent); font-weight:700; }
+  .sn-item .sn-n{ flex:0 0 auto; font-variant-numeric:tabular-nums; font-size:11.5px; color:var(--text-faint); }
+  .sn-item.on .sn-n{ color:var(--accent); }
+  .sn-item .sn-t{ flex:1; min-width:0; }
+
+  /* step 2 has one more level: domain, then the sections inside it */
+  .sn-sub + .sn-sub{ margin-top:1px; }
+  .sn-dom{
+    width:100%; appearance:none; cursor:pointer; text-align:left; border:none; background:transparent;
+    display:flex; align-items:center; gap:8px; padding:6px 9px; border-radius:8px;
+    font-size:12.6px; font-weight:700; color:var(--text-dim);
+  }
+  .sn-dom:hover{ background:var(--surface-2); color:var(--text); }
+  .sn-dom .sn-code{ flex:0 0 auto; font-size:11px; color:var(--text-faint); font-variant-numeric:tabular-nums; }
+  .sn-dom .sn-caret{ margin-left:auto; flex:0 0 auto; font-size:9px; color:var(--text-faint); transition:transform .18s ease; }
+  .sn-sub.open > .sn-dom .sn-caret{ transform:rotate(90deg); }
+  .sn-sub.on > .sn-dom{ color:var(--accent); }
+  .sn-sections{ display:none; margin:1px 0 5px 9px; padding-left:8px; border-left:1px solid var(--border); }
+  .sn-sub.open > .sn-sections{ display:block; }
+
+  .sn-backdrop{ display:none; }
+  /* The viewport takes its overflow from whichever of html/body the mode
+     makes the scrolling element, so lock both or the page keeps scrolling
+     behind the open drawer. */
+  html.sn-locked, body.sn-locked{ overflow:hidden; }
+
+  /* phones and small laptops: the rail becomes a drawer over the content */
+  @media (max-width:1080px){
+    .sidenav{
+      position:fixed; left:0; top:0; bottom:0; z-index:72;
+      width:min(310px,86vw); flex-basis:auto; max-height:none;
+      background:var(--bg); border-right:1px solid var(--border);
+      padding:18px 8px 40px 16px; transform:translateX(-101%);
+      transition:transform .2s ease; box-shadow:0 0 40px rgba(0,0,0,.35);
+    }
+    .layout:not(.sn-closed) .sidenav{ transform:none; }
+    .layout:not(.sn-closed) .sn-backdrop{ display:block; position:fixed; inset:0; background:rgba(8,11,18,.55); z-index:71; }
+    .layout.sn-closed .sidenav{ width:min(310px,86vw); padding:18px 8px 40px 16px; border-right:1px solid var(--border); overflow-y:auto; }
+  }
+
+  details.rules-card > summary h3,
+  details.cheat-card > summary h3{ margin:0; font-size:16px; line-height:1.35; }
+  details.rules-card[open] > summary,
+  details.cheat-card[open] > summary{ margin-bottom:12px; }
+  details.rules-card[open] > summary .ss-peek,
+  details.cheat-card[open] > summary .ss-peek{ display:none; }
+
+  /* checklist rows: the header keeps its checkbox, but now it also opens the card */
+  details.task-card > summary{ list-style:none; cursor:pointer; }
+  details.task-card > summary .task-head{ border-bottom:none; }
+  details.task-card[open] > summary .task-head{ border-bottom:1px solid var(--border); }
+  .task-head .ss-chev{ margin-top:3px; }
+
+  /* "chot lai" - the skim layer that sits above the original prose */
+  .gist{
+    background:var(--accent-soft); border:1px solid var(--accent-soft-2);
+    border-radius:12px; padding:12px 15px; margin:0 0 16px;
+  }
+  .gist-label{
+    display:block; font-size:11px; font-weight:700; letter-spacing:.05em;
+    text-transform:uppercase; color:var(--accent); margin-bottom:7px;
+  }
+  .gist ul{ margin:0; padding-left:1.15em; display:flex; flex-direction:column; gap:5px; }
+  .gist li{ font-size:13.4px; line-height:1.55; color:var(--text); }
+
+  /* provenance and other small print folds away from the hint line */
+  .hint-more{ display:block; margin-top:7px; }
+  .hint-more > summary{
+    list-style:none; cursor:pointer; display:inline-flex; align-items:center; gap:4px;
+    font-size:12px; font-weight:700; color:var(--accent);
+  }
+  .hint-more > summary::-webkit-details-marker{ display:none; }
+  .hint-more > summary::after{ content:" \25BE"; }
+  .hint-more[open] > summary::after{ content:" \25B4"; }
+  .hint-more[open] > summary{ margin-bottom:6px; }
+
+  @media (max-width:860px){
+    details.subsec{ padding:11px 13px; }
+    details.subsec > summary h4{ font-size:14.2px; }
+  }
+
+  /* sub-pages 1-2 are the actual flow; the last two are reference material */
+  .pr-btn.ref{ border-style:dashed; }
+  .pr-btn.ref strong{ color:var(--text-dim); }
+  .pr-btn.ref[aria-selected="true"] strong{ color:var(--accent); }
+
+  /* ---------- step 3: what the four sub-pages are for ---------- */
+  .pflow{ display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); align-items:stretch; gap:10px; margin-bottom:10px; }
+  .pflow-card{
+    appearance:none; cursor:pointer; font-family:inherit; text-align:left;
+    display:flex; flex-direction:column; gap:5px; padding:14px 16px;
+    border:1px solid var(--border); border-radius:var(--radius); background:var(--surface); box-shadow:var(--shadow);
+    transition:border-color .15s ease;
+  }
+  .pflow-card:hover{ border-color:var(--accent); }
+  .pflow-card.key{ border-color:var(--accent); background:var(--accent-soft); }
+  .pflow-tag{ font-size:11px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--text-faint); }
+  .pflow-card.key .pflow-tag{ color:var(--accent); }
+  .pflow-card b{ font-family:var(--font-display); font-size:16px; line-height:1.3; color:var(--text); }
+  .pflow-card span{ font-size:13px; line-height:1.55; color:var(--text-dim); }
+  .pflow-arrow{ align-self:center; color:var(--text-faint); font-size:20px; }
+  .pflow-aside{
+    display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-bottom:22px;
+    padding:10px 14px; border:1px dashed var(--border); border-radius:var(--radius);
+    font-size:12.5px; color:var(--text-faint);
+  }
+  .pflow-chip{
+    appearance:none; cursor:pointer; font-family:inherit; font-size:13px; font-weight:600;
+    min-height:32px; padding:4px 12px; border-radius:99px;
+    border:1px solid var(--border); background:var(--surface); color:var(--text-dim);
+  }
+  .pflow-chip:hover{ border-color:var(--accent); color:var(--accent); }
+  /* phones: the quiz question has to stay near the top, so the flow cards
+     shrink to tag + title and the reference shelf loses its padding */
+  @media (max-width:860px){
+    .pflow{ grid-template-columns:1fr; gap:8px; margin-bottom:8px; }
+    .pflow-arrow{ display:none; }
+    .pflow-card{ padding:10px 13px; gap:2px; }
+    .pflow-card b{ font-size:14.5px; }
+    .pflow-card span:not(.pflow-tag){ display:none; }
+    .pflow-aside{ padding:8px 12px; gap:6px; margin-bottom:16px; font-size:12px; }
+  }
+
+  /* ---------- reference: further reading ---------- */
+  .res-group{ margin-bottom:26px; }
+  .res-head{ display:flex; align-items:center; gap:8px; font-size:15px; margin-bottom:10px; }
+  .res-list{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+  .res-item{
+    display:flex; flex-direction:column; gap:5px; text-decoration:none;
+    padding:14px 16px; border:1px solid var(--border); border-radius:var(--radius);
+    background:var(--surface); box-shadow:var(--shadow); transition:border-color .15s ease;
+  }
+  .res-item:hover{ border-color:var(--accent); }
+  .res-item strong{ font-size:14.5px; color:var(--text); overflow-wrap:anywhere; }
+  .res-item span{ font-size:13px; line-height:1.55; color:var(--text-dim); }
+  .res-item em{ font-style:normal; font-size:12px; color:var(--text-faint); overflow-wrap:anywhere; margin-top:auto; padding-top:6px; }
+  .res-tag{
+    align-self:flex-start; font-size:10.5px; font-weight:700; letter-spacing:.04em; text-transform:uppercase;
+    padding:2px 8px; border-radius:99px; background:var(--accent-soft); color:var(--accent);
+  }
+  @media (max-width:860px){ .res-list{ grid-template-columns:1fr; } }
 
   /* ---------- Lookup drawer: glossary lives outside the learning path ---------- */
   /* .drawer sets display:flex, which beats the UA [hidden] rule — restate it. */
@@ -614,7 +825,9 @@
   .task-card{ scroll-margin-top:calc(var(--header-h) + 18px); }
   .ext-sidenav{
     top:calc(var(--header-h) + 14px);
-    max-height:calc(100vh - var(--header-h) - 40px);
+    /* same trailing-footer reservation as .sidenav above, so this rail can't
+       get pushed up under the sticky header once the page bottom is close */
+    max-height:calc(100vh - var(--header-h) - var(--footer-h) - 64px - 40px);
   }
 
   /* horizontal-scroll affordance, added by JS only when a table actually overflows */
@@ -631,7 +844,6 @@
      ========================================================================== */
 
   @media (max-width:1180px){
-    .domain-picker{ grid-template-columns:repeat(3,1fr); }
     .roadmap-steps{ grid-template-columns:repeat(2,1fr); }
   }
 
@@ -650,51 +862,53 @@
     .steps{ display:none; }
     .ext-tabbar{ display:none !important; }
 
-    .bottomnav{
-      display:grid; grid-template-columns:repeat(5,1fr); gap:2px;
-      position:fixed; left:0; right:0; bottom:0; z-index:60;
-      background:var(--surface); border-top:1px solid var(--border);
-      padding:5px 4px calc(5px + env(safe-area-inset-bottom,0px));
-      box-shadow:0 -6px 20px -14px rgba(0,0,0,.5);
-    }
-
     .topbar-inner{ padding:9px 14px; gap:10px; }
-    /* min-width:0 on both the flex item and its child, or the long product
-       name refuses to shrink and slides under the action buttons. */
-    .brand{ gap:9px; min-width:0; flex:1 1 auto; overflow:hidden; }
-    .brand-text{ min-width:0; }
+    /* Row 1 keeps only the essentials - title, search, theme, language.
+       Full navigation and "where am I" context live in the breadcrumb row
+       below instead, so this row never gets crowded. */
+    .topbar-actions a.icon-btn{ display:none; }   /* Exam Guide PDF link */
+    #sideNavOpen{ display:none; }                 /* the drawer opens from row 2 instead */
+    .progress-chip{ display:none; }
+    #openLookup{ order:1; }
+    #themeToggle{ order:2; }
+    .lang-switch{ order:3; }
+    .brand{ flex:1 1 auto; min-width:0; }
+    .brand-text{ display:none; }
     .brand-mark{ font-size:15px; padding:6px 7px; }
-    .brand-text strong{ font-size:13.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .brand-text span{ display:none; }
     .icon-btn-label, .icon-btn kbd{ display:none; }
     .icon-btn{ width:40px; padding:0; justify-content:center; }
-    .progress-chip{ padding:4px 10px 4px 5px; }
-    .progress-chip-text strong{ display:none; }
-    .ring-wrap{ width:34px; height:34px; }
-    .ring-wrap svg{ width:34px; height:34px; }
-    .ring-pct{ font-size:9.5px; }
 
-    .app{ padding-bottom:calc(80px + env(safe-area-inset-bottom,0px)); }
+    /* Row 2: the menu (opens the full 目次 drawer) plus a breadcrumb showing
+       where you are - this replaces both the old 4-step tab row and the
+       fixed bottom nav, so it's the only wayfinding chrome left. */
+    .mobile-crumb{ display:flex; align-items:center; gap:8px; padding:2px 14px 10px; }
+    .mobile-crumb .icon-btn{ flex-shrink:0; }
+    .crumb-trail{
+      flex:1 1 auto; min-width:0;
+      font-size:12.5px; font-weight:600; color:var(--text-dim);
+      overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+    }
+
     .content{ padding:18px 14px 0; }
-    .totop{ bottom:calc(78px + env(safe-area-inset-bottom,0px)); right:14px; }
 
     .roadmap-steps{ grid-template-columns:1fr; }
     .readiness{ grid-template-columns:1fr; gap:10px; }
-    .domain-picker{ grid-template-columns:repeat(2,1fr); }
-    .practice-nav{ grid-template-columns:1fr; }
+    .practice-nav{ grid-template-columns:repeat(2,1fr); }
     .pr-btn{ min-height:50px; }
-    .mode-switch{ max-width:none; }
     .panel-foot{ grid-template-columns:1fr; }
     .foot-btn.is-empty{ display:none; }
 
     .drawer{ width:100%; border-left:none; }
 
-    /* the deep-dive TOC becomes a horizontal chip rail under the picker */
+    /* the deep-dive "On this page" rail becomes a horizontal chip strip - the
+       label doesn't fit as just another chip, so it's dropped here instead
+       of getting squeezed into a narrow, wrapped sliver at the front */
     .ext-layout{ display:block; }
     .ext-sidenav{
       position:static; flex-direction:row; width:auto; max-height:none;
       overflow-x:auto; margin:0 -14px 16px; padding:0 14px 2px; gap:7px;
     }
+    .ext-sidenav-title{ display:none; }
     .ext-sidenav .toc-btn{ flex:0 0 auto; min-width:132px; }
   }
 
@@ -719,14 +933,6 @@
     .grid-2{ grid-template-columns:1fr; }
   }
 
-  @media (max-width:420px){
-    .domain-picker{ grid-template-columns:1fr; }
-    .dp-btn{ flex-direction:row; align-items:center; flex-wrap:wrap; gap:8px; }
-    .dp-top{ flex:0 0 auto; gap:8px; }
-    .dp-name{ flex:1 1 100%; order:3; }
-    .dp-bar{ flex:1 1 100%; order:4; }
-    .dp-meta{ order:2; margin-left:auto; }
-  }
 
   /* Coarse pointers get real 44px+ targets everywhere it matters */
   @media (pointer:coarse){
@@ -823,10 +1029,6 @@
   .scope-grid .rules-card{ margin-bottom:0; }
 
   /* ---------- step 2: quiz shortcut for the selected domain ---------- */
-  .learn-toolbar{ display:flex; flex-wrap:wrap; align-items:stretch; gap:10px; margin-bottom:20px; }
-  .learn-toolbar .mode-switch{ margin-bottom:0; flex:1 1 360px; }
-  .mode-quiz{ flex:0 0 auto; min-height:56px; border-radius:13px; flex-direction:column; align-items:flex-start; gap:1px; padding:6px 16px; }
-  .mode-quiz small{ font-size:11px; font-weight:500; opacity:.85; }
   .domain-quiz-cta{
     display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap;
     margin-top:26px; padding:16px 18px; border-radius:var(--radius);
@@ -836,7 +1038,7 @@
   .domain-quiz-cta span{ font-size:13px; color:var(--text-dim); }
 
   /* ---------- step 3 nav: three sub-pages ---------- */
-  .practice-nav{ grid-template-columns:repeat(3,1fr); }
+  .practice-nav{ grid-template-columns:repeat(4,1fr); }
 
   /* ---------- quiz: focus mode ---------- */
   .qz-toolbar{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:14px; }
@@ -948,8 +1150,10 @@
      box never leaves a gap under itself. */
   .qz-side{
     grid-column:1; grid-row:1; position:sticky; top:calc(var(--header-h) + 14px);
-    display:flex; flex-direction:column; min-height:min(calc(100vh - var(--header-h) - 28px), 660px);
-    max-height:calc(100vh - var(--header-h) - 28px); overflow-y:auto; scrollbar-width:thin; padding:14px;
+    display:flex; flex-direction:column;
+    min-height:min(calc(100vh - var(--header-h) - var(--footer-h) - 64px - 28px), 660px);
+    max-height:calc(100vh - var(--header-h) - var(--footer-h) - 64px - 28px);
+    overflow-y:auto; scrollbar-width:thin; padding:14px;
     background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow);
   }
   .qz-stats{ display:grid; grid-template-columns:repeat(3,1fr); text-align:center; }
@@ -1036,6 +1240,8 @@
 
   /* ---------- mock exams ---------- */
   .mock-grid{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; margin-bottom:18px; }
+  .mock-grid.single{ grid-template-columns:minmax(0,1fr); }
+  .mock-grid.single .mock-go{ align-self:flex-start; }
   .mock-card{
     background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow);
     padding:16px 18px; display:flex; flex-direction:column; gap:8px;
@@ -1109,7 +1315,7 @@
     .scenario-grid{ grid-template-columns:repeat(2,minmax(0,1fr)); }
   }
   @media (max-width:1024px){
-    .practice-nav{ grid-template-columns:repeat(3,1fr); }
+    .practice-nav{ grid-template-columns:repeat(2,1fr); }
     .overview-grid{ grid-template-columns:1fr; }
     .overview-grid .weight-label{ width:230px; font-size:13.5px; }
     .qz-layout{ grid-template-columns:300px minmax(0,1fr); }
@@ -1123,7 +1329,7 @@
   }
   @media (max-width:860px){
     /* three compact segments instead of three stacked 50px rows */
-    .practice-nav{ grid-template-columns:repeat(3,1fr); gap:6px; }
+    .practice-nav{ grid-template-columns:repeat(2,1fr); gap:6px; }
     .pr-btn{ min-height:44px; padding:8px 9px; justify-content:center; }
     .pr-btn strong{ font-size:12.3px; }
     .pr-btn small{ display:none; }
@@ -1134,8 +1340,6 @@
     .qz-nav{ bottom:calc(72px + env(safe-area-inset-bottom,0px)); }
     .qz-kbd-hint{ display:none; }
     .qz-card{ padding:15px; }
-    .learn-toolbar .mode-switch{ flex-basis:100%; }
-    .mode-quiz{ width:100%; }
 
     /* get the question itself onto the first phone screen: one scrollable
        filter row, intro copy hidden, stats + palette moved under the card */
@@ -1188,11 +1392,6 @@
     width:34px; height:34px; border-radius:9px; background:transparent; color:inherit; font-size:15px; cursor:pointer; }
   .lang-banner-close:hover{ background:rgba(127,127,127,.28); }
   .brand-mark{ flex-shrink:0; }   /* the wider language control must squeeze the title, never the logo */
-  @media (max-width:480px){
-    .progress-chip-text{ display:none; }   /* the ring already shows the %; frees room for logo + language */
-    .progress-chip{ padding:4px; }
-    .brand-text{ display:none; }            /* only a clipped sliver of the title would fit */
-  }
   /* ---------- Japanese typography: keep phrases whole when balanced headings wrap ---------- */
   h1, h2, h3, h4, h5, .step-text strong, .pr-btn strong, .rs-go, .foot-btn strong{ word-break:auto-phrase; }
   .subsec p.muted{ font-size:13px; color:var(--text-dim); margin-top:6px; }
@@ -1222,6 +1421,7 @@
         </nav>
         <a class="icon-btn" href="CCAF-Exam-Guide.pdf" target="_blank" rel="noopener" title="公式 Exam Guide を開く（PDF）" aria-label="公式 Exam Guide を開く（PDF）">📄<span class="icon-btn-label">Exam Guide</span></a>
         <button class="icon-btn" id="openLookup" data-open-lookup aria-label="用語を検索">🔍<span class="icon-btn-label">用語検索</span><kbd>Ctrl K</kbd></button>
+        <button class="icon-btn" id="sideNavOpen" aria-expanded="true" aria-controls="sideNav" title="目次" aria-label="目次">☰<span class="icon-btn-label">目次</span></button>
         <button class="icon-btn" id="themeToggle" aria-label="ライト/ダーク表示を切り替え" title="ライト/ダーク表示を切り替え">🌓</button>
         <button class="progress-chip" id="progressChip" aria-label="学習の進捗を見る">
           <span class="ring-wrap">
@@ -1239,28 +1439,25 @@
       </div>
     </div>
 
-    <!-- The learning path itself is the navigation: four numbered steps, read
-         left to right. Reference material (glossary) deliberately lives in a
-         drawer instead of a fifth tab, so the path stays four items long. -->
-    <nav class="steps" id="stepNav" role="tablist" aria-label="4ステップの学習ロードマップ">
-      <button class="step" role="tab" id="tab-start" data-tab="start" aria-selected="true" aria-controls="panel-start">
-        <span class="step-num">1</span>
-        <span class="step-text"><strong>スタート</strong><small>試験を知る · 約15分</small></span>
-      </button>
-      <button class="step" role="tab" id="tab-learn" data-tab="learn" aria-selected="false" aria-controls="panel-learn" tabindex="-1">
-        <span class="step-num">2</span>
-        <span class="step-text"><strong>5ドメインを学ぶ</strong><small>理論 + クイズ · 数回に分けて</small></span>
-      </button>
-      <button class="step" role="tab" id="tab-practice" data-tab="practice" aria-selected="false" aria-controls="panel-practice" tabindex="-1">
-        <span class="step-num">3</span>
-        <span class="step-text"><strong>問題演習</strong><small>クイズ · コツ · 模試 800点以上</small></span>
-      </button>
-      <button class="step" role="tab" id="tab-examday" data-tab="examday" aria-selected="false" aria-controls="panel-examday" tabindex="-1">
-        <span class="step-num">4</span>
-        <span class="step-text"><strong>申込 &amp; 受験</strong><small>手順 + 試験規則</small></span>
-      </button>
-    </nav>
+    <!-- Phones only: row 1 above stays minimal (title, search, theme,
+         language); the drawer trigger and a "where am I" breadcrumb live
+         here instead, docked right under it. Desktop never shows this -
+         .topbar-actions already has its own 目次 button. -->
+    <div class="mobile-crumb" id="mobileCrumb">
+      <button class="icon-btn" id="sideNavOpenMobile" aria-expanded="true" aria-controls="sideNav" title="目次" aria-label="目次">☰</button>
+      <div class="crumb-trail" id="crumbTrail"></div>
+    </div>
   </header>
+
+  <div class="layout" id="layout">
+    <div class="sn-backdrop" id="sideNavBackdrop"></div>
+    <aside class="sidenav" id="sideNav" aria-label="サイト全体の目次">
+      <div class="sn-top">
+        <span class="sn-title">目次</span>
+        <button type="button" class="sn-collapse" id="sideNavCollapse" aria-label="目次を閉じる">✕</button>
+      </div>
+      <nav class="sn-list" id="sideNavList"></nav>
+    </aside>
 
   <main class="content">
 
@@ -1269,7 +1466,7 @@
       <div class="panel-head">
         <div class="step-badge">ステップ1 · ここから始める</div>
         <h1 class="section-title">CCAR-F 対策 — シンプルな学習フロー</h1>
-        <p class="section-sub">あれこれ手を広げる必要も、コードを書いて練習する必要もありません。試験を知る → クイズを解きながら理論を学ぶ → 模試で 800点以上を取る → 受験を申し込む。各ページの最後に、次のステップへ進むボタンがあります。</p>
+        <p class="section-sub">あれこれ手を広げる必要も、コードを書いて練習する必要もありません。試験を知る → クイズを解きながら理論を学ぶ → 本番レベルの問題演習で 800点以上を取る → 受験を申し込む。各ページの最後に、次のステップへ進むボタンがあります。</p>
       </div>
 
       <!-- Where the content comes from, up front: people trust a study page far
@@ -1297,14 +1494,15 @@
                 <tr><td>ステップ4 · 採点、試験規則、再受験、NDA、更新</td><td><span class="src-tag">Exam Guide §10–16</span></td></tr>
                 <tr><td>ステップ4 · LDI への申請、受験料の支援・払い戻し</td><td><span class="src-tag">FPT Place</span> 国際資格の受験料支援・資格取得報奨プログラム（v1.1）</td></tr>
                 <tr><td>ステップ3 · クイズ 77問</td><td><span class="src-tag">CCAF-Quiz.pdf</span> 5ドメイン別の練習問題集（公式問題ではありません）— 解答は Exam Guide と照合済み</td></tr>
-                <tr><td>解答のコツ · 模試サイト · 申込手順</td><td><span class="src-tag exp">受験者の経験談</span></td></tr>
+                <tr><td>解答のコツ · 演習サイト · 申込手順</td><td><span class="src-tag exp">受験者の経験談</span></td></tr>
+                <tr><td>ステップ3 · 参考リソース</td><td><span class="src-tag">Anthropic 公式リソース一覧</span>（<a href="https://claudecertificationguide.com/resources" target="_blank" rel="noopener">claudecertificationguide.com/resources</a> より）</td></tr>
               </table>
             </div>
           </details>
         </div>
       </div>
 
-      <div class="eyebrow">シンプルな学習フロー</div>
+      <div class="eyebrow" data-toc="学習フロー">シンプルな学習フロー</div>
       <div class="roadmap">
         <ol class="roadmap-steps">
           <li><button class="roadmap-step" data-goto="start" data-scroll="overview">
@@ -1320,8 +1518,8 @@
             <div class="rs-go">ステップ2へ →</div>
           </button></li>
           <li><button class="roadmap-step" data-goto="practice" data-practice="mock">
-            <h3>模試で 800点以上</h3>
-            <p>3つの模試サイトから<strong>1つ</strong>を選ぶ。模試で<strong>800点超えを2回</strong>達成したら受験して OK（本番の合格点は 720）。</p>
+            <h3>本番レベルの演習で 800点以上</h3>
+            <p>合格率をいちばん左右する部分。本番形式の問題を繰り返し解き、<strong>800点超えを2回</strong>達成したら受験して OK（本番の合格点は 720）。</p>
             <div class="rs-meta">目標を達成するまで繰り返す</div>
             <div class="rs-go">ステップ3へ →</div>
           </button></li>
@@ -1334,7 +1532,7 @@
         </ol>
       </div>
 
-      <div class="eyebrow">いまどこまで進んだ？</div>
+      <div class="eyebrow" data-toc="進捗">いまどこまで進んだ？</div>
       <div class="readiness">
         <button class="rd-card" data-goto="learn">
           <div class="rd-label">ステップ2 · 理論</div>
@@ -1349,15 +1547,15 @@
           <div class="rd-hint">現在正解している問題の数</div>
         </button>
         <button class="rd-card" data-goto="practice" data-practice="mock">
-          <div class="rd-label">ステップ3 · 模試</div>
+          <div class="rd-label">ステップ3 · 本番演習</div>
           <div class="rd-value" id="rdMock">0/2</div>
           <div class="rd-track"><i id="rdMockBar"></i></div>
-          <div class="rd-hint">模試で 800点以上を取った回数 — 2回で受験 OK</div>
+          <div class="rd-hint">演習で 800点以上を取った回数 — 2回で受験 OK</div>
         </button>
       </div>
 
       <div class="prose" style="margin-bottom:18px;" id="overview">
-        <div class="eyebrow">試験について <span class="src-tag">Exam Guide §1</span></div>
+        <div class="eyebrow" data-toc="試験について">試験について <span class="src-tag">Exam Guide §1</span></div>
         <h2 class="section-title" style="font-size:20px;">この認定資格は何のため？</h2>
         <p class="lede">Claude Certified Architect – Foundations（試験コード <code>CCAR-F</code>）は、Claude を使って実際のシステムを作るときに、妥当な<em>トレードオフ</em>の判断ができることを証明する資格です — 理論の丸暗記ではありません。試験では、4つの主要な「武器」の基礎知識が問われます：<strong>Claude Code</strong>、<strong>Claude Agent SDK</strong>、<strong>Claude API</strong>、<strong>Model Context Protocol (MCP)</strong>。</p>
         <p>問題は知識をそのまま問うのではなく、現実的な状況をもとに作られています：カスタマーサポート用エージェントの構築、リサーチ用マルチエージェント・パイプラインの構築、Claude Code の CI/CD への組み込み、開発者向け生産性ツールの作成、雑多なドキュメントからの構造化データ抽出など。理論に加えて、アーキテクチャの「センス」、適切な場所での設定、本番運用でのトレードオフの理解も求められます。</p>
@@ -1380,7 +1578,7 @@
 
       <div class="overview-grid">
         <div>
-          <div class="eyebrow">試験概要 <span class="src-tag">Exam Guide §3</span></div>
+          <div class="eyebrow" data-toc="試験概要">試験概要 <span class="src-tag">Exam Guide §3</span></div>
           <div class="table-wrap">
             <table>
               <tr><th>試験コード</th><td>CCAR-F</td></tr>
@@ -1396,7 +1594,7 @@
           </div>
         </div>
         <div>
-          <div class="eyebrow">Blueprint — 5ドメインの配点比率 <span class="src-tag">Exam Guide §4</span></div>
+          <div class="eyebrow" data-toc="Blueprint">Blueprint — 5ドメインの配点比率 <span class="src-tag">Exam Guide §4</span></div>
           <div class="card">
             <div class="weight-row">
               <span class="weight-label">D1 · Agentic Architecture &amp; Orchestration</span>
@@ -1428,7 +1626,7 @@
         </div>
       </div>
 
-      <div class="eyebrow" id="scenarios">6つのシナリオ — 本番ではランダムに 4/6 <span class="src-tag">Exam Guide §5</span></div>
+      <div class="eyebrow" data-toc="シナリオ" id="scenarios">6つのシナリオ — 本番ではランダムに 4/6 <span class="src-tag">Exam Guide §5</span></div>
       <p class="section-sub">受験のたびに、以下の6つから<strong>ランダムに4つ</strong>のシナリオが問題の背景として選ばれます。どれが外れるかは予測できないので、6つすべてをしっかり読んでおきましょう。</p>
       <div class="scenario-grid">
         <div class="scenario-card">
@@ -1469,7 +1667,7 @@
         </div>
       </div>
 
-      <div class="eyebrow">出題範囲 — 学ぶもの・捨てるもの <span class="src-tag">Exam Guide §17</span></div>
+      <div class="eyebrow" data-toc="出題範囲">出題範囲 — 学ぶもの・捨てるもの <span class="src-tag">Exam Guide §17</span></div>
       <div class="grid-2 scope-grid">
         <div class="rules-card">
           <h3>📚 出題されうる技術</h3>
@@ -1532,55 +1730,11 @@
       <div class="panel-head">
         <div class="step-badge">ステップ2 · メインコンテンツ</div>
         <h1 class="section-title">5つのドメインを学ぶ</h1>
-        <p class="section-sub">下から<strong>ドメインを1つ</strong>選び、3つの段階で学びます：<strong>チェックリスト</strong>で何が問われるかを把握 → <strong>深掘り</strong>で「なぜ」を理解 → そのドメインの<strong>クイズ</strong>で理解度をチェック。1つ終えてから次のドメインへ — 最も比重の大きい D1（27%）から始めましょう。</p>
+        <p class="section-sub">左の目次から<strong>ドメインを1つ</strong>（D1 → D5）選び、そのドメインの理論を読み切ってから<strong>クイズ</strong>で理解度を確かめます。1つ終えてから次のドメインへ — 最も比重の大きい D1（27%）から始めましょう。<strong>チェックリスト</strong>は目次に独立した項目としてあり、5ドメイン分をまとめて確認できます。30の Task Statement を押さえたか確認するためのものです。</p>
       </div>
 
-      <!-- One picker drives both study modes. Previously the same domain lived in
-           two separate tabs with two different navigators, which is what made
-           people lose track of where they were. -->
-      <nav class="domain-picker" id="domainPicker" role="tablist" aria-label="ドメインを選択">
-        <button class="dp-btn" role="tab" data-domain="1" aria-selected="true">
-          <span class="dp-top"><span class="dp-code">D1</span><span class="dp-weight">27%</span></span>
-          <span class="dp-name">Agentic Architecture &amp; Orchestration</span>
-          <span class="dp-bar"><i></i></span>
-          <span class="dp-meta"><span data-dp-count="1">0/7</span> 項目</span>
-        </button>
-        <button class="dp-btn" role="tab" data-domain="2" aria-selected="false" tabindex="-1">
-          <span class="dp-top"><span class="dp-code">D2</span><span class="dp-weight">18%</span></span>
-          <span class="dp-name">Tool Design &amp; MCP Integration</span>
-          <span class="dp-bar"><i></i></span>
-          <span class="dp-meta"><span data-dp-count="2">0/5</span> 項目</span>
-        </button>
-        <button class="dp-btn" role="tab" data-domain="3" aria-selected="false" tabindex="-1">
-          <span class="dp-top"><span class="dp-code">D3</span><span class="dp-weight">20%</span></span>
-          <span class="dp-name">Claude Code Config &amp; Workflows</span>
-          <span class="dp-bar"><i></i></span>
-          <span class="dp-meta"><span data-dp-count="3">0/6</span> 項目</span>
-        </button>
-        <button class="dp-btn" role="tab" data-domain="4" aria-selected="false" tabindex="-1">
-          <span class="dp-top"><span class="dp-code">D4</span><span class="dp-weight">20%</span></span>
-          <span class="dp-name">Prompt Engineering &amp; Structured Output</span>
-          <span class="dp-bar"><i></i></span>
-          <span class="dp-meta"><span data-dp-count="4">0/6</span> 項目</span>
-        </button>
-        <button class="dp-btn" role="tab" data-domain="5" aria-selected="false" tabindex="-1">
-          <span class="dp-top"><span class="dp-code">D5</span><span class="dp-weight">15%</span></span>
-          <span class="dp-name">Context Management &amp; Reliability</span>
-          <span class="dp-bar"><i></i></span>
-          <span class="dp-meta"><span data-dp-count="5">0/6</span> 項目</span>
-        </button>
-      </nav>
-
-      <div class="learn-toolbar">
-        <div class="mode-switch" id="modeSwitch" role="tablist" aria-label="学習モード">
-        <button class="mode-btn" role="tab" data-mode="checklist" aria-selected="true">📋 チェックリスト<small>何が問われるか — 先に読む</small></button>
-        <button class="mode-btn" role="tab" data-mode="deep" aria-selected="false" tabindex="-1">📖 深掘り<small>「なぜ」を理解 — 後で読む</small></button>
-        </div>
-        <button type="button" class="btn btn-primary mode-quiz" id="modeQuizBtn">❓ クイズ D1<small>22問 · 読んだ後に解く</small></button>
-      </div>
-
-      <div class="learn-mode active" id="mode-checklist">
-        <div class="mode-hint"><span>📋</span><span>各 Task Statement は<strong>押さえるべき知識</strong>（理論）と<strong>できるべきこと</strong>（試験で問われるスキル）の2つで構成されています。理解できたら見出しをクリックして ✓ を付けましょう — 進捗はお使いのブラウザに自動で保存されます。</span></div>
+      <div class="learn-mode" id="mode-checklist">
+        <div class="mode-hint"><span>📋</span><span>各 Task Statement は<strong>押さえるべき知識</strong>（理論）と<strong>できるべきこと</strong>（試験で問われるスキル）の2つで構成されており、どちらも最初から表示されています。チェックボックスをクリックすると ✓ が付きます — 進捗はお使いのブラウザに自動で保存されます。</span></div>
       <!-- ===== DOMAIN 1 ===== -->
       <div id="domain-1" class="domain-panel active">
         <div class="domain-intro">
@@ -1588,11 +1742,11 @@
           <p>試験で最も比重の大きいパートです（27%）。基本の考え方：エージェントは <code>stop_reason</code> を見て自分で判断する、coordinator は subagent 同士をつなぐ唯一の「中継役」である、そして100%確実でなければならない箇所では、プロンプトに頼らず必ず hook や前提条件のチェック（prerequisite）を使う。</p>
         </div>
 
-        <div class="task-card" data-domain="1">
-          <div class="task-head">
+        <details class="task-card" data-domain="1" open>
+          <summary><div class="task-head">
             <input type="checkbox" class="task-check" id="t-1-1">
             <div class="task-head-text"><div class="task-id">Task Statement 1.1</div><div class="task-title">タスクを自律的に進める agentic loop の設計と実装</div></div>
-          </div>
+          </div></summary>
           <div class="task-body">
             <div class="task-col"><div class="task-col-label">📚 押さえるべき知識</div><ul>
               <li>基本の agentic loop：Claude にリクエストを送る → <code>stop_reason</code> が <code>"tool_use"</code> か <code>"end_turn"</code> かを確認 → 要求されたツールを実行 → 結果を次のループに渡す</li>
@@ -1605,13 +1759,13 @@
               <li>アンチパターンを避ける：自然言語の応答を解析してループの終了を推測する、固定のループ回数上限を主な停止手段にする、「テキストの回答が含まれている」ことを完了とみなす — どれも誤り</li>
             </ul></div>
           </div>
-        </div>
+        </details>
 
-        <div class="task-card" data-domain="1">
-          <div class="task-head">
+        <details class="task-card" data-domain="1" open>
+          <summary><div class="task-head">
             <input type="checkbox" class="task-check" id="t-1-2">
             <div class="task-head-text"><div class="task-id">Task Statement 1.2</div><div class="task-title">coordinator–subagent パターンによるマルチエージェントの取りまとめ（orchestration）</div></div>
-          </div>
+          </div></summary>
           <div class="task-body">
             <div class="task-col"><div class="task-col-label">📚 押さえるべき知識</div><ul>
               <li>hub-and-spoke 型のアーキテクチャ：coordinator が中心となり、subagent 間のすべてのやり取り、エラー処理、情報の受け渡しを管理する</li>
@@ -1626,13 +1780,13 @@
               <li>subagent 間のやり取りはすべて coordinator を経由させる — 追跡しやすく、エラー処理を統一でき、情報の流れを管理できる</li>
             </ul></div>
           </div>
-        </div>
+        </details>
 
-        <div class="task-card" data-domain="1">
-          <div class="task-head">
+        <details class="task-card" data-domain="1" open>
+          <summary><div class="task-head">
             <input type="checkbox" class="task-check" id="t-1-3">
             <div class="task-head-text"><div class="task-id">Task Statement 1.3</div><div class="task-title">subagent の呼び出し・コンテキストの受け渡し・起動（spawn）の設定</div></div>
-          </div>
+          </div></summary>
           <div class="task-body">
             <div class="task-col"><div class="task-col-label">📚 押さえるべき知識</div><ul>
               <li><code>Task</code> ツールが subagent を起動（spawn）する仕組み — coordinator の <code>allowedTools</code> に <code>"Task"</code> が含まれていないと subagent を呼べない</li>
@@ -1647,13 +1801,13 @@
               <li>coordinator のプロンプトは、機械的な手順の指示ではなく「目標 + 品質の基準」の形で書く — subagent が状況に合わせて柔軟に動けるように</li>
             </ul></div>
           </div>
-        </div>
+        </details>
 
-        <div class="task-card" data-domain="1">
-          <div class="task-head">
+        <details class="task-card" data-domain="1" open>
+          <summary><div class="task-head">
             <input type="checkbox" class="task-check" id="t-1-4">
             <div class="task-head-text"><div class="task-id">Task Statement 1.4</div><div class="task-title">複数ステップのワークフロー：いつ強制し、いつ人に引き継ぐか</div></div>
-          </div>
+          </div></summary>
           <div class="task-body">
             <div class="task-col"><div class="task-col-label">📚 押さえるべき知識</div><ul>
               <li>ワークフローの順序を守らせる方法として、コードによる強制（hooks、前提条件のゲート）と、プロンプトでの指示だけに頼る方法はまったく別物</li>
@@ -1666,13 +1820,13 @@
               <li>人に引き継ぐときは、構造化された引き継ぎサマリー（顧客 ID、根本原因、返金額、推奨する対応）を作る — 担当者は会話ログ（transcript）を読めないため</li>
             </ul></div>
           </div>
-        </div>
+        </details>
 
-        <div class="task-card" data-domain="1">
-          <div class="task-head">
+        <details class="task-card" data-domain="1" open>
+          <summary><div class="task-head">
             <input type="checkbox" class="task-check" id="t-1-5">
             <div class="task-head-text"><div class="task-id">Task Statement 1.5</div><div class="task-title">Agent SDK の hooks でツール呼び出しを制御し、データを正規化する</div></div>
-          </div>
+          </div></summary>
           <div class="task-body">
             <div class="task-col"><div class="task-col-label">📚 押さえるべき知識</div><ul>
               <li><code>PostToolUse</code> hook はツールの結果を途中で受け取り（intercept）、モデルが処理する前に変換する</li>
@@ -1685,13 +1839,13 @@
               <li>業務ルールを絶対に守らせる必要があるときは、プロンプトではなく hook を選べる</li>
             </ul></div>
           </div>
-        </div>
+        </details>
 
-        <div class="task-card" data-domain="1">
-          <div class="task-head">
+        <details class="task-card" data-domain="1" open>
+          <summary><div class="task-head">
             <input type="checkbox" class="task-check" id="t-1-6">
             <div class="task-head-text"><div class="task-id">Task Statement 1.6</div><div class="task-title">複雑なワークフローのためのタスク分解（task decomposition）戦略の設計</div></div>
-          </div>
+          </div></summary>
           <div class="task-body">
             <div class="task-col"><div class="task-col-label">📚 押さえるべき知識</div><ul>
               <li>順番の決まったパイプライン（prompt chaining）を使うべき場面と、途中の結果に応じて柔軟に分解する方法を使うべき場面</li>
@@ -1704,13 +1858,13 @@
               <li>答えの決まっていないタスク（例：「レガシーなコードベースに十分なテストを追加する」）では、まず全体の構造を把握し、優先度の高い領域を特定し、順序立てた計画を作り、新しい依存関係が見つかったら計画を見直す</li>
             </ul></div>
           </div>
-        </div>
+        </details>
 
-        <div class="task-card" data-domain="1">
-          <div class="task-head">
+        <details class="task-card" data-domain="1" open>
+          <summary><div class="task-head">
             <input type="checkbox" class="task-check" id="t-1-7">
             <div class="task-head-text"><div class="task-id">Task Statement 1.7</div><div class="task-title">セッションの状態・再開（resume）・分岐（fork）の管理</div></div>
-          </div>
+          </div></summary>
           <div class="task-body">
             <div class="task-col"><div class="task-col-label">📚 押さえるべき知識</div><ul>
               <li><code>--resume &lt;session-name&gt;</code> で名前付きのセッションを再開し、以前の会話をそのまま続ける</li>
@@ -1725,7 +1879,7 @@
               <li>再開するときは、変更された特定のファイルだけをエージェントに伝えて該当箇所を再分析させる — 最初から探索し直させない</li>
             </ul></div>
           </div>
-        </div>
+        </details>
 
       </div>
       <!-- ===== /DOMAIN 1 ===== -->
@@ -1737,11 +1891,11 @@
           <p>要点：ツールの説明文（description）は、LLM が正しいツールを選ぶための拠り所です — 雑な説明文だと選択を誤ります。さらに、エラー応答は構造化する、ツールは役割に応じて割り当てる（1つのエージェントに18個も詰め込まない）、MCP サーバーを正しいスコープで設定する、の3点も重要です。</p>
         </div>
 
-        <div class="task-card" data-domain="2">
-          <div class="task-head">
+        <details class="task-card" data-domain="2" open>
+          <summary><div class="task-head">
             <input type="checkbox" class="task-check" id="t-2-1">
             <div class="task-head-text"><div class="task-id">Task Statement 2.1</div><div class="task-title">明確で境界のはっきりしたツールインターフェースの設計</div></div>
-          </div>
+          </div></summary>
           <div class="task-body">
             <div class="task-col"><div class="task-col-label">📚 押さえるべき知識</div><ul>
               <li>ツールの説明文（description）は、LLM がツールを選ぶ主な手がかり — 雑な説明文だと、似たツールの間で選択がぶれる</li>
@@ -1756,13 +1910,13 @@
               <li>システムプロンプト内のキーワードが、せっかく丁寧に書いたツールの説明文をうっかり「上書き」していないか見直す</li>
             </ul></div>
           </div>
-        </div>
+        </details>
 
-        <div class="task-card" data-domain="2">
-          <div class="task-head">
+        <details class="task-card" data-domain="2" open>
+          <summary><div class="task-head">
             <input type="checkbox" class="task-check" id="t-2-2">
             <div class="task-head-text"><div class="task-id">Task Statement 2.2</div><div class="task-title">MCP ツールの構造化されたエラー応答の設計</div></div>
-          </div>
+          </div></summary>
           <div class="task-body">
             <div class="task-col"><div class="task-col-label">📚 押さえるべき知識</div><ul>
               <li>ツールのエラーをエージェントに伝える、MCP の <code>isError</code> フラグの仕組み</li>
@@ -1777,13 +1931,13 @@
               <li>区別する：本当のアクセスエラー（リトライするかの判断が必要）と、正常な空の結果（検索は成功したが該当なし）は別物</li>
             </ul></div>
           </div>
-        </div>
+        </details>
 
-        <div class="task-card" data-domain="2">
-          <div class="task-head">
+        <details class="task-card" data-domain="2" open>
+          <summary><div class="task-head">
             <input type="checkbox" class="task-check" id="t-2-3">
             <div class="task-head-text"><div class="task-id">Task Statement 2.3</div><div class="task-title">役割に応じたツールの割り当てと tool_choice の設定</div></div>
-          </div>
+          </div></summary>
           <div class="task-body">
             <div class="task-col"><div class="task-col-label">📚 押さえるべき知識</div><ul>
               <li>エージェントにツールを与えすぎる（例：4〜5個ではなく18個）と、選択肢が増えて判断が複雑になり、ツール選択の信頼性が下がる</li>
@@ -1799,13 +1953,13 @@
               <li><code>tool_choice: "any"</code> を設定して、モデルがテキストだけで答えずに必ずツールを呼ぶようにする</li>
             </ul></div>
           </div>
-        </div>
+        </details>
 
-        <div class="task-card" data-domain="2">
-          <div class="task-head">
+        <details class="task-card" data-domain="2" open>
+          <summary><div class="task-head">
             <input type="checkbox" class="task-check" id="t-2-4">
             <div class="task-head-text"><div class="task-id">Task Statement 2.4</div><div class="task-title">MCP サーバーを Claude Code とエージェントのワークフローに組み込む</div></div>
-          </div>
+          </div></summary>
           <div class="task-body">
             <div class="task-col"><div class="task-col-label">📚 押さえるべき知識</div><ul>
               <li>MCP サーバーのスコープ：チームで共有するツールはプロジェクト単位（<code>.mcp.json</code>）、個人用・お試し用のサーバーはユーザー単位（<code>~/.claude.json</code>）</li>
@@ -1821,13 +1975,13 @@
               <li>コンテンツの一覧を MCP リソースとして公開し、エージェントがツール呼び出しで探さなくても、使えるデータが「見える」ようにする</li>
             </ul></div>
           </div>
-        </div>
+        </details>
 
-        <div class="task-card" data-domain="2">
-          <div class="task-head">
+        <details class="task-card" data-domain="2" open>
+          <summary><div class="task-head">
             <input type="checkbox" class="task-check" id="t-2-5">
             <div class="task-head-text"><div class="task-id">Task Statement 2.5</div><div class="task-title">組み込みツール（Read、Write、Edit、Bash、Grep、Glob）の使い分け</div></div>
-          </div>
+          </div></summary>
           <div class="task-body">
             <div class="task-col"><div class="task-col-label">📚 押さえるべき知識</div><ul>
               <li><code>Grep</code> = ファイルの中身を検索（関数名、エラーメッセージ、import 文など）</li>
@@ -1843,7 +1997,7 @@
               <li>ラッパーモジュールを経由した関数の使用箇所を追う：まず export されている名前をすべて洗い出し、それぞれの名前でコードベース全体を検索する</li>
             </ul></div>
           </div>
-        </div>
+        </details>
 
       </div>
       <!-- ===== /DOMAIN 2 ===== -->
@@ -1855,11 +2009,11 @@
           <p>要点：<code>CLAUDE.md</code> の階層構造をしっかり理解すること、plan mode と直接実行（direct execution）の使い分けを知ること、そしてパイプラインを入力待ちで止めずに Claude Code を CI/CD に組み込む方法。</p>
         </div>
 
-        <div class="task-card" data-domain="3">
-          <div class="task-head">
+        <details class="task-card" data-domain="3" open>
+          <summary><div class="task-head">
             <input type="checkbox" class="task-check" id="t-3-1">
             <div class="task-head-text"><div class="task-id">Task Statement 3.1</div><div class="task-title"><code>CLAUDE.md</code> を正しい階層・スコープで設定し、適切にファイルを分割する</div></div>
-          </div>
+          </div></summary>
           <div class="task-body">
             <div class="task-col"><div class="task-col-label">📚 押さえるべき知識</div><ul>
               <li><code>CLAUDE.md</code> の3つの階層：ユーザー単位（<code>~/.claude/CLAUDE.md</code>）、プロジェクト単位（<code>.claude/CLAUDE.md</code> またはルートの <code>CLAUDE.md</code>）、ディレクトリ単位（各サブフォルダ内のファイル）</li>
@@ -1874,13 +2028,13 @@
               <li><code>/memory</code> コマンドで、どのメモリファイルが読み込まれているかを確認する — セッションによって挙動が違うときに役立つ</li>
             </ul></div>
           </div>
-        </div>
+        </details>
 
-        <div class="task-card" data-domain="3">
-          <div class="task-head">
+        <details class="task-card" data-domain="3" open>
+          <summary><div class="task-head">
             <input type="checkbox" class="task-check" id="t-3-2">
             <div class="task-head-text"><div class="task-id">Task Statement 3.2</div><div class="task-title">カスタムのスラッシュコマンドと skill の作成・設定</div></div>
-          </div>
+          </div></summary>
           <div class="task-body">
             <div class="task-col"><div class="task-col-label">📚 押さえるべき知識</div><ul>
               <li>プロジェクト単位のコマンドは <code>.claude/commands/</code>（バージョン管理で共有）、ユーザー単位のコマンドは <code>~/.claude/commands/</code>（個人用）</li>
@@ -1896,13 +2050,13 @@
               <li>skill（必要なときに呼び出す、個別のワークフロー向け）と <code>CLAUDE.md</code>（常に読み込まれる、プロジェクト共通の規約向け）を使い分けられる</li>
             </ul></div>
           </div>
-        </div>
+        </details>
 
-        <div class="task-card" data-domain="3">
-          <div class="task-head">
+        <details class="task-card" data-domain="3" open>
+          <summary><div class="task-head">
             <input type="checkbox" class="task-check" id="t-3-3">
             <div class="task-head-text"><div class="task-id">Task Statement 3.3</div><div class="task-title">パス指定のルール（path-specific rules）で規約を条件付きで読み込む</div></div>
-          </div>
+          </div></summary>
           <div class="task-body">
             <div class="task-col"><div class="task-col-label">📚 押さえるべき知識</div><ul>
               <li><code>.claude/rules/</code> 内のファイルは、YAML frontmatter の <code>paths</code> フィールドに glob パターンを書くことで、ルールを条件付きで有効にできる</li>
@@ -1915,13 +2069,13 @@
               <li>コードベース全体に散らばったファイルに規約を適用したいときは、サブディレクトリの <code>CLAUDE.md</code> ではなく、パス指定のルールを選ぶ</li>
             </ul></div>
           </div>
-        </div>
+        </details>
 
-        <div class="task-card" data-domain="3">
-          <div class="task-head">
+        <details class="task-card" data-domain="3" open>
+          <summary><div class="task-head">
             <input type="checkbox" class="task-check" id="t-3-4">
             <div class="task-head-text"><div class="task-id">Task Statement 3.4</div><div class="task-title">plan mode と直接実行（direct execution）の使い分け</div></div>
-          </div>
+          </div></summary>
           <div class="task-body">
             <div class="task-col"><div class="task-col-label">📚 押さえるべき知識</div><ul>
               <li>plan mode は複雑なタスク向け：大規模な変更、妥当なアプローチが複数ある、アーキテクチャの判断が必要、多数のファイルを修正する</li>
@@ -1936,13 +2090,13 @@
               <li>組み合わせる：plan mode で調査し、立てた計画に沿って直接実行で実装する（例：ライブラリの移行を計画してから実行する）</li>
             </ul></div>
           </div>
-        </div>
+        </details>
 
-        <div class="task-card" data-domain="3">
-          <div class="task-head">
+        <details class="task-card" data-domain="3" open>
+          <summary><div class="task-head">
             <input type="checkbox" class="task-check" id="t-3-5">
             <div class="task-head-text"><div class="task-id">Task Statement 3.5</div><div class="task-title">反復的な改善（iterative refinement）で少しずつ良くしていく</div></div>
-          </div>
+          </div></summary>
           <div class="task-body">
             <div class="task-col"><div class="task-col-label">📚 押さえるべき知識</div><ul>
               <li>言葉での説明が人によって違う意味に取られるとき、具体的な入力/出力の例は、期待する変換を伝える最も効果的な方法</li>
@@ -1958,13 +2112,13 @@
               <li>互いに影響し合う複数の問題は1つの詳しいメッセージにまとめ、独立した問題は1つずつ順に直す</li>
             </ul></div>
           </div>
-        </div>
+        </details>
 
-        <div class="task-card" data-domain="3">
-          <div class="task-head">
+        <details class="task-card" data-domain="3" open>
+          <summary><div class="task-head">
             <input type="checkbox" class="task-check" id="t-3-6">
             <div class="task-head-text"><div class="task-id">Task Statement 3.6</div><div class="task-title">Claude Code を CI/CD パイプラインに組み込む</div></div>
-          </div>
+          </div></summary>
           <div class="task-body">
             <div class="task-col"><div class="task-col-label">📚 押さえるべき知識</div><ul>
               <li><code>-p</code>（または <code>--print</code>）フラグで、自動化パイプラインの中で Claude Code を非対話モード（non-interactive）で実行する</li>
@@ -1980,7 +2134,7 @@
               <li>テストの規約、価値のあるテストの基準、利用できる fixture を <code>CLAUDE.md</code> に明記し、生成されるテストの質を上げて、意味の薄いテストを減らす</li>
             </ul></div>
           </div>
-        </div>
+        </details>
 
       </div>
       <!-- ===== /DOMAIN 3 ===== -->
@@ -1992,11 +2146,11 @@
           <p>要点：基準が具体的なほど誤検知（false positive）は減る（「注意して」と言うだけでは効果がない）、few-shot は出力を安定させる最強の武器、そして <code>tool_use</code> + JSON schema が構造化出力（structured output）を強制する最も確実な方法。</p>
         </div>
 
-        <div class="task-card" data-domain="4">
-          <div class="task-head">
+        <details class="task-card" data-domain="4" open>
+          <summary><div class="task-head">
             <input type="checkbox" class="task-check" id="t-4-1">
             <div class="task-head-text"><div class="task-id">Task Statement 4.1</div><div class="task-title">明確な基準を持つプロンプトを設計し、精度を上げて誤検知（false positive）を減らす</div></div>
-          </div>
+          </div></summary>
           <div class="task-body">
             <div class="task-col"><div class="task-col-label">📚 押さえるべき知識</div><ul>
               <li>具体的な基準は、あいまいな指示に必ず勝る（例：「コメントが説明する動作が実際のコードと矛盾する場合だけ指摘する」は、「コメントが正しいかチェックして」よりはるかに良い）</li>
@@ -2009,13 +2163,13 @@
               <li>重大度（severity）の基準を、レベルごとの具体的なコード例とともに明確に定義し、分類がぶれないようにする</li>
             </ul></div>
           </div>
-        </div>
+        </details>
 
-        <div class="task-card" data-domain="4">
-          <div class="task-head">
+        <details class="task-card" data-domain="4" open>
+          <summary><div class="task-head">
             <input type="checkbox" class="task-check" id="t-4-2">
             <div class="task-head-text"><div class="task-id">Task Statement 4.2</div><div class="task-title">few-shot prompting で出力の一貫性と品質を上げる</div></div>
-          </div>
+          </div></summary>
           <div class="task-body">
             <div class="task-col"><div class="task-col-label">📚 押さえるべき知識</div><ul>
               <li>文章での詳しい指示だけでは結果が安定しないとき、few-shot の例（入出力の見本）は、正しい形式・正しい振る舞いの出力を得る最も効果的な手法</li>
@@ -2031,13 +2185,13 @@
               <li>形式の異なるドキュメントから正しく抽出する例を追加し、必須フィールドが空（null）のまま抽出される問題に対処する</li>
             </ul></div>
           </div>
-        </div>
+        </details>
 
-        <div class="task-card" data-domain="4">
-          <div class="task-head">
+        <details class="task-card" data-domain="4" open>
+          <summary><div class="task-head">
             <input type="checkbox" class="task-check" id="t-4-3">
             <div class="task-head-text"><div class="task-id">Task Statement 4.3</div><div class="task-title">tool use と JSON schema で構造化出力を強制する</div></div>
-          </div>
+          </div></summary>
           <div class="task-body">
             <div class="task-col"><div class="task-col-label">📚 押さえるべき知識</div><ul>
               <li>JSON schema 付きの <code>tool_use</code> は、スキーマに沿った出力を得る最も確実な方法で、JSON の構文エラーを完全になくせる</li>
@@ -2054,13 +2208,13 @@
               <li>厳格な出力スキーマと合わせて、形式をそろえるルールをプロンプトに書き、元データの形式のばらつきに対処する</li>
             </ul></div>
           </div>
-        </div>
+        </details>
 
-        <div class="task-card" data-domain="4">
-          <div class="task-head">
+        <details class="task-card" data-domain="4" open>
+          <summary><div class="task-head">
             <input type="checkbox" class="task-check" id="t-4-4">
             <div class="task-head-text"><div class="task-id">Task Statement 4.4</div><div class="task-title">検証・リトライ・フィードバックの仕組みで抽出の品質を上げる</div></div>
-          </div>
+          </div></summary>
           <div class="task-body">
             <div class="task-col"><div class="task-col-label">📚 押さえるべき知識</div><ul>
               <li>エラー内容を伝えるリトライ：リトライするときに具体的な検証エラーをプロンプトに入れ、モデルが正しい方向に自己修正できるようにする</li>
@@ -2075,13 +2229,13 @@
               <li>自己修正の流れを設計する：<code>calculated_total</code>（計算した合計）と <code>stated_total</code>（記載された合計）の両方を抽出して数値のズレを見つけ、元データが矛盾しているときは真偽値の <code>conflict_detected</code> を立てる</li>
             </ul></div>
           </div>
-        </div>
+        </details>
 
-        <div class="task-card" data-domain="4">
-          <div class="task-head">
+        <details class="task-card" data-domain="4" open>
+          <summary><div class="task-head">
             <input type="checkbox" class="task-check" id="t-4-5">
             <div class="task-head-text"><div class="task-id">Task Statement 4.5</div><div class="task-title">効率的なバッチ処理（batch processing）戦略の設計</div></div>
-          </div>
+          </div></summary>
           <div class="task-body">
             <div class="task-col"><div class="task-col-label">📚 押さえるべき知識</div><ul>
               <li>Message Batches API：コストは 50%削減、処理は最大24時間以内、応答時間（レイテンシ）の保証（SLA）は<em>なし</em></li>
@@ -2096,13 +2250,13 @@
               <li>大量のバッチを流す前に、小さなサンプルでプロンプトを調整し、1回目の成功率を上げて再送のコストを減らす</li>
             </ul></div>
           </div>
-        </div>
+        </details>
 
-        <div class="task-card" data-domain="4">
-          <div class="task-head">
+        <details class="task-card" data-domain="4" open>
+          <summary><div class="task-head">
             <input type="checkbox" class="task-check" id="t-4-6">
             <div class="task-head-text"><div class="task-id">Task Statement 4.6</div><div class="task-title">複数インスタンス・複数パスのレビュー構成の設計</div></div>
-          </div>
+          </div></summary>
           <div class="task-body">
             <div class="task-col"><div class="task-col-label">📚 押さえるべき知識</div><ul>
               <li>自己レビューの限界：モデルは生成したときの「考えの流れ」をそのまま持っているので、同じセッションの中では自分の判断を疑いにくい</li>
@@ -2115,7 +2269,7 @@
               <li>モデルが各指摘に確信度を付ける確認用のパスを実行し、確信度に応じてレビューの振り分けを変える</li>
             </ul></div>
           </div>
-        </div>
+        </details>
 
       </div>
       <!-- ===== /DOMAIN 4 ===== -->
@@ -2127,11 +2281,11 @@
           <p>要点：要約の過程で重要な数値を失わないこと、「lost in the middle」効果を理解すること、人に引き継ぐ（エスカレーションする）べきタイミングを知ること、そして複数の情報源を統合するときに情報の出所（provenance）を保つこと。</p>
         </div>
 
-        <div class="task-card" data-domain="5">
-          <div class="task-head">
+        <details class="task-card" data-domain="5" open>
+          <summary><div class="task-head">
             <input type="checkbox" class="task-check" id="t-5-1">
             <div class="task-head-text"><div class="task-id">Task Statement 5.1</div><div class="task-title">長いやり取りでも重要な情報を失わないための会話コンテキストの管理</div></div>
-          </div>
+          </div></summary>
           <div class="task-body">
             <div class="task-col"><div class="task-col-label">📚 押さえるべき知識</div><ul>
               <li>段階的な要約（progressive summarization）のリスク：数値、パーセンテージ、日付、顧客の要望が、あいまいな要約に丸められてしまう</li>
@@ -2148,13 +2302,13 @@
               <li>後続のエージェントが使えるコンテキストに限りがあるときは、前段のエージェントを修正し、長い文章や推論の過程ではなく構造化データ（主な事実、引用、関連ポイント）を返させる</li>
             </ul></div>
           </div>
-        </div>
+        </details>
 
-        <div class="task-card" data-domain="5">
-          <div class="task-head">
+        <details class="task-card" data-domain="5" open>
+          <summary><div class="task-head">
             <input type="checkbox" class="task-check" id="t-5-2">
             <div class="task-head-text"><div class="task-id">Task Statement 5.2</div><div class="task-title">効果的なエスカレーション（人への引き継ぎ）と、あいまいさへの対処の設計</div></div>
-          </div>
+          </div></summary>
           <div class="task-body">
             <div class="task-col"><div class="task-col-label">📚 押さえるべき知識</div><ul>
               <li>エスカレーションすべき妥当なきっかけ：顧客が人の対応を求めている、ポリシーに例外や想定外の穴がある（ケースが複雑というだけではない）、エージェントが行き詰まって前に進めない</li>
@@ -2170,13 +2324,13 @@
               <li>ツールが複数の一致結果を返したら、経験則で選ばずに、本人を特定する情報を追加で尋ねるようエージェントに指示する</li>
             </ul></div>
           </div>
-        </div>
+        </details>
 
-        <div class="task-card" data-domain="5">
-          <div class="task-head">
+        <details class="task-card" data-domain="5" open>
+          <summary><div class="task-head">
             <input type="checkbox" class="task-check" id="t-5-3">
             <div class="task-head-text"><div class="task-id">Task Statement 5.3</div><div class="task-title">マルチエージェントシステムでのエラーの伝え方（error propagation）の実装</div></div>
-          </div>
+          </div></summary>
           <div class="task-body">
             <div class="task-col"><div class="task-col-label">📚 押さえるべき知識</div><ul>
               <li>構造化されたエラー情報（エラーの種類、試したクエリ、途中までの結果、代わりの手段）があれば、coordinator は賢く復旧の判断ができる</li>
@@ -2191,13 +2345,13 @@
               <li>統合結果にカバー範囲の注記を付け、しっかり裏付けのある発見と、情報源にアクセスできずに抜けている領域を明示する</li>
             </ul></div>
           </div>
-        </div>
+        </details>
 
-        <div class="task-card" data-domain="5">
-          <div class="task-head">
+        <details class="task-card" data-domain="5" open>
+          <summary><div class="task-head">
             <input type="checkbox" class="task-check" id="t-5-4">
             <div class="task-head-text"><div class="task-id">Task Statement 5.4</div><div class="task-title">大規模なコードベースを探索するときの効率的なコンテキスト管理</div></div>
-          </div>
+          </div></summary>
           <div class="task-body">
             <div class="task-col"><div class="task-col-label">📚 押さえるべき知識</div><ul>
               <li>長いセッションでのコンテキストの劣化：モデルの回答がぶれ始め、以前に見つけた具体的なクラス名ではなく、「よくあるパターン」のような一般論を言い始める</li>
@@ -2213,13 +2367,13 @@
               <li>長い探索の出力でコンテキストがいっぱいになった長時間のセッションでは、<code>/compact</code> でコンテキストを圧縮する</li>
             </ul></div>
           </div>
-        </div>
+        </details>
 
-        <div class="task-card" data-domain="5">
-          <div class="task-head">
+        <details class="task-card" data-domain="5" open>
+          <summary><div class="task-head">
             <input type="checkbox" class="task-check" id="t-5-5">
             <div class="task-head-text"><div class="task-id">Task Statement 5.5</div><div class="task-title">人によるレビューの流れと、確信度の較正（confidence calibration）の設計</div></div>
-          </div>
+          </div></summary>
           <div class="task-body">
             <div class="task-col"><div class="task-col-label">📚 押さえるべき知識</div><ul>
               <li>全体の正答率（例：全体で97%）は、特定のドキュメントの種類やフィールドでの低い性能を隠してしまうことがある</li>
@@ -2234,13 +2388,13 @@
               <li>確信度の低い抽出結果や、元のドキュメントがあいまい・矛盾している抽出結果を人のレビューに回し、限られたレビュー担当者の時間を優先的に使う</li>
             </ul></div>
           </div>
-        </div>
+        </details>
 
-        <div class="task-card" data-domain="5">
-          <div class="task-head">
+        <details class="task-card" data-domain="5" open>
+          <summary><div class="task-head">
             <input type="checkbox" class="task-check" id="t-5-6">
             <div class="task-head-text"><div class="task-id">Task Statement 5.6</div><div class="task-title">情報の出所（provenance）の保持と、複数の情報源を統合するときの不確かさへの対処</div></div>
-          </div>
+          </div></summary>
           <div class="task-body">
             <div class="task-col"><div class="task-col-label">📚 押さえるべき知識</div><ul>
               <li>主張（claim）と出典の対応を残さずに調査結果を要約すると、出典情報（attribution）が失われやすい</li>
@@ -2256,26 +2410,24 @@
               <li>統合結果では、内容の種類に合った形で表示する — 財務データは表、ニュースは文章、技術的な発見は構造化されたリスト — すべてを1つの形式に押し込めない</li>
             </ul></div>
           </div>
-        </div>
+        </details>
 
       </div>
       <!-- ===== /DOMAIN 5 ===== -->      </div><!-- /mode-checklist -->
 
-      <div class="learn-mode" id="mode-deep">
-        <div class="mode-hint"><span>📖</span><span><strong>これは公式の Exam Guide ではありません。</strong>このパートは、コミュニティのリポジトリ <code>dnacenta/claude-certified-architect</code> と Anthropic の公式ドキュメントをまとめたもので、2つの層に分かれています：<strong style="color:var(--accent)">「補強」</strong>（Exam Guide の内容を詳しくしたもの — 安心して学べる）と<strong>「🔭 範囲外」</strong>（より新しい機能 — 視野を広げるために知っておくとよいが、暗記は不要）。</span></div>
+      <div class="learn-mode active" id="mode-deep">
+        <div class="mode-hint"><span>📖</span><span>このドメインは2つの層に分かれています：<strong style="color:var(--accent)">「補強」</strong>（Exam Guide の内容を詳しくしたもの — 安心して学べる）と<strong>「🔭 範囲外」</strong>（より新しい機能 — 視野を広げるために知っておくとよいが、暗記は不要）。<details class="hint-more"><summary>このパートの出典</summary>なお、これは公式の Exam Guide ではありません：このパートは、コミュニティのリポジトリ <code>dnacenta/claude-certified-architect</code> と Anthropic の公式ドキュメントをまとめたものです。</details></span></div>
 
         <div class="ext-layout">
-          <nav class="ext-sidenav" id="extSectionNav" aria-label="このドメインの項目">
-            <!-- filled by JS: lists the subsections (1.1, 1.2, ...) of the active domain -->
-          </nav>
           <div class="ext-content">
       <!-- ===== EXT D1 ===== -->
       <div id="ext-1" class="ext-panel">
         <div class="ext-group-title">Domain 1 の補強</div>
         <p class="ext-group-sub">詳しい解説と具体的な数値。学んだ Task Statement 1.1–1.7 の内容にそのまま対応しています。</p>
 
-<div class="subsec">
-  <h4>1.1 The Agentic Loop Lifecycle — agentic loop のライフサイクル</h4>
+<details class="subsec" data-toc="1.1" open>
+  <summary><h4>1.1 The Agentic Loop Lifecycle — agentic loop のライフサイクル</h4></summary>
+  <div class="ss-body">
 
   <p>本質的に、エージェント型（agentic）のシステムは1つのループです。Claude はツールの定義とともにプロンプトを受け取り、ツールを呼ぶか、そのまま答えるかを判断します。このループは、Claude が完了を知らせるまで繰り返されます。</p>
 
@@ -2452,9 +2604,11 @@
 
   <p><strong>どれを選ぶか：</strong>要件を満たせる範囲で、いちばんシンプルなものにしましょう。単発の呼び出しや、コードで流れを制御するワークフローで、大半のタスクは処理できます。エージェントを使うのは、タスクが本当に open-ended でモデル自身の判断が必要なとき、得られる価値が待ち時間とコストに見合うとき、そして誤りを検出できる（テスト、レビュー、ロールバック）ときに限りましょう。</p>
 </div>
+</details>
 
-<div class="subsec">
-  <h4>1.2 Multi-Agent Orchestration — 複数のエージェントを取りまとめる</h4>
+<details class="subsec" data-toc="1.2" open>
+  <summary><h4>1.2 Multi-Agent Orchestration — 複数のエージェントを取りまとめる</h4></summary>
+  <div class="ss-body">
 
   <h5>Hub-and-Spoke Architecture — ハブ＆スポーク型のアーキテクチャ</h5>
 
@@ -2526,9 +2680,11 @@ Coordinator → Subagents (round 2, targeted)
          ↓
    Final synthesis</code></pre>
 </div>
+</details>
 
-<div class="subsec">
-  <h4>1.3 Subagent Spawning and Context Passing — subagent の起動とコンテキストの受け渡し</h4>
+<details class="subsec" data-toc="1.3" open>
+  <summary><h4>1.3 Subagent Spawning and Context Passing — subagent の起動とコンテキストの受け渡し</h4></summary>
+  <div class="ss-body">
 
   <h5>The Agent Tool — Agent ツール</h5>
 
@@ -2636,9 +2792,11 @@ async for message in query(
 
   <p>こうすることで出典情報（attribution）を保持でき、受け取ったエージェントが情報源の信頼性を判断できるようになります。</p>
 </div>
+</details>
 
-<div class="subsec">
-  <h4>1.4 Workflow Enforcement and Handoff — ワークフローの強制と人への引き継ぎ</h4>
+<details class="subsec" data-toc="1.4" open>
+  <summary><h4>1.4 Workflow Enforcement and Handoff — ワークフローの強制と人への引き継ぎ</h4></summary>
+  <div class="ss-body">
 
   <h5>The Critical Distinction — 最も重要な区別</h5>
 
@@ -2673,9 +2831,11 @@ Actions taken: Verified order, confirmed damage via photos
 Recommended action: Full refund + replacement shipment
 Refund amount: $149.99</code></pre>
 </div>
+</details>
 
-<div class="subsec">
-  <h4>1.5 Claude Code / Agent SDK Hooks — Claude Code / Agent SDK の hooks</h4>
+<details class="subsec" data-toc="1.5" open>
+  <summary><h4>1.5 Claude Code / Agent SDK Hooks — Claude Code / Agent SDK の hooks</h4></summary>
+  <div class="ss-body">
 
   <h5>Hook Events (Current Catalog) — 現在の hook イベント一覧</h5>
 
@@ -2788,9 +2948,11 @@ Refund amount: $149.99</code></pre>
     <tr><td>Managed policy settings（管理ポリシー設定）</td><td>組織全体</td><td>はい（管理者が管理）</td></tr>
   </table></div>
 </div>
+</details>
 
-<div class="subsec">
-  <h4>1.6 Task Decomposition Strategies — タスク分解の戦略</h4>
+<details class="subsec" data-toc="1.6" open>
+  <summary><h4>1.6 Task Decomposition Strategies — タスク分解の戦略</h4></summary>
+  <div class="ss-body">
 
   <h5>Prompt Chaining (Fixed Sequential) — prompt chaining（順番の決まった処理）</h5>
 
@@ -2840,9 +3002,11 @@ Step 3: Generate final report</code></pre>
     <li>連携の問題を見落とす（ファイル単体を見るだけでは、ファイルをまたぐ問題は見えない）</li>
   </ul>
 </div>
+</details>
 
-<div class="subsec">
-  <h4>1.7 Session Management — セッションの管理</h4>
+<details class="subsec" data-toc="1.7" open>
+  <summary><h4>1.7 Session Management — セッションの管理</h4></summary>
+  <div class="ss-body">
 
   <h5>Resuming Sessions — セッションの再開</h5>
 
@@ -2880,6 +3044,7 @@ session cookies. Please re-analyze the authentication flow with these changes."<
 
   <p>再開したセッションが変更に自動で気づくと思い込まないこと — 前のセッションのツールの結果は、古いファイルの内容のままかもしれません。</p>
 </div>
+</details>
 
       </div>
       <!-- ===== /EXT D1 ===== -->
@@ -2889,8 +3054,9 @@ session cookies. Please re-analyze the authentication flow with these changes."<
         <div class="ext-group-title">Domain 2 の補強</div>
         <p class="ext-group-sub">MCP の仕様（spec）に沿った解説と、ツールがコンテキストを圧迫する実際の数値。</p>
 
-<div class="subsec">
-  <h4>2.1 Tool Interface Design — ツールのインターフェース設計</h4>
+<details class="subsec" data-toc="2.1" open>
+  <summary><h4>2.1 Tool Interface Design — ツールのインターフェース設計</h4></summary>
+  <div class="ss-body">
 
   <h5>Tool Descriptions Are Everything — ツールの説明文がすべて</h5>
   <p>ツールの説明文（description）は、Claude がどのツールを呼ぶかを決める<strong>主な手がかり</strong>です。説明文はただの参考資料ではなく、選択の基準そのものです。</p>
@@ -2968,9 +3134,11 @@ session cookies. Please re-analyze the authentication flow with these changes."<
 Tool 2: "analyze_document" — "Analyze a document for insights"</code></pre>
   <p>Claude はこの2つを確実には見分けられません。対策：目的がはっきり区別できる名前に変えるか、1つのツールにまとめる。</p>
 </div>
+</details>
 
-<div class="subsec">
-  <h4>2.2 Structured Error Responses — 構造化されたエラー応答</h4>
+<details class="subsec" data-toc="2.2" open>
+  <summary><h4>2.2 Structured Error Responses — 構造化されたエラー応答</h4></summary>
+  <div class="ss-body">
 
   <h5>MCP Error Structure — MCP のエラーの形</h5>
   <p>ツールが失敗したときのエラー応答は、ありきたりな文字列ではなく、はっきりした構造を持たせるべきです：</p>
@@ -3017,9 +3185,11 @@ Tool 2: "analyze_document" — "Analyze a document for insights"</code></pre>
   </table></div>
   <p>この2つは別々に扱う必要があります。前者は「情報」、後者は「エラー」です。</p>
 </div>
+</details>
 
-<div class="subsec">
-  <h4>2.3 Tool Distribution and tool_choice — ツールの割り当てと tool_choice パラメータ</h4>
+<details class="subsec" data-toc="2.3" open>
+  <summary><h4>2.3 Tool Distribution and tool_choice — ツールの割り当てと tool_choice パラメータ</h4></summary>
+  <div class="ss-body">
 
   <h5>The 4-5 Tool Maximum — ツールは最大 4〜5個</h5>
   <p>1つのエージェントに持たせるツールは<strong>最大 4〜5個</strong>にすべきです。1つのエージェントに18個も与えると選択の信頼性が下がります — Claude が間違ったツールを選んだり、不要なツールを呼んだり、どれを使うべきか判断に迷ったりします。</p>
@@ -3091,9 +3261,11 @@ response = client.messages.create(
     tool_choice={"type": "tool", "name": "extract_metadata"}
 )</code></pre>
 </div>
+</details>
 
-<div class="subsec">
-  <h4>2.4 MCP Server Configuration — MCP サーバーの設定</h4>
+<details class="subsec" data-toc="2.4" open>
+  <summary><h4>2.4 MCP Server Configuration — MCP サーバーの設定</h4></summary>
+  <div class="ss-body">
 
   <h5>What is MCP? — MCP とは？</h5>
   <p>Model Context Protocol（MCP）は、AI モデルを外部のデータやツールにつなぐためのオープンな標準規格です。Claude がデータベース、API、ファイルシステムなどのサービスとやり取りするための、共通の方法を提供します。</p>
@@ -3249,9 +3421,11 @@ claude mcp add-json example '{"type":"http","url":"https://mcp.example.com/mcp"}
   ]
 }</code></pre>
 </div>
+</details>
 
-<div class="subsec">
-  <h4>2.5 Built-in Tools — 組み込みツール</h4>
+<details class="subsec" data-toc="2.5" open>
+  <summary><h4>2.5 Built-in Tools — 組み込みツール</h4></summary>
+  <div class="ss-body">
   <p>Claude Code の組み込みツールと、それぞれの使いどころ：</p>
   <div class="table-wrap"><table>
     <tr><th>ツール</th><th>目的</th><th>使いどころ</th></tr>
@@ -3281,9 +3455,11 @@ claude mcp add-json example '{"type":"http","url":"https://mcp.example.com/mcp"}
   <p>Edit ツールは、一意なテキストにマッチさせて編集します。そのテキストがファイル内に複数あると、編集は失敗します。</p>
   <p><strong>代わりの方法：</strong>Read でファイルの内容全体を取得し、Write で編集後の内容をファイル全体に上書きする。</p>
 </div>
+</details>
 
-<div class="subsec">
-  <h4>2.6 Anthropic-Defined and Server-Side Tools — Anthropic が定義したツールと、サーバー側で動くツール</h4>
+<details class="subsec" data-toc="2.6" open>
+  <summary><h4>2.6 Anthropic-Defined and Server-Side Tools — Anthropic が定義したツールと、サーバー側で動くツール</h4></summary>
+  <div class="ss-body">
   <p>すべてのツールを自分で作るわけではありません。一部は <strong>Anthropic が定義したツール（Anthropic-defined）</strong>で、スキーマは不要です — <code>type</code> と <code>name</code> を宣言するだけで、Claude は使い方を知っています。また一部は<strong>サーバー側で動くツール（server-side）</strong>で、Anthropic のインフラ上で直接実行されます — 結果は同じ応答の中のブロックとして返ってくるので、クライアント側で実行ループを書く必要はありません。</p>
 
   <div class="table-wrap"><table>
@@ -3326,6 +3502,7 @@ claude mcp add-json example '{"type":"http","url":"https://mcp.example.com/mcp"}
 
   <p><code>defer_loading</code> は、個々のツール定義ではなく、<code>mcp_toolset</code> エントリの <code>default_config</code>（またはツールごとの <code>configs</code>）で一度だけ設定します。</p>
 </div>
+</details>
 
       </div>
       <!-- ===== /EXT D2 ===== -->
@@ -3335,8 +3512,9 @@ claude mcp add-json example '{"type":"http","url":"https://mcp.example.com/mcp"}
         <div class="ext-group-title">Domain 3 の補強</div>
         <p class="ext-group-sub">正確なファイルパスと正確な CLI の書き方 — 覚えてしまえば確実に点が取れる知識です。</p>
 
-<div class="subsec">
-  <h4>3.0 Surfaces: Where Claude Code Runs — Claude Code を使える場所</h4>
+<details class="subsec" data-toc="3.0" open>
+  <summary><h4>3.0 Surfaces: Where Claude Code Runs — Claude Code を使える場所</h4></summary>
+  <div class="ss-body">
   <p>Claude Code は、もう CLI だけではありません。すべての利用環境（surface）が<strong>同じエンジン</strong>につながっているので、CLAUDE.md、設定、skill、MCP サーバーはどの環境でもまったく同じように動きます — これがアーキテクチャ上の要点です：設定はどこへでも持ち運べ、セッションも同じように移動できます。</p>
   <div class="table-wrap"><table>
     <tr><th>利用環境</th><th>内容</th><th>インストール / 始め方</th></tr>
@@ -3368,9 +3546,11 @@ claude mcp add-json example '{"type":"http","url":"https://mcp.example.com/mcp"}
     <tr><td><strong><code>/loop</code></strong></td><td>今の CLI のセッションの中</td><td>作業中に、短い間隔で状態を確認したいとき</td></tr>
   </table></div>
 </div>
+</details>
 
-<div class="subsec">
-  <h4>3.1 CLAUDE.md Hierarchy — CLAUDE.md の階層構造</h4>
+<details class="subsec" data-toc="3.1" open>
+  <summary><h4>3.1 CLAUDE.md Hierarchy — CLAUDE.md の階層構造</h4></summary>
+  <div class="ss-body">
 
   <h5>What is CLAUDE.md? — CLAUDE.md とは？</h5>
   <p>CLAUDE.md は、特定の場面で Claude Code がどう振る舞うべきかを伝える指示ファイルです。<code>.editorconfig</code> や <code>.eslintrc</code> の AI エージェント版のようなもので、コーディング規約、プロジェクトの決まりごと、使ってよいツールの制限、作業の進め方のルールなどを書きます。</p>
@@ -3455,9 +3635,11 @@ See @README.md for project overview.</code></pre>
     <tr><td><code>CLAUDE_CODE_NEW_INIT=1</code></td><td><code>/init</code> を複数ステップの対話形式で実行し、CLAUDE.md、skill、hook のひな形を作る</td></tr>
   </table></div>
 </div>
+</details>
 
-<div class="subsec">
-  <h4>3.2 Skills (and Legacy Slash Commands) — skill（と以前のスラッシュコマンド）</h4>
+<details class="subsec" data-toc="3.2" open>
+  <summary><h4>3.2 Skills (and Legacy Slash Commands) — skill（と以前のスラッシュコマンド）</h4></summary>
+  <div class="ss-body">
 
   <div class="callout">
     <div class="callout-head">💡 大きな変更（2026年）</div>
@@ -3577,9 +3759,11 @@ Summarize this pull request...</code></pre>
   <p><strong>プラグイン（plugin）</strong>は、skill、subagent、hook、MCP サーバーをまとめた配布用のパッケージで、マーケットプレイスからインストールし、プロジェクトごとに有効にします。プラグインが提供するものには名前の接頭辞が付くので（skill は <code>plugin-name:skill-name</code>、MCP サーバーは <code>plugin:&lt;plugin&gt;:&lt;server&gt;</code>）、自分で作ったものと名前がぶつかりません。skill の優先順位では、プラグインがいちばん低くなります（Enterprise > Personal > Project > Plugin）。</p>
   <p>プラグインは、<code>claude plugin eval</code> コマンドでテストする単位でもあります：プラグインの skill を対象にした評価（eval）のセットを書き、サンドボックスや CI で実行すると、JSON 形式のレポートが出力されます。これが「チームは自分たちの Claude Code の決まりごとを、どうやって配布し、変更で壊れていないか（リグレッション）を確認するのか？」という問いへの、パッケージングの面からの答えです。</p>
 </div>
+</details>
 
-<div class="subsec">
-  <h4>3.3 Path-Specific Rules — パス指定のルール</h4>
+<details class="subsec" data-toc="3.3" open>
+  <summary><h4>3.3 Path-Specific Rules — パス指定のルール</h4></summary>
+  <div class="ss-body">
 
   <h5>Conditional Rule Loading — ルールを条件付きで読み込む</h5>
   <p><code>.claude/rules/</code> のルールは、YAML frontmatter に glob パターンを書くことで、どのファイルに適用するかを指定できます：</p>
@@ -3634,9 +3818,11 @@ paths:
     <li>CLAUDE.md をあちこちのディレクトリにコピーする必要がない</li>
   </ul>
 </div>
+</details>
 
-<div class="subsec">
-  <h4>3.4 Plan Mode vs Direct Execution — plan mode と直接実行</h4>
+<details class="subsec" data-toc="3.4" open>
+  <summary><h4>3.4 Plan Mode vs Direct Execution — plan mode と直接実行</h4></summary>
+  <div class="ss-body">
 
   <h5>Permission Modes (Current) — 権限モード（現行）</h5>
   <p>plan mode は現在、より大きな「権限モード（permission mode）」の仕組みの中の、1つのモードという位置づけです。<code>--permission-mode &lt;mode&gt;</code> で特定のモードから始めたり、対話型のセッションで <strong>Shift+Tab</strong> を押してモードを切り替えたりできます。</p>
@@ -3741,9 +3927,11 @@ Execute SELECT queries only. Never issue writes.</code></pre>
     <li>1ファイルずつ直接実装する</li>
   </ol>
 </div>
+</details>
 
-<div class="subsec">
-  <h4>3.5 Iterative Refinement Techniques — 繰り返して改善するテクニック</h4>
+<details class="subsec" data-toc="3.5" open>
+  <summary><h4>3.5 Iterative Refinement Techniques — 繰り返して改善するテクニック</h4></summary>
+  <div class="ss-body">
 
   <h5>1. Concrete Examples — 具体例を示す</h5>
   <p>文章での指示では結果が安定しないときは、入力/出力の例を2〜3個示します：</p>
@@ -3780,9 +3968,11 @@ Claude: "Before I implement, a few questions:
 Fix both together."</code></pre>
   <p><strong>互いに独立した問題：</strong>1つひとつの変更をきれいでレビューしやすく保つため、順番に直すべき。</p>
 </div>
+</details>
 
-<div class="subsec">
-  <h4>3.6 CI/CD Integration — CI/CD への組み込み</h4>
+<details class="subsec" data-toc="3.6" open>
+  <summary><h4>3.6 CI/CD Integration — CI/CD への組み込み</h4></summary>
+  <div class="ss-body">
 
   <h5>CLI Flags for CI — CI で使う CLI のフラグ</h5>
   <div class="table-wrap"><table>
@@ -3876,6 +4066,7 @@ resubmit_batch = [r for r in original_requests if r.custom_id in failed_ids]</co
                           ↓
 Review session: Claude reviews the code fresh</code></pre>
 </div>
+</details>
 
       </div>
       <!-- ===== /EXT D3 ===== -->
@@ -3885,8 +4076,9 @@ Review session: Claude reviews the code fresh</code></pre>
         <div class="ext-group-title">Domain 4 の補強</div>
         <p class="ext-group-sub">few-shot、JSON schema、バッチ処理、プロンプトキャッシュの具体的な数値。</p>
 
-<div class="subsec">
-  <h4>4.1 Explicit Criteria — 明確な基準</h4>
+<details class="subsec" data-toc="4.1" open>
+  <summary><h4>4.1 Explicit Criteria — 明確な基準</h4></summary>
+  <div class="ss-body">
 
   <h5>The Problem with Vague Instructions — あいまいな指示の問題点</h5>
   <p>あいまいな指示では、モデルが実行するたびに違う解釈をしてしまうため、結果が安定しません。</p>
@@ -3923,9 +4115,11 @@ Do NOT flag:
   <p>あるカテゴリで誤検知が多いと、正しく機能している他のカテゴリも含め、<strong>すべての</strong>カテゴリが信頼されなくなります。開発者は、正しい警告まで含めて、すべての警告を無視するようになってしまいます。</p>
   <p><strong>解決策：</strong>誤検知の多いカテゴリはいったん無効にし、そのカテゴリの判断基準（プロンプト）を改善してから、再び有効にする。ノイズの多い1つのカテゴリのせいで、正確なカテゴリの価値まで下げないこと。</p>
 </div>
+</details>
 
-<div class="subsec">
-  <h4>4.2 Few-Shot Prompting — 例を見せるプロンプト（few-shot prompting）</h4>
+<details class="subsec" data-toc="4.2" open>
+  <summary><h4>4.2 Few-Shot Prompting — 例を見せるプロンプト（few-shot prompting）</h4></summary>
+  <div class="ss-body">
 
   <h5>When to Use Few-Shot — few-shot を使うべきとき</h5>
   <ul>
@@ -3968,9 +4162,11 @@ Reasoning: "The comment says 'validates input' and the function does validate
   <h5>Few-Shot Enables Generalization — few-shot でモデルが応用できるようになる</h5>
   <p>良い例は、個別のケースだけでなく、パターンそのものをモデルに教えます。モデルは例を丸暗記するのではなく、それぞれの例の背景にある考え方を理解することで、初めて見る状況にも応用できるようになります。</p>
 </div>
+</details>
 
-<div class="subsec">
-  <h4>4.3 Structured Output via tool_use — tool_use による構造化出力</h4>
+<details class="subsec" data-toc="4.3" open>
+  <summary><h4>4.3 Structured Output via tool_use — tool_use による構造化出力</h4></summary>
+  <div class="ss-body">
 
   <h5>The Problem — 問題</h5>
   <p>Claude に構造化データ（JSON）を返させたいとき、自由にテキストを書かせると、次のようなことが起こりえます：</p>
@@ -4129,9 +4325,11 @@ Reasoning: "The comment says 'validates input' and the function does validate
 
   <p><strong>実務での意味：</strong>数値の範囲、文字列の長さ、正規表現のパターン、複雑な条件付きのスキーマのチェックは、スキーマではなく、自分の検証コードで行う必要があります。</p>
 </div>
+</details>
 
-<div class="subsec">
-  <h4>4.4 Validation-Retry Loops — 検証してリトライするループ</h4>
+<details class="subsec" data-toc="4.4" open>
+  <summary><h4>4.4 Validation-Retry Loops — 検証してリトライするループ</h4></summary>
+  <div class="ss-body">
 
   <h5>The Pattern — 基本の形</h5>
   <pre class="code-block"><code>max_retries = 3
@@ -4194,9 +4392,11 @@ raise ExtractionError(f"Failed after {max_retries} attempts: {errors}")</code></
 }</code></pre>
   <p>これで、よく却下（dismiss）されるパターンを分析できます — 開発者が「string concatenation in query（クエリでの文字列連結）」の指摘を何度も却下しているなら、そのパターンの判断基準（プロンプト）を見直す必要があるかもしれません。</p>
 </div>
+</details>
 
-<div class="subsec">
-  <h4>4.5 Batch Processing — バッチ処理</h4>
+<details class="subsec" data-toc="4.5" open>
+  <summary><h4>4.5 Batch Processing — バッチ処理</h4></summary>
+  <div class="ss-body">
 
   <h5>Message Batches API</h5>
   <div class="table-wrap"><table>
@@ -4249,9 +4449,11 @@ resubmit = [orig for orig in original if orig.custom_id in [f.custom_id for f in
   <h5>Pre-Batch Refinement — バッチ実行前の調整</h5>
   <p>大量のバッチを流す前に、必ず少数のサンプルでプロンプトを調整しましょう。1万件のドキュメントで費用を使ってしまう前に、プロンプトの問題を見つけられます。</p>
 </div>
+</details>
 
-<div class="subsec">
-  <h4>4.6 Multi-Pass Review — 独立した複数回のレビュー</h4>
+<details class="subsec" data-toc="4.6" open>
+  <summary><h4>4.6 Multi-Pass Review — 独立した複数回のレビュー</h4></summary>
+  <div class="ss-body">
 
   <h5>The Self-Review Problem — 自分でレビューすることの問題</h5>
   <p>Claude がコードを生成し、同じセッションでそのままレビューすると、生成したときの考えの流れ（reasoning context）がそのまま残っています。なぜそう判断したのかを「覚えている」ので、その判断自体を疑いにくくなります。</p>
@@ -4290,9 +4492,11 @@ Session 2: Claude reviews the code
     <li><strong>Missing integration issues（統合の問題の見落とし）</strong> — ファイルを順番に見ていくだけでは、ファイルをまたぐ問題に気づけない</li>
   </ol>
 </div>
+</details>
 
-<div class="subsec">
-  <h4>4.7 Thinking, Effort, and the Current Request Surface — Thinking・Effort と、現在のリクエストの書き方</h4>
+<details class="subsec" data-toc="4.7" open>
+  <summary><h4>4.7 Thinking, Effort, and the Current Request Surface — Thinking・Effort と、現在のリクエストの書き方</h4></summary>
+  <div class="ss-body">
 
   <p>Claude へのリクエストの書き方は、モデルの世代が 4.6 から 5 に移る間に大きく変わりました。古いドキュメントで標準とされていたパラメータの多くは、現行のモデルでは <strong>400</strong> エラーになります。</p>
 
@@ -4331,9 +4535,11 @@ Session 2: Claude reviews the code
   <h5>Mid-Conversation System Messages — 会話の途中に入れる system message</h5>
   <p>Claude Opus 5、Opus 4.8、Fable 5 では（Sonnet 5 は対象外、beta ヘッダー不要）、トップレベルの <code>system</code> フィールドを書き換える代わりに、<strong><code>messages</code> 配列の中</strong>に <code>{"role": "system", "content": "..."}</code> を追加できます。これはプロンプトインジェクションに強い、オペレーター用の指示の経路です。キャッシュ済みの先頭部分（prefix）に触れないので、最も安く済む方法でもあります。制約：<code>user</code> の message（またはサーバーツールの使用で終わる assistant の message）の後に置く必要があり、<code>messages[0]</code> には置けず、最後の message にするか、直後に assistant のターンを続ける必要があります。</p>
 </div>
+</details>
 
-<div class="subsec">
-  <h4>4.8 Prompt Caching — プロンプトキャッシュ</h4>
+<details class="subsec" data-toc="4.8" open>
+  <summary><h4>4.8 Prompt Caching — プロンプトキャッシュ</h4></summary>
+  <div class="ss-body">
 
   <p>キャッシュが効くかどうかはプロンプトの<em>構造</em>で決まるため、運用手順ではなくこのセクションで扱います。</p>
 
@@ -4353,6 +4559,7 @@ Session 2: Claude reviews the code
 
   <p><strong>tool search との関係：</strong>読み込みを後回しにした（deferred）ツールは system prompt の先頭部分に含まれず、見つかったツールは会話の中に挿入されるため、<code>defer_loading</code> を使ってもキャッシュは<em>壊れません</em>。ただし、<code>defer_loading: true</code> のツールには <code>cache_control</code> を同時に付けられないので、ブレークポイントは defer していないツールに置きましょう。</p>
 </div>
+</details>
 
       </div>
       <!-- ===== /EXT D4 ===== -->
@@ -4362,8 +4569,9 @@ Session 2: Claude reviews the code
         <div class="ext-group-title">Domain 5 の補強</div>
         <p class="ext-group-sub">「context rot」、Case Facts Block のパターン、データが食い違うときの対処法 — Domain 5 をさらに深く理解する。</p>
 
-<div class="subsec">
-  <h4>5.1 Conversation Context Management — 会話のコンテキスト管理</h4>
+<details class="subsec" data-toc="5.1" open>
+  <summary><h4>5.1 Conversation Context Management — 会話のコンテキスト管理</h4></summary>
+  <div class="ss-body">
 
   <h5>The Context Window Is Finite — コンテキストウィンドウには上限がある</h5>
   <p>Claude が一度に扱える情報量（コンテキストウィンドウ）には上限があります。すべての message、ツールの結果、system prompt がトークンを消費します。会話が長くなるほど、古い情報が圧縮されたり、完全に消えたりして、品質が落ちやすくなります。</p>
@@ -4439,9 +4647,11 @@ Session 2: Claude reviews the code
     <tr><td>Auto-memory（MEMORY.md）</td><td>最初のコンテキストにあった正確な引用や数値</td></tr>
   </table></div>
 </div>
+</details>
 
-<div class="subsec">
-  <h4>5.2 Escalation Patterns — 人間への引き継ぎ（エスカレーション）のパターン</h4>
+<details class="subsec" data-toc="5.2" open>
+  <summary><h4>5.2 Escalation Patterns — 人間への引き継ぎ（エスカレーション）のパターン</h4></summary>
+  <div class="ss-body">
 
   <h5>When to Escalate Immediately — すぐにエスカレーションすべきとき</h5>
   <div class="table-wrap"><table>
@@ -4498,9 +4708,11 @@ Actions taken by agent:
 Recommended action: Manual approval for full refund + replacement
 Urgency: Standard (customer is frustrated but not at risk of churn)</code></pre>
 </div>
+</details>
 
-<div class="subsec">
-  <h4>5.3 Error Propagation — エラー情報の伝え方</h4>
+<details class="subsec" data-toc="5.3" open>
+  <summary><h4>5.3 Error Propagation — エラー情報の伝え方</h4></summary>
+  <div class="ss-body">
 
   <h5>Structured Error Context — 構造化されたエラー情報</h5>
   <p>エラーが起きたら、状況がわかる情報を十分に付けて上に伝えます：</p>
@@ -4562,9 +4774,11 @@ Step 3: ABORT ENTIRE WORKFLOW</code></pre>
     <li>リトライできるかどうか</li>
   </ul>
 </div>
+</details>
 
-<div class="subsec">
-  <h4>5.4 Large Codebase Context Management — 大規模なコードベースでのコンテキスト管理</h4>
+<details class="subsec" data-toc="5.4" open>
+  <summary><h4>5.4 Large Codebase Context Management — 大規模なコードベースでのコンテキスト管理</h4></summary>
+  <div class="ss-body">
 
   <h5>Context Degradation in Extended Sessions — 長いセッションでのコンテキストの劣化</h5>
   <p>セッションが長くなると、Claude の回答の信頼性が下がっていきます：</p>
@@ -4621,9 +4835,11 @@ manifest = {
 # On resume, coordinator loads manifest and picks up where it left off</code></pre>
   <p>各エージェントが決まった場所に状態を保存し、coordinator がその一覧（manifest）を管理します。再開するときは、manifest を読み込んで中断したところから続けます。</p>
 </div>
+</details>
 
-<div class="subsec">
-  <h4>5.5 Human Review Workflows — 人間によるレビューの進め方</h4>
+<details class="subsec" data-toc="5.5" open>
+  <summary><h4>5.5 Human Review Workflows — 人間によるレビューの進め方</h4></summary>
+  <div class="ss-body">
 
   <h5>Stratified Random Sampling — 層別ランダムサンプリング</h5>
   <p>出力全体から均等にランダムに選ぶだけでは不十分です。リスクの高さやカテゴリーごとにグループ分けして（stratify）、抜き取る割合を変えましょう：</p>
@@ -4674,9 +4890,11 @@ Handwritten Notes:
 
   <p>こうすれば、全体の数字に埋もれることなく、本当に改善が必要な箇所がはっきりわかります。</p>
 </div>
+</details>
 
-<div class="subsec">
-  <h4>5.6 Information Provenance — 情報の出所（provenance）</h4>
+<details class="subsec" data-toc="5.6" open>
+  <summary><h4>5.6 Information Provenance — 情報の出所（provenance）</h4></summary>
+  <div class="ss-body">
 
   <h5>Claim-Source Mappings — 主張と出典の対応付け</h5>
   <p>subagent が調べた結果を返すときは、それぞれの主張（claim）にどこから得た情報なのか（provenance）を構造化して付けるべきです：</p>
@@ -4756,9 +4974,11 @@ Handwritten Notes:
     </li>
   </ol>
 </div>
+</details>
 
-<div class="subsec">
-  <h4>5.7 Server-Side Context Management — サーバー側でのコンテキスト管理</h4>
+<details class="subsec" data-toc="5.7" open>
+  <summary><h4>5.7 Server-Side Context Management — サーバー側でのコンテキスト管理</h4></summary>
+  <div class="ss-body">
 
   <p>5.1 と 5.4 では、コンテキスト管理を<em>自分で</em>行う方法を扱いました — Case Facts Block、メモ用ファイル、ツール出力の削減、subagent への委任。現在は、この作業の一部を API がサーバー側で代わりに行う仕組みが3つあります。3つは置き換え合うものではなく組み合わせて使うもので、どの仕組みがどの問題を解決するのかを押さえることが大切です。</p>
 
@@ -4818,9 +5038,11 @@ Handwritten Notes:
     <tr><td>絶対に言い換えられてはいけない事実</td><td>Case Facts Block（§5.1）— 正確な数値を守るには、原文のまま書き残すのがいちばん確実</td></tr>
   </table></div>
 </div>
+</details>
 
-<div class="subsec">
-  <h4>5.8 Bounding and Recovering Long Runs — 長時間の実行に上限を設け、止まったら立て直す</h4>
+<details class="subsec" data-toc="5.8" open>
+  <summary><h4>5.8 Bounding and Recovering Long Runs — 長時間の実行に上限を設け、止まったら立て直す</h4></summary>
+  <div class="ss-body">
 
   <h5>Task Budgets vs max_tokens — task budget と max_tokens の違い</h5>
   <p><code>max_tokens</code> はモデルからは見えない上限で、そこに達すると出力が途中で切れます。<strong>task budget</strong>（<code>output_config.task_budget</code>、beta <code>task-budgets-2026-03-13</code>、最小 20,000）はモデルに<em>見える</em>上限なので、モデルは残りを見ながら進め方を調整し、きりのよいところで作業を終えられます。Claude Opus 5、Fable 5、Sonnet 5、Opus 4.8/4.7 で使えます。数えるのは、そのターンで Claude が生成する量と読み込むツールの結果です — 送り返す会話履歴全体ではありません。通常のループでは <code>remaining</code> は指定しません。履歴を自分で書き換えたり compact したりして、サーバーがそれまでの消費量を把握できなくなったときにだけ値を渡します。</p>
@@ -4829,9 +5051,11 @@ Handwritten Notes:
   <h5>Refusals Are a Reliability Concern, Not Just a Safety One — 回答拒否は安全性だけでなく、信頼性の問題でもある</h5>
   <p>回答拒否（<code>refusal</code>）も HTTP 200 で返ってきて、<code>stop_reason: "refusal"</code> と <code>stop_details.category</code> が付きます。<code>stop_reason</code> を確認せずに <code>content</code> だけを読むコードは、回答拒否を「空だけど成功した応答」として扱ってしまいます — 失敗した検索を「結果0件」とみなすのと同じ種類のバグです（§5.3）。本番環境では、サーバー側のフォールバック（<code>betas=["server-side-fallback-2026-07-01"]</code>、<code>fallbacks="default"</code>）を有効にして、リクエストが止まったままにならず、拒否のカテゴリーに応じて別の経路に回されるようにしましょう。Domain 1 §1.1 も参照してください。</p>
 </div>
+</details>
 
       </div>
       <!-- ===== /EXT D5 ===== -->          </div><!-- /ext-content -->
+          <nav class="ext-sidenav" id="extSideNav" aria-label="ページ内目次"></nav>
         </div><!-- /ext-layout -->
       </div><!-- /mode-deep -->
 
@@ -4842,18 +5066,41 @@ Handwritten Notes:
     </section>
     <!-- ================= /STEP 2 ================= -->
 
-    <!-- ============ STEP 3 · PRACTICE (quiz + tips + mock exams) ==== -->
+    <!-- ==== STEP 3 · PRACTICE: two flow sub-pages (quiz, real-exam drills)
+           + two reference sub-pages (tips, resources) ==== -->
     <section id="panel-practice" class="panel" role="tabpanel" aria-labelledby="tab-practice">
       <div class="panel-head">
         <div class="step-badge">ステップ3 · 問題演習</div>
         <h1 class="section-title">問題演習</h1>
-        <p class="section-sub">ドメインの学習と並行して<strong>クイズ77問</strong>を解く → <strong>解答のコツ</strong>を読んで、選択肢をすばやく絞り込めるようにする → 3つのサイトから1つを選んで<strong>模擬試験</strong>を受け、800点以上を2回取れるまで繰り返す。</p>
+        <p class="section-sub">このステップで<strong>やることは2つだけ</strong>です。ステップ2の理論学習と並行して<strong>クイズ77問</strong>を解き、そのあとは<strong>本番レベルの問題演習</strong>に集中する — 合格率をいちばん押し上げるのはここです。残りの2つは<strong>必要なときに開く参考資料</strong>で、必ず通る手順ではありません。</p>
+      </div>
+
+      <!-- Two flow cards + a reference shelf: the sub-nav alone never made clear
+           which of the four sub-pages you actually have to *do*. -->
+      <div class="pflow">
+        <button class="pflow-card" data-goto="practice" data-practice="quiz">
+          <span class="pflow-tag">やること1 · 理論学習と並行して</span>
+          <b>❓ クイズ77問</b>
+          <span>ステップ2の補助です。1つのドメインを学んだら、すぐそのドメインのクイズを解いて知識を定着させます。模試ではありません。</span>
+        </button>
+        <span class="pflow-arrow" aria-hidden="true">→</span>
+        <button class="pflow-card key" data-goto="practice" data-practice="mock">
+          <span class="pflow-tag">やること2 · いちばん重要</span>
+          <b>🏁 本番レベルの問題演習</b>
+          <span>本番と同じ形式（60問 · 120分）で1回分を通して解きます。数をこなすのが合格へのいちばんの近道です。</span>
+        </button>
+      </div>
+      <div class="pflow-aside">
+        <span>必要なときに開く参考資料 — 学習の流れには含まれません：</span>
+        <button class="pflow-chip" data-goto="practice" data-practice="tips">💡 解答のコツ</button>
+        <button class="pflow-chip" data-goto="practice" data-practice="res">📚 参考リソース</button>
       </div>
 
       <nav class="practice-nav" id="practiceNav" role="tablist" aria-label="演習コンテンツ">
-        <button class="pr-btn" role="tab" data-practice="quiz" aria-selected="true"><strong>1 · ❓ クイズ77問</strong><small>ドメイン別 · 日本語の解説付き</small></button>
-        <button class="pr-btn" role="tab" data-practice="tips" aria-selected="false" tabindex="-1"><strong>2 · 💡 解答のコツ</strong><small>選択肢を消すルール + 要点まとめ</small></button>
-        <button class="pr-btn" role="tab" data-practice="mock" aria-selected="false" tabindex="-1"><strong>3 · 🏁 模擬試験</strong><small>模試サイト3つ · 目標は800点以上</small></button>
+        <button class="pr-btn" role="tab" data-practice="quiz" aria-selected="true"><strong>① ❓ クイズ77問</strong><small>理論学習と並行して</small></button>
+        <button class="pr-btn key" role="tab" data-practice="mock" aria-selected="false" tabindex="-1"><strong>② 🏁 本番レベルの演習</strong><small>いちばん重要 · 目標800点以上</small></button>
+        <button class="pr-btn ref" role="tab" data-practice="tips" aria-selected="false" tabindex="-1"><strong>💡 解答のコツ</strong><small>参考 · 選択肢を消すルール</small></button>
+        <button class="pr-btn ref" role="tab" data-practice="res" aria-selected="false" tabindex="-1"><strong>📚 参考リソース</strong><small>参考 · 公式ドキュメント等</small></button>
       </nav>
 
       <!-- ===== Quiz: one question on screen at a time, palette on the side ===== -->
@@ -4896,11 +5143,53 @@ Handwritten Notes:
         </div>
       </div><!-- /pr-quiz -->
 
+      <!-- ===== Real-exam drills: one site, log scores until 2 x >= 800 ===== -->
+      <div class="practice-panel" id="pr-mock">
+        <div class="eyebrow">やること2 · いちばん重要 <span class="src-tag exp">受験者の経験談</span></div>
+        <h2 class="section-title" style="font-size:20px;">本番レベルの問題演習 — ここをやり込む</h2>
+        <p class="section-sub">ここが<strong>合格率をいちばん押し上げる</strong>部分です。本番と同じ形式（60問 · 120分）で通して解くと、理論を読み直すよりずっと速く、自分の弱いところが分かります。<strong>800点以上を2回</strong>取れたら安心して受験できます — 本番の合格点は 720/1000 なので、800点なら十分な余裕があります。</p>
+
+        <div class="mock-grid single">
+          <article class="mock-card top">
+            <div class="mock-top"><span class="mock-rank">01</span><span class="badge">⭐ 本番にいちばん近い</span></div>
+            <h3>claudecertificationguide.com</h3>
+            <p>本番の出題形式・言い回しにいちばん近い演習サイトです。このサイトを繰り返しやり込めば十分です。間違えた問題は、どのドメインの問題かを確認してステップ2に戻りましょう。</p>
+            <a class="btn btn-primary mock-go" href="https://claudecertificationguide.com/mock-exam" target="_blank" rel="noopener">/mock-exam を開く ↗</a>
+          </article>
+        </div>
+
+        <div class="card mock-tracker">
+          <div class="mt-head">
+            <div>
+              <h3>📈 演習の記録</h3>
+              <p>1回分を解くたびに点数を記録して、受験の準備ができたかを確かめましょう。記録はお使いのブラウザにだけ保存されます。</p>
+            </div>
+            <div class="mt-goal"><span class="goal-slot"></span><span class="goal-slot"></span><strong id="mockGoalText">800点以上：0/2 回</strong></div>
+          </div>
+          <form class="mt-form" id="mockForm">
+            <label>サイト
+              <select id="mockSite">
+                <option>claudecertificationguide.com</option>
+                <option>その他</option>
+              </select>
+            </label>
+            <label>点数（100–1000）
+              <input id="mockScore" type="number" min="100" max="1000" step="1" inputmode="numeric" required placeholder="例：820">
+            </label>
+            <button class="btn btn-primary" type="submit">+ 点数を記録</button>
+          </form>
+          <ul class="mock-list" id="mockList"></ul>
+          <p class="mock-empty" id="mockEmpty">まだ演習の記録がありません。</p>
+          <button class="btn btn-primary" id="mockReady" data-goto="examday" hidden>🎉 目標達成 — ステップ4：受験の申し込みへ →</button>
+          <p class="tip-note">間違えた問題は、どのドメインの問題かを確認して<button class="linkish" data-goto="learn">5ドメインの学習</button>に戻りましょう。選択肢が2つまで絞れて迷った場合は<button class="linkish" data-goto="practice" data-practice="tips">解答のコツ</button>が役に立ちます。</p>
+        </div>
+      </div><!-- /pr-mock -->
+
       <!-- ===== Tips: field-tested elimination rules first, guide cheat sheet after ===== -->
       <div class="practice-panel" id="pr-tips">
-        <div class="eyebrow">解答のコツ <span class="src-tag exp">受験者の経験談</span></div>
+        <div class="eyebrow">参考資料 — 必須の手順ではありません <span class="src-tag exp">受験者の経験談</span></div>
         <h2 class="section-title" style="font-size:20px;">間違った選択肢をすばやく消すコツ</h2>
-        <p class="section-sub">CCAR-F の問題では、「どちらも正しそうに見える」選択肢が2つ残ることがよくあります。次のルールを使えば、間違った選択肢をすばやく消せます。<span class="ref-chip quiz-chip" aria-hidden="true">#31</span> のようなチップをクリックすると、実例となるクイズの問題が開きます。</p>
+        <p class="section-sub">このページは<strong>学習の流れには含まれません</strong> — 演習の前に読んでおく必要はありません。「どちらも正しそうに見える」選択肢が2つ残って迷うことが多いと感じたとき、または受験前夜に一度だけ目を通す、という使い方をしてください。次のルールを使えば、間違った選択肢をすばやく消せます。<span class="ref-chip quiz-chip" aria-hidden="true">#31</span> のようなチップをクリックすると、実例となるクイズの問題が開きます。</p>
 
         <div class="card tip-hero">
           <h3>🧭 選択肢を選ぶ順番 — いつも、いちばんシンプルな方法から考える</h3>
@@ -4993,8 +5282,7 @@ Handwritten Notes:
         <div class="eyebrow" style="margin-top:30px;">要点まとめ（cheat sheet） <span class="src-tag">Exam Guide より</span></div>
         <p class="section-sub">試験の直前に読み返しましょう — 下のアンチパターンに当てはまる選択肢は、すぐに消せます。</p>
 
-      <div class="cheat-card">
-        <h3>⚠️ 不正解の選択肢によく使われる10のアンチパターン</h3>
+      <details class="cheat-card" data-toc="不正解の選択肢によく使われる10のアンチパターン" open><summary><h3>⚠️ 不正解の選択肢によく使われる10のアンチパターン</h3></summary>
         <p style="font-size:13px; color:var(--text-dim); margin-bottom:12px;">このリストは、公式 Exam Guide の問題の傾向とほぼそのまま対応しています — 当てはまる選択肢は、すぐに消しましょう。</p>
         <ol class="antipattern-list">
           <li><code>stop_reason</code> を確認せず、応答の文章を読み取ってループを止めるかどうか判断する</li>
@@ -5008,10 +5296,9 @@ Handwritten Notes:
           <li>コードを生成したのと同じセッションに、そのコードをレビューさせる（生成したときの考えに引きずられる）</li>
           <li>全体の精度（aggregate accuracy）だけを見て問題ないと判断し、特定のドキュメントの種類や項目でのエラー率の高さを見逃す</li>
         </ol>
-      </div>
+      </details>
 
-      <div class="cheat-card">
-        <h3>🧭 すばやく判断するための対比表（Key Decision Frameworks）</h3>
+      <details class="cheat-card" data-toc="すばやく判断するための対比表（Key Decision Frameworks）" open><summary><h3>🧭 すばやく判断するための対比表（Key Decision Frameworks）</h3></summary>
         <p style="font-size:13px; color:var(--text-dim); margin-bottom:12px;">「A と B のどちらを選ぶか」という問題で使います — 問題の状況が左右どちらに当てはまるかで、答えの方向が決まります。</p>
         <table class="fw-table">
           <tr><td>ルールの守らせ方</td><td><b class="good">Programmatic hooks</b> — お金や安全に関わるとき &nbsp;·&nbsp; <b class="alt">プロンプトでの指示</b> — 「できるだけ守れればよい」ときだけ。確実ではない</td></tr>
@@ -5023,10 +5310,9 @@ Handwritten Notes:
           <tr><td>コードレビュー</td><td><b class="good">Multi-pass</b> — 大きな PR、ファイル数が多い &nbsp;·&nbsp; <b class="alt">Single-pass</b> — 小さくまとまった PR</td></tr>
           <tr><td>コンテキストの受け渡し</td><td>subagent のプロンプトに<b class="good">必ず明示的に書く</b> &nbsp;·&nbsp; 自動で引き継がれる（auto-inherit）とは考えない</td></tr>
         </table>
-      </div>
+      </details>
 
-      <div class="cheat-card">
-        <h3>🧩 「Building Effective Agents」の6つの基本パターン</h3>
+      <details class="cheat-card" data-toc="Building Effective Agents」の6つの基本パターン" open><summary><h3>🧩 「Building Effective Agents」の6つの基本パターン</h3></summary>
         <p style="font-size:13px; color:var(--text-dim); margin-bottom:6px;">Anthropic の基本となるブログ記事（2024年12月）で、Domain 1 の考え方の多くはここがもとになっていると考えられます。いちばん大事な区別：<strong>Workflow</strong> = あらかじめ決めた固定の手順を、コードでたどる。<strong>Agent</strong> = 環境からの反応を見ながら、モデル自身が次の手順を決める。</p>
         <div class="pattern-grid">
           <div class="pattern-card"><h4>Prompt Chaining</h4><p>タスクを順番に並んだ LLM のステップに分け、前のステップの出力を次のステップが処理する。途中に確認のチェックポイント（gate）を置く。時間はかかるが、精度が上がる。</p></div>
@@ -5037,64 +5323,119 @@ Handwritten Notes:
           <div class="pattern-card"><h4>Autonomous Agents</h4><p>終わりの決まっていないループの中で、エージェントが自分で計画して行動し、ツールやコードの実行結果を「事実（ground truth）」として進み具合を自分で確かめ、停止条件に達するまで続ける。</p></div>
         </div>
         <p style="font-size:12.6px; color:var(--text-faint); margin-top:12px;">この記事の大原則は「複雑にするのは、それで結果が本当に良くなるときだけ」。もう1つが <strong>Agent-Computer Interface（ACI）</strong>：ツールの説明文は、新人の開発者に向けたドキュメントのように丁寧に書くこと。人間のエンジニアでもどのツールを使えばよいか迷うようなら、AI にそれ以上を期待することはできないからです。</p>
-      </div>
+      </details>
       </div><!-- /pr-tips -->
 
-      <!-- ===== Mock exams: pick one site, log scores until 2 × ≥ 800 ===== -->
-      <div class="practice-panel" id="pr-mock">
-        <div class="eyebrow">模擬試験 <span class="src-tag exp">受験者の経験談</span></div>
-        <h2 class="section-title" style="font-size:20px;">本番形式の模擬試験 — 3つのサイトから1つを選ぶ</h2>
-        <p class="section-sub">3つ全部をやる必要はありません。1つのサイトを選んで、本番と同じように1回分を通して解きましょう（60問 · 120分）。模試で<strong>800点以上を2回</strong>取れたら、安心して受験できます — 本番の合格点は 720/1000 です。</p>
+      <!-- ===== Reference: official Anthropic material, mapped onto the 5 domains ===== -->
+      <div class="practice-panel" id="pr-res">
+        <div class="eyebrow">参考資料 — 必須の手順ではありません <span class="src-tag">Anthropic 公式</span></div>
+        <h2 class="section-title" style="font-size:20px;">さらに学びたい人向けの参考リソース</h2>
+        <p class="section-sub"><strong>すべてを読む必要はありません</strong> — このページの Exam Guide の内容を学び、演習を重ねれば受験には十分です。演習で特定のドメインを落とすことが多く、一次情報にあたりたくなったときに開いてください。各リソースには対応するドメインのラベルを付けてあります。<a href="https://claudecertificationguide.com/resources" target="_blank" rel="noopener">元のリスト ↗</a></p>
 
-        <div class="mock-grid">
-          <article class="mock-card top">
-            <div class="mock-top"><span class="mock-rank">01</span><span class="badge">⭐ 本番にいちばん近い</span></div>
-            <h3>claudecertificationguide.com</h3>
-            <p>本番の試験にいちばん近い内容です — このサイトをしっかりやれば十分です。</p>
-            <a class="btn btn-primary mock-go" href="https://claudecertificationguide.com/mock-exam" target="_blank" rel="noopener">/mock-exam を開く ↗</a>
-          </article>
-          <article class="mock-card">
-            <div class="mock-top"><span class="mock-rank">02</span><span class="badge vi">🇻🇳 ベトナム語対応</span></div>
-            <h3>hoccungsushi.com</h3>
-            <p>こちらも本番と同じ形式で、しっかり取り組めば十分です。ベトナム語にも対応しています。</p>
-            <a class="btn mock-go" href="https://hoccungsushi.com/cert/cca-f" target="_blank" rel="noopener">/cert/cca-f を開く ↗</a>
-          </article>
-          <article class="mock-card">
-            <div class="mock-top"><span class="mock-rank">03</span><span class="badge ext">CI/CD の応用問題</span></div>
-            <h3>viehub.io.vn</h3>
-            <p>応用的な問題も含まれます。CI/CD パイプラインに関する問題は、本番に近い内容です。</p>
-            <a class="btn mock-go" href="https://viehub.io.vn/hoc-tap/ccaf-luyen-thi" target="_blank" rel="noopener">/ccaf-luyen-thi を開く ↗</a>
-          </article>
-        </div>
-
-        <div class="card mock-tracker">
-          <div class="mt-head">
-            <div>
-              <h3>📈 模試の記録</h3>
-              <p>模試を受けるたびに点数を記録して、受験の準備ができたかを確かめましょう。記録はお使いのブラウザにだけ保存されます。</p>
-            </div>
-            <div class="mt-goal"><span class="goal-slot"></span><span class="goal-slot"></span><strong id="mockGoalText">800点以上：0/2 回</strong></div>
+        <div class="res-group">
+          <h3 class="res-head">📘 公式ドキュメント</h3>
+          <div class="res-list">
+            <a class="res-item" href="https://docs.anthropic.com" target="_blank" rel="noopener">
+              <span class="res-tag">全体の土台</span>
+              <strong>Claude API Documentation</strong>
+              <span>API リファレンス一式と、ガイド・チュートリアル。</span>
+              <em>docs.anthropic.com ↗</em>
+            </a>
+            <a class="res-item" href="https://code.claude.com" target="_blank" rel="noopener">
+              <span class="res-tag">ドメイン3</span>
+              <strong>Claude Code Documentation</strong>
+              <span>設定、hook、MCP 連携、日々のワークフロー — ドメイン3でよく問われる範囲そのものです。</span>
+              <em>code.claude.com ↗</em>
+            </a>
+            <a class="res-item" href="https://platform.claude.com/docs/en/agent-sdk/overview" target="_blank" rel="noopener">
+              <span class="res-tag">ドメイン1</span>
+              <strong>Agent SDK Overview</strong>
+              <span>Claude Agent SDK で本番向けのエージェントを作る方法。</span>
+              <em>platform.claude.com/docs/en/agent-sdk/overview ↗</em>
+            </a>
+            <a class="res-item" href="https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/overview" target="_blank" rel="noopener">
+              <span class="res-tag">ドメイン4</span>
+              <strong>Prompt Engineering Guide</strong>
+              <span>Anthropic 自身が書いたプロンプト手法。ドメイン4の問題の多くはここが出典です。</span>
+              <em>docs.anthropic.com · prompt-engineering ↗</em>
+            </a>
           </div>
-          <form class="mt-form" id="mockForm">
-            <label>サイト
-              <select id="mockSite">
-                <option>claudecertificationguide.com</option>
-                <option>hoccungsushi.com</option>
-                <option>viehub.io.vn</option>
-                <option>その他</option>
-              </select>
-            </label>
-            <label>点数（100–1000）
-              <input id="mockScore" type="number" min="100" max="1000" step="1" inputmode="numeric" required placeholder="例：820">
-            </label>
-            <button class="btn btn-primary" type="submit">+ 点数を記録</button>
-          </form>
-          <ul class="mock-list" id="mockList"></ul>
-          <p class="mock-empty" id="mockEmpty">まだ模試の記録がありません。</p>
-          <button class="btn btn-primary" id="mockReady" data-goto="examday" hidden>🎉 目標達成 — ステップ4：受験の申し込みへ →</button>
-          <p class="tip-note">模試で間違えた問題は、どのドメインの問題かを確認して、<button class="linkish" data-goto="learn">5ドメインの学習</button>か<button class="linkish" data-goto="practice" data-practice="tips">解答のコツ</button>に戻って復習しましょう。</p>
         </div>
-      </div><!-- /pr-mock -->
+
+        <div class="res-group">
+          <h3 class="res-head">💻 GitHub リポジトリ</h3>
+          <div class="res-list">
+            <a class="res-item" href="https://github.com/modelcontextprotocol" target="_blank" rel="noopener">
+              <span class="res-tag">ドメイン2</span>
+              <strong>Model Context Protocol</strong>
+              <span>MCP の仕様そのもの。公式 SDK とリファレンス実装のサーバー付き。</span>
+              <em>github.com/modelcontextprotocol ↗</em>
+            </a>
+            <a class="res-item" href="https://github.com/anthropics/claude-agent-sdk-python" target="_blank" rel="noopener">
+              <span class="res-tag">ドメイン1</span>
+              <strong>Claude Agent SDK (Python)</strong>
+              <span>Python で Claude のエージェントを作るために必要なもの一式。</span>
+              <em>github.com/anthropics/claude-agent-sdk-python ↗</em>
+            </a>
+            <a class="res-item" href="https://github.com/anthropics/anthropic-cookbook" target="_blank" rel="noopener">
+              <span class="res-tag">ドメイン1〜5</span>
+              <strong>Anthropic Cookbook</strong>
+              <span>動くコード例とパターン集。何かを作り始める前に一度ざっと目を通す価値があります。</span>
+              <em>github.com/anthropics/anthropic-cookbook ↗</em>
+            </a>
+          </div>
+        </div>
+
+        <div class="res-group">
+          <h3 class="res-head">🎓 無料コース（Anthropic Skilljar）</h3>
+          <div class="res-list">
+            <a class="res-item" href="https://anthropic.skilljar.com/claude-101" target="_blank" rel="noopener">
+              <span class="res-tag">入門</span>
+              <strong>Claude 101</strong>
+              <span>やさしい入門編：Claude に何ができて、みんながどう使っているか。</span>
+              <em>anthropic.skilljar.com/claude-101 ↗</em>
+            </a>
+            <a class="res-item" href="https://anthropic.skilljar.com/claude-with-the-anthropic-api" target="_blank" rel="noopener">
+              <span class="res-tag">ドメイン2 · 5</span>
+              <strong>Building with Claude API</strong>
+              <span>API 連携と tool use を手を動かして学ぶコース。</span>
+              <em>anthropic.skilljar.com/claude-with-the-anthropic-api ↗</em>
+            </a>
+            <a class="res-item" href="https://anthropic.skilljar.com/introduction-to-model-context-protocol" target="_blank" rel="noopener">
+              <span class="res-tag">ドメイン2</span>
+              <strong>Introduction to MCP</strong>
+              <span>MCP とは何か、なぜ生まれたのか、どう実装するのか。</span>
+              <em>anthropic.skilljar.com/introduction-to-model-context-protocol ↗</em>
+            </a>
+            <a class="res-item" href="https://anthropic.skilljar.com/claude-code-in-action" target="_blank" rel="noopener">
+              <span class="res-tag">ドメイン3</span>
+              <strong>Claude Code in Action</strong>
+              <span>Claude Code を日常的に使うための実践的なワークフローと設定。</span>
+              <em>anthropic.skilljar.com/claude-code-in-action ↗</em>
+            </a>
+          </div>
+        </div>
+
+        <div class="res-group">
+          <h3 class="res-head">📝 Engineering Blog</h3>
+          <div class="res-list">
+            <a class="res-item" href="https://www.anthropic.com/engineering/building-agents-with-the-claude-agent-sdk" target="_blank" rel="noopener">
+              <span class="res-tag">ドメイン1</span>
+              <strong>Building Agents with Claude Agent SDK</strong>
+              <span>SDK を作ったチーム自身による、エージェントのアーキテクチャパターン。</span>
+              <em>anthropic.com/engineering ↗</em>
+            </a>
+            <a class="res-item" href="https://www.anthropic.com/engineering" target="_blank" rel="noopener">
+              <span class="res-tag">ドメイン1 · 5</span>
+              <strong>Anthropic Engineering Blog</strong>
+              <span>Claude が実際にどう動くかについての技術記事。「解答のコツ」で紹介している6つのパターンの出典「Building Effective Agents」もここにあります。</span>
+              <em>anthropic.com/engineering ↗</em>
+            </a>
+          </div>
+        </div>
+
+        <p class="tip-note">読んでもまだ分かりにくいところがあれば、<button class="linkish" data-goto="learn">5ドメインの学習</button>の「掘り下げ」と読み比べて、<button class="linkish" data-goto="practice" data-practice="mock">本番レベルの問題演習</button>で理解を確かめましょう。</p>
+      </div><!-- /pr-res -->
     </section>
     <!-- ================= /STEP 3 ================= -->
 
@@ -5124,7 +5465,7 @@ Handwritten Notes:
         </div>
       </div>
 
-      <div class="eyebrow">申し込みの手順 <span class="src-tag exp">受験者の経験談</span></div>
+      <div class="eyebrow" data-toc="申し込み">申し込みの手順 <span class="src-tag exp">受験者の経験談</span></div>
       <div class="card reg-card">
         <div class="phase">
           <div class="phase-title"><span class="phase-tag">A</span>アカウント作成と支払い</div>
@@ -5170,36 +5511,30 @@ Handwritten Notes:
         </div>
       </div>
 
-      <div class="eyebrow" style="margin-top:28px;">公式の試験ルール <span class="src-tag">Exam Guide §10–16</span></div>
+      <div class="eyebrow" data-toc="試験ルール" style="margin-top:28px;">公式の試験ルール <span class="src-tag">Exam Guide §10–16</span></div>
       <p class="section-sub">Exam Guide の要約です — 覚える必要はありませんが、うっかり受験料を無駄にしないために知っておきましょう。</p>
 
-      <div class="rules-card">
-        <h3>📐 採点方法</h3>
+      <details class="rules-card" data-toc="採点方法" open><summary><h3>📐 採点方法</h3></summary>
         <p>CCAR-F の試験は<strong>基準準拠（criterion-referenced）</strong>で採点されます — 他の受験者との比較ではなく、あらかじめ決められた基準に達しているかどうかで判定されます。合格は、出題範囲（blueprint）に沿った知識とスキルが十分にあると示せたことを意味し、「他の受験者の何%を上回ったか」ではありません。</p>
         <p>合格点の 720 は、正式な基準設定の調査によって決められており、専門家が「合格に必要な最低限の水準」を評価しています。点数は <strong>100〜1,000</strong> のスケールで表示されます。結果には合否（Pass/Fail）とスケールスコア、ドメインごとの正答率が含まれます（ドメインごとの正答率は参考情報で、合否の判定には使われません）。</p>
-      </div>
+      </details>
 
       <div class="grid-2">
-        <div class="rules-card">
-          <h3>🪪 身分証明書</h3>
+        <details class="rules-card" data-toc="身分証明書" open><summary><h3>🪪 身分証明書</h3></summary>
           <p>政府が発行した、写真付きで有効期限内の身分証明書が必要です。身分証の氏名は、登録した氏名と<em>完全に</em>一致していなければなりません。氏名を修正する必要がある場合は、試験を予約する<strong>前に</strong> <code>certifications-support@anthropic.com</code> に連絡してください。</p>
-        </div>
-        <div class="rules-card">
-          <h3>♿ 特別な配慮</h3>
+        </details>
+        <details class="rules-card" data-toc="特別な配慮" open><summary><h3>♿ 特別な配慮</h3></summary>
           <p>障害などにより配慮が必要なことを証明できる受験者には、法令に従って合理的な配慮が提供されます。試験を予約する<strong>前に</strong> Pearson VUE に申請し、承認を受ける必要があります — 承認される前に予約しないこと。</p>
-        </div>
-        <div class="rules-card">
-          <h3>🔁 再受験のルール</h3>
+        </details>
+        <details class="rules-card" data-toc="再受験のルール" open><summary><h3>🔁 再受験のルール</h3></summary>
           <p>不合格だった場合、次に受験できるまでの待機期間があります：1回目の不合格の後は<strong>14日</strong>、2回目の後は<strong>30日</strong>、3回目の後は<strong>90日</strong>。受験できるのは<strong>12か月で最大4回</strong>までです。この試験に不合格でも、他の試験の申し込みには影響しません。受験のたびに受験料がかかります。</p>
-        </div>
-        <div class="rules-card">
-          <h3>🚫 無断欠席（No-show）・遅刻</h3>
+        </details>
+        <details class="rules-card" data-toc="無断欠席（No-show）・遅刻" open><summary><h3>🚫 無断欠席（No-show）・遅刻</h3></summary>
           <p>予約した日時に受験しなかった場合や、許容時間を超えて遅刻した場合は、受験料は戻らず、最初から申し込み直す必要があります。</p>
-        </div>
+        </details>
       </div>
 
-      <div class="rules-card">
-        <h3>🎥 試験中のルール</h3>
+      <details class="rules-card" data-toc="試験中のルール" open><summary><h3>🎥 試験中のルール</h3></summary>
         <p>監督付きの決められた環境（オンライン、またはテストセンター）で受験します。試験中は、次のことを守る必要があります：</p>
         <ul>
           <li>試験の間、常に試験監督（オンラインの場合は Webカメラ）から見える位置にいること</li>
@@ -5209,43 +5544,31 @@ Handwritten Notes:
         </ul>
         <p style="margin-top:10px;">持ち込み禁止：スマートフォン、スマートウォッチ、ヘッドホン、学習資料、録音・録画機器。持ち込めるものがある場合は Pearson VUE が指定します（例：試験監督が配布するメモ用紙）。</p>
         <p style="margin-top:10px; color:var(--danger); font-weight:600;">不正行為、禁止されたものを使おうとする行為、試験内容の漏えいは、いずれも結果の取り消し、資格の剥奪、今後の受験の永久禁止につながる可能性があります。</p>
-      </div>
+      </details>
 
-      <div class="rules-card">
-        <h3>🔒 試験内容の秘密保持（NDA）</h3>
+      <details class="rules-card" data-toc="試験内容の秘密保持（NDA）" open><summary><h3>🔒 試験内容の秘密保持（NDA）</h3></summary>
         <p>試験を始める前に、秘密保持契約（NDA）への同意が求められます。同意するということは、試験の内容（問題、選択肢、シナリオ）がすべて Anthropic の所有物であることを認め、その一部でも公開・複製・配布しないと約束することです。同意しない場合は、その場で試験終了となり、受験料は返金されません。</p>
-      </div>
+      </details>
 
-      <div class="rules-card">
-        <h3>♻️ 資格の有効期限と更新</h3>
+      <details class="rules-card" data-toc="資格の有効期限と更新" open><summary><h3>♻️ 資格の有効期限と更新</h3></summary>
         <p>資格は取得日から <strong>12か月</strong>有効です。技術の変化が速いため、資格を持つ人の知識が常に最新であるよう、有効期限が設けられています。</p>
         <p>期限内に更新する場合は、変更された部分を学び直し、Anthropic Partner Academy で監督なしの評価テストを受けます — <strong>無料</strong>です。期限が切れると、もう一度試験全体を受ける必要があり、受験料も全額かかります。試験内容が大きく変わった場合は、更新用の評価テストではなく、試験全体の受け直しが求められることもあります。</p>
-      </div>
+      </details>
 
-      <div class="rules-card">
-        <h3>💬 サポート・異議申し立て・個人情報</h3>
+      <details class="rules-card" data-toc="サポート・異議申し立て・個人情報" open><summary><h3>💬 サポート・異議申し立て・個人情報</h3></summary>
         <p>登録した氏名の修正：<code>certifications-support@anthropic.com</code>。その他の質問（申し込み、予約、特別な配慮、結果）：Pearson VUE のサポートへ。</p>
         <p>異議申し立ては、決定の通知から14日以内（結果に関するものは受験日から14日以内）に、Pearson VUE のサポートを通じて行います。合格基準の決め方（standard-setting）や、個々の問題の内容は、異議申し立ての対象<strong>外</strong>です。</p>
         <p>申し込み時と受験時に集められた個人情報は、Anthropic と Pearson VUE のプライバシーポリシー、および関係するデータ保護法に従って扱われます。</p>
-      </div>
+      </details>
     </section>
     <!-- ================= /STEP 4 ================= -->
 
   </main>
+  </div><!-- /layout -->
 
-  <footer class="note"><a href="CCAF-Exam-Guide.pdf" target="_blank" rel="noopener">公式 Exam Guide</a>（v1.0、2026年7月発効）を翻訳・要約した内容です · クイズは <a href="CCAF-Quiz.pdf" target="_blank" rel="noopener">CCAF-Quiz.pdf</a> より · 解答のコツと模擬試験は受験者の経験談より。学習用の資料であり、公式資料に代わるものではありません · <a href="CCA-F-Study.html" hreflang="vi" lang="vi" data-lang="vi">Bản tiếng Việt</a>。合格をお祈りしています 🍀</footer>
+  <footer class="note"><a href="CCAF-Exam-Guide.pdf" target="_blank" rel="noopener">公式 Exam Guide</a>（v1.0、2026年7月発効）を翻訳・要約した内容です · クイズは <a href="CCAF-Quiz.pdf" target="_blank" rel="noopener">CCAF-Quiz.pdf</a> より · 解答のコツと演習サイトの情報は受験者の経験談より。学習用の資料であり、公式資料に代わるものではありません · <a href="CCA-F-Study.html" hreflang="vi" lang="vi" data-lang="vi">Bản tiếng Việt</a>。合格をお祈りしています 🍀</footer>
 
 </div>
-
-  <!-- Mobile primary navigation. Same four steps as the desktop rail, plus the
-       lookup drawer, placed where a thumb reaches. -->
-  <nav class="bottomnav" id="bottomNav" aria-label="学習ロードマップ">
-    <button class="bn-btn" data-tab="start"    aria-current="true"><span class="bn-ico">1</span>スタート</button>
-    <button class="bn-btn" data-tab="learn"    aria-current="false"><span class="bn-ico">2</span>学習</button>
-    <button class="bn-btn" data-tab="practice" aria-current="false"><span class="bn-ico">3</span>演習</button>
-    <button class="bn-btn" data-tab="examday"  aria-current="false"><span class="bn-ico">4</span>受験</button>
-    <button class="bn-btn" data-open-lookup aria-label="用語を検索"><span class="bn-ico">🔍</span>用語検索</button>
-  </nav>
 
   <button class="totop" id="toTop" aria-label="ページの先頭へ">↑</button>
 
@@ -5596,26 +5919,21 @@ Handwritten Notes:
   var STEP = {
     start:    { n:"1", label:"スタート",       sub:"試験を理解" },
     learn:    { n:"2", label:"5ドメインを学ぶ", sub:"理論 + クイズ" },
-    practice: { n:"3", label:"問題演習",      sub:"クイズ · コツ · 模試" },
+    practice: { n:"3", label:"問題演習",      sub:"クイズ + 本番演習" },
     examday:  { n:"4", label:"申込 & 受験",   sub:"手順 + 試験規則" }
   };
-  var PRACTICE = ["quiz", "tips", "mock"];
+  var PRACTICE = ["quiz", "mock", "tips", "res"];
   var PRACTICE_ALIAS = { cheat:"tips", drill:"quiz" };   // sub-pages renamed/removed in v3
 
-  var state = { tab:"start", domain:"1", mode:"checklist", practice:"quiz" };
+  var state = { tab:"start", domain:"1", mode:"deep", practice:"quiz" };
   var selfHash = 0;   // hashchange events this script caused itself
 
   var panels        = document.querySelectorAll(".panel");
-  var stepBtns      = document.querySelectorAll("#stepNav .step");
-  var bnBtns        = document.querySelectorAll("#bottomNav .bn-btn[data-tab]");
-  var dpBtns        = document.querySelectorAll("#domainPicker .dp-btn");
-  var modeBtns      = document.querySelectorAll("#modeSwitch .mode-btn");
   var prBtns        = document.querySelectorAll("#practiceNav .pr-btn");
   var domainPanels  = document.querySelectorAll(".domain-panel");
   var extPanels     = document.querySelectorAll(".ext-panel");
   var learnModes    = document.querySelectorAll(".learn-mode");
   var practicePanels= document.querySelectorAll(".practice-panel");
-  var extSectionNav = document.getElementById("extSectionNav");
   var topbar        = document.getElementById("topbar");
 
   /* ---------- keep --header-h honest so anchor jumps land correctly ----------
@@ -5630,6 +5948,24 @@ Handwritten Notes:
   if (window.ResizeObserver && topbar) new ResizeObserver(syncHeaderHeight).observe(topbar);
   window.addEventListener("resize", syncHeaderHeight);
   syncHeaderHeight();
+
+  /* ---------- keep --footer-h honest too ----------
+     The sticky side rails (.sidenav, .ext-sidenav, .qz-side) cap their own
+     height to "viewport minus header" so they never grow past the screen.
+     But the page footer sits *after* that whole layout, so near the very
+     bottom of the page the layout's box ends before a maxed-out rail would
+     be ready to let go - the rail's top then pokes out above the header
+     offset and the opaque sticky header covers it. Reserving the footer's
+     real height in that same max-height calc closes the gap. */
+  var footerEl = document.querySelector("footer.note");
+  function syncFooterHeight(){
+    if (!footerEl) return;
+    var h = Math.round(footerEl.getBoundingClientRect().height);
+    document.documentElement.style.setProperty("--footer-h", h + "px");
+  }
+  if (window.ResizeObserver && footerEl) new ResizeObserver(syncFooterHeight).observe(footerEl);
+  window.addEventListener("resize", syncFooterHeight);
+  syncFooterHeight();
 
   /* ---------- theme ---------- */
   var THEME_KEY = "ccaf-theme-v1";
@@ -5655,6 +5991,25 @@ Handwritten Notes:
   /* Chrome's smooth scrollIntoView quietly gives up on long distances (it lands
      ~200px short on this page), and it ignores scroll-margin in that case. So
      compute the target ourselves and re-assert once the animation settles. */
+  // Everything the header covers has to be subtracted from an anchor jump,
+  // otherwise the target lands underneath it and the reader sees the *next*
+  // section instead - which is exactly what the old chip TOC did.
+  function stickyOffset(){
+    var bar = document.getElementById("topbar");
+    return (bar ? Math.round(bar.getBoundingClientRect().height) : 0) + 16;
+  }
+
+  var scrollSettleTimer = 0;
+  function cancelScrollSettle(){
+    if (!scrollSettleTimer) return;
+    window.clearTimeout(scrollSettleTimer);
+    scrollSettleTimer = 0;
+  }
+  // any scroll the reader starts themselves outranks a pending re-assert
+  ["wheel", "touchstart", "keydown"].forEach(function(ev){
+    window.addEventListener(ev, cancelScrollSettle, { passive:true });
+  });
+
   function scrollToEl(el, center){
     if (!el) return;
     function target(){
@@ -5664,45 +6019,524 @@ Handwritten Notes:
       // viewport must align to the top *below* the sticky header instead.
       var off = (center && r.height < window.innerHeight - 24)
         ? (window.innerHeight - r.height) / 2
-        : margin;
+        : Math.max(margin, stickyOffset());
       return Math.round(window.scrollY + r.top - off);
     }
+    cancelScrollSettle();
     window.scrollTo({ top:target(), behavior:"smooth" });
-    window.setTimeout(function(){
+    // Smooth scrolling can undershoot when images or folds resize mid-flight,
+    // so re-assert once it has settled - but only ever for the LATEST target.
+    // Leaving this timer uncancelled made a quick second pick jump back to the
+    // first pick's position about half a second later.
+    scrollSettleTimer = window.setTimeout(function(){
+      scrollSettleTimer = 0;
       var t = target();
       if (Math.abs(t - window.scrollY) > 4) window.scrollTo({ top:t, behavior:"auto" });
     }, 650);
   }
 
-  /* ---------- deep-dive section TOC ---------- */
-  var tocIdCounter = 0;
-  function buildSectionNav(panelEl){
-    if (!extSectionNav) return;
-    extSectionNav.innerHTML = "";
-    if (!panelEl) return;
-    var headings = panelEl.querySelectorAll(".subsec > h4");
-    var tocBtns = [];
-    headings.forEach(function(h){
-      if (!h.id) { tocIdCounter++; h.id = "toc-sec-" + tocIdCounter; }
-      var fullText = h.textContent.trim();
-      var label = fullText, sub = "";
-      // Headings read "1.1 The Agentic Loop Lifecycle — agentic loop のライフサイクル".
-      // Number becomes the bold label, English title the caption.
-      var m = fullText.match(/^(\d+\.\d+)\s+(.+?)(?:\s+—\s+.+)?$/);
-      if (m) { label = m[1]; sub = m[2]; }
-      var btn = document.createElement("button");
-      btn.className = "toc-btn";
-      btn.type = "button";
-      btn.innerHTML = "<strong>" + label + "</strong>" + (sub ? "<small>" + sub + "</small>" : "");
-      btn.addEventListener("click", function(){
-        scrollToEl(h);
-        tocBtns.forEach(function(b){ b.classList.remove("active"); });
-        btn.classList.add("active");
+  /* ==================================================================
+     Progressive disclosure plumbing.
+
+     Two jobs. (1) Every collapsed row gets a "peek" line, so skimming the
+     closed list still teaches you something. The peek is built from the
+     headings already inside the row - never authored twice, so it cannot
+     drift from the content it previews. (2) One sticky table of contents
+     serves all four steps: it lists whatever [data-toc] elements are
+     currently visible, which makes it follow domain / mode / sub-page
+     switches for free.
+     ================================================================== */
+
+  // "How the Loop Works - Loop hoat dong the nao" -> the half after the dash
+  function localHalf(text){
+    var t = (text || "").trim();
+    var i = t.indexOf(" — ");
+    return (i > -1 ? t.slice(i + 3) : t).trim();
+  }
+
+  function decorate(row, labels, countText){
+    var summary = row.querySelector(":scope > summary");
+    if (!summary || summary.querySelector(".ss-chev")) return;
+
+    var chev = document.createElement("span");
+    chev.className = "ss-chev";
+    chev.setAttribute("aria-hidden", "true");
+
+    var main = document.createElement("span");
+    main.className = "ss-main";
+    var heading = summary.querySelector("h3, h4");
+    if (heading) main.appendChild(heading);
+    if (labels.length) {
+      var peek = document.createElement("span");
+      peek.className = "ss-peek";
+      peek.textContent = labels.slice(0, 4).join(" · ") + (labels.length > 4 ? " …" : "");
+      main.appendChild(peek);
+    }
+
+    summary.insertBefore(main, summary.firstChild);
+    summary.insertBefore(chev, summary.firstChild);
+
+    if (countText) {
+      var badge = document.createElement("span");
+      badge.className = "ss-count";
+      badge.textContent = countText;
+      summary.appendChild(badge);
+    }
+  }
+
+  (function decorateAllRows(){
+    document.querySelectorAll("details.subsec").forEach(function(row){
+      var labels = Array.prototype.map.call(
+        row.querySelectorAll(".ss-body h5"),
+        function(h){ return localHalf(h.textContent); });
+      decorate(row, labels, labels.length ? labels.length + "項目" : "");
+    });
+
+    // rules + cheat sheets: the author's own opening sentence is the peek
+    document.querySelectorAll("details.rules-card, details.cheat-card").forEach(function(row){
+      var p = row.querySelector(":scope > p");
+      var t = p ? p.textContent.trim().replace(/\s+/g, " ") : "";
+      var cut = t.search(/。|\.\s/);
+      if (cut > -1) t = t.slice(0, cut + 1);
+      if (t.length > 110) t = t.slice(0, 108).trim() + "…";
+      decorate(row, t ? [t] : [], "");
+    });
+
+    // checklist rows: say how much is behind the fold, not what it says
+    document.querySelectorAll("details.task-card").forEach(function(row){
+      var summary = row.querySelector(":scope > summary");
+      if (!summary || summary.querySelector(".ss-chev")) return;
+      var cols = row.querySelectorAll(".task-col"), bits = [];
+      if (cols[0]) bits.push(cols[0].querySelectorAll("li").length + " 知識");
+      if (cols[1]) bits.push(cols[1].querySelectorAll("li").length + " できること");
+      var head = summary.querySelector(".task-head-text");
+      if (head && bits.length) {
+        var peek = document.createElement("span");
+        peek.className = "ss-peek";
+        peek.textContent = bits.join(" · ");
+        head.appendChild(peek);
+      }
+      var chev = document.createElement("span");
+      chev.className = "ss-chev";
+      chev.setAttribute("aria-hidden", "true");
+      var hd = summary.querySelector(".task-head");
+      if (hd) hd.appendChild(chev);
+    });
+  })();
+
+  /* The checkbox sits inside the <summary>. Left alone, one click would both
+     tick the task and unfold the card; swallowing the click on the input
+     keeps the two gestures separate. */
+  document.querySelectorAll("details.task-card .task-check").forEach(function(cb){
+    cb.addEventListener("click", function(e){ e.stopPropagation(); });
+  });
+
+  /* These four kinds of <details> ship permanently open (see the `open`
+     attribute in the markup) and are no longer meant to be collapsible —
+     block the browser's native "click the summary to toggle" behavior so a
+     stray click can never close one. Interactive controls inside a summary
+     (the task-card checkbox) are left alone so they keep working normally. */
+  document.addEventListener("click", function(e){
+    if (e.target.closest("input, button, a, select, textarea")) return;
+    var summary = e.target.closest(
+      "details.subsec > summary, details.task-card > summary, " +
+      "details.cheat-card > summary, details.rules-card > summary");
+    if (summary) e.preventDefault();
+  }, true);
+
+
+  /* ==================================================================
+     The index rail.
+
+     One nested list of every landmark on the site, built once from the
+     DOM so it can never disagree with the content. Picking a section
+     shows that section - it does not toggle a fold - which is what the
+     old chip strip got wrong.
+     ================================================================== */
+
+  var sideNav      = document.getElementById("sideNav");
+  var sideNavList  = document.getElementById("sideNavList");
+  var sideLayout   = document.getElementById("layout");
+  var extSideNav   = document.getElementById("extSideNav");
+
+  function setSideNav(open){
+    if (!sideLayout) return;
+    sideLayout.classList.toggle("sn-closed", !open);
+    document.querySelectorAll("#sideNavOpen, #sideNavOpenMobile").forEach(function(btn){
+      btn.setAttribute("aria-expanded", open ? "true" : "false");
+    });
+    // as a drawer it covers the page, so the page must not scroll behind it
+    var lock = open && sideNavIsDrawer();
+    document.body.classList.toggle("sn-locked", lock);
+    document.documentElement.classList.toggle("sn-locked", lock);
+  }
+  function sideNavIsDrawer(){ return window.matchMedia("(max-width:1080px)").matches; }
+  function closeDrawerIfNeeded(){ if (sideNavIsDrawer()) setSideNav(false); }
+
+  // "1.1 The Agentic Loop Lifecycle - Vong doi cua agentic loop" -> "Vong doi..."
+  function railTitle(h4){
+    var t = localHalf(h4.textContent.trim());
+    return t.replace(/^\d+\.\d+\s*/, "");
+  }
+
+  function mkItem(parent, num, label){
+    var b = document.createElement("button");
+    b.type = "button";
+    b.className = "sn-item";
+    var n = document.createElement("span"); n.className = "sn-n"; n.textContent = num;
+    var t = document.createElement("span"); t.className = "sn-t"; t.textContent = label;
+    b.appendChild(n); b.appendChild(t);
+    parent.appendChild(b);
+    return b;
+  }
+
+  /* "On this page" — the right-hand rail for step 2's deep-dive mode. Lists
+     the current domain's subsections only, so it stays short and always
+     agrees with whatever the reader is actually looking at. */
+  function buildExtSideNav(){
+    if (!extSideNav) return;
+    extSideNav.innerHTML = "";
+    if (state.tab !== "learn") return;
+
+    if (state.mode === "deep") {
+      var panel = document.getElementById("ext-" + state.domain);
+      if (!panel) return;
+      var rows = panel.querySelectorAll(":scope > details.subsec[data-toc]");
+      if (!rows.length) return;
+
+      extSideNavTitle();
+      rows.forEach(function(row){
+        var h4 = row.querySelector(":scope > summary h4");
+        if (!h4) return;
+        var sec = row.dataset.toc || "";
+        var btn = mkTocBtn(sec, railTitle(h4), sec);
+        btn.addEventListener("click", function(){
+          markLearnActive(sec);
+          pinRail();
+          railJump(row);
+        });
+        extSideNav.appendChild(btn);
       });
-      tocBtns.push(btn);
-      extSectionNav.appendChild(btn);
+      return;
+    }
+
+    if (state.mode === "checklist") {
+      // Checklist merges every domain onto one page - list all 5 as jump
+      // targets instead of the per-subsection list deep mode uses.
+      extSideNavTitle();
+      for (var n = 1; n <= 5; n++) {
+        (function(d){
+          var panel = document.getElementById("domain-" + d);
+          var h3 = panel ? panel.querySelector(".domain-intro h3") : null;
+          if (!panel || !h3) return;
+          var raw = h3.textContent.trim(), dot = raw.indexOf(" · ");
+          var name = dot > -1 ? raw.slice(dot + 3) : raw;
+          panel.dataset.railId = "d" + d;
+          var btn = mkTocBtn("D" + d, name, "d" + d);
+          btn.addEventListener("click", function(){
+            markExtActive("d" + d);
+            pinRail();
+            railJump(panel);
+          });
+          extSideNav.appendChild(btn);
+        })(String(n));
+      }
+    }
+  }
+
+  function extSideNavTitle(){
+    var title = document.createElement("div");
+    title.className = "ext-sidenav-title";
+    title.textContent = "このページの内容";
+    extSideNav.appendChild(title);
+  }
+
+  function mkTocBtn(code, label, sec){
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "toc-btn";
+    btn.dataset.sec = sec;
+    var strong = document.createElement("strong"); strong.textContent = code;
+    var small  = document.createElement("small");  small.textContent = label;
+    btn.appendChild(strong); btn.appendChild(small);
+    return btn;
+  }
+
+  function markExtActive(sec){
+    if (!extSideNav) return;
+    extSideNav.querySelectorAll(".toc-btn.active").forEach(function(x){ x.classList.remove("active"); });
+    if (sec == null) return;
+    var btn = extSideNav.querySelector('.toc-btn[data-sec="' + sec + '"]');
+    if (btn) btn.classList.add("active");
+  }
+
+  function buildSideNav(){
+    if (!sideNavList) return;
+    sideNavList.innerHTML = "";
+
+    PATH.forEach(function(tab, i){
+      var g = document.createElement("div");
+      g.className = "sn-group";
+      g.dataset.tab = tab;
+
+      var head = document.createElement("button");
+      head.type = "button";
+      head.className = "sn-step";
+      var num = document.createElement("span"); num.className = "sn-num"; num.textContent = STEP[tab].n;
+      var lab = document.createElement("span"); lab.className = "sn-label"; lab.textContent = STEP[tab].label;
+      var car = document.createElement("span"); car.className = "sn-caret"; car.textContent = "▶";
+      head.appendChild(num); head.appendChild(lab); head.appendChild(car);
+      head.addEventListener("click", function(){
+        var already = state.tab === tab;
+        if (already) g.classList.toggle("open");
+        else { g.classList.add("open"); go(tab); }
+        closeDrawerIfNeeded();
+      });
+      g.appendChild(head);
+
+      var items = document.createElement("div");
+      items.className = "sn-items";
+      g.appendChild(items);
+
+      if (tab === "learn") buildLearnBranch(items);
+      else if (tab === "practice") buildPracticeBranch(items);
+      else buildLandmarkBranch(items, tab);
+
+      sideNavList.appendChild(g);
+    });
+    syncSideNav();
+  }
+
+  // steps 1 and 4 are long scrolling pages: the rail jumps to a landmark
+  function buildLandmarkBranch(items, tab){
+    var panel = document.getElementById("panel-" + tab);
+    var n = 0;
+    panel.querySelectorAll("[data-toc]").forEach(function(el){
+      n++;
+      var b = mkItem(items, n + ".", el.dataset.toc);
+      b.dataset.anchor = "1";
+      b.addEventListener("click", function(){
+        if (state.tab !== tab) go(tab, null, { keepScroll:true });
+        if (el.tagName === "DETAILS") el.open = true;
+        markActive(b);
+        pinRail();
+        closeDrawerIfNeeded();
+        railJump(el);
+      });
+      el.dataset.railId = String(n);
+      b.dataset.landmark = String(n);
+      b.dataset.tab = tab;
     });
   }
+
+  // step 3 is four sub-pages
+  function buildPracticeBranch(items){
+    var n = 0;
+    document.querySelectorAll("#practiceNav .pr-btn").forEach(function(btn){
+      n++;
+      // strip the leading marker glyphs ("(1)", "?", "flag") so every row reads alike
+      var label = (btn.querySelector("strong") || btn).textContent
+                    .replace(/^[^0-9A-Za-zÀ-ỹ぀-鿿]+/, "").trim();
+      var b = mkItem(items, n + ".", label);
+      b.dataset.practice = btn.dataset.practice;
+      b.addEventListener("click", function(){
+        go("practice", { practice: btn.dataset.practice });
+        closeDrawerIfNeeded();
+      });
+    });
+  }
+
+  // step 2's left rail only goes one level deep now (D1 → D5 + a Checklist
+  // link under each) - the subsection-by-subsection jump list lives in the
+  // right "On this page" rail instead, so it isn't duplicated on both sides.
+  function buildLearnBranch(items){
+    for (var n = 1; n <= 5; n++) {
+      (function(d){
+        var h3 = document.querySelector("#domain-" + d + " .domain-intro h3");
+        var raw = h3 ? h3.textContent.trim() : ("Domain " + d);
+        var dot = raw.indexOf(" · ");
+
+        var sub = document.createElement("div");
+        sub.className = "sn-sub open";
+        sub.dataset.domain = d;
+
+        var head = document.createElement("button");
+        head.type = "button";
+        head.className = "sn-dom";
+        var code = document.createElement("span"); code.className = "sn-code";
+        code.textContent = "D" + d;
+        var nm = document.createElement("span"); nm.className = "sn-t";
+        nm.textContent = dot > -1 ? raw.slice(dot + 3) : raw;
+        head.appendChild(code); head.appendChild(nm);
+        head.addEventListener("click", function(){
+          go("learn", { domain:d, mode:"deep" });
+          closeDrawerIfNeeded();
+        });
+        sub.appendChild(head);
+
+        // still tag every subsection row with a rail id - the right-hand
+        // "On this page" rail and the scroll-spy that drives it both need it
+        var ext = document.getElementById("ext-" + d);
+        if (ext) ext.querySelectorAll("details.subsec[data-toc]").forEach(function(row){
+          row.dataset.railId = row.dataset.toc || "";
+        });
+
+        items.appendChild(sub);
+      })(String(n));
+    }
+
+    // Checklist covers all 30 task statements across every domain on one
+    // page (see applyState), so it gets a single standalone entry here -
+    // not nested under any one domain.
+    var clBtn = mkItem(items, "📋", "チェックリスト");
+    clBtn.dataset.checklist = "all";
+    clBtn.addEventListener("click", function(){
+      go("learn", { mode:"checklist" });
+      closeDrawerIfNeeded();
+    });
+  }
+
+  function markActive(btn){
+    if (!sideNavList) return;
+    sideNavList.querySelectorAll(".sn-item.on").forEach(function(x){ x.classList.remove("on"); });
+    if (btn) btn.classList.add("on");
+  }
+
+  /* Subsection-level detail now lives only in the right "On this page" rail
+     (the left rail stops at the domain level) - kept as its own function so
+     every place that jumps to a subsection agrees on how to light it up. */
+  function markLearnActive(sec){
+    markExtActive(sec);
+  }
+
+  function syncSideNav(){
+    if (!sideNavList) return;
+    sideNavList.querySelectorAll(".sn-group").forEach(function(g){
+      var on = g.dataset.tab === state.tab;
+      g.classList.toggle("on", on);
+      if (on) g.classList.add("open");
+    });
+    sideNavList.querySelectorAll(".sn-sub").forEach(function(s){
+      var on = state.tab === "learn" && s.dataset.domain === state.domain;
+      s.classList.toggle("on", on);
+      if (on) s.classList.add("open");
+    });
+    // Whatever step we are on owns the highlight; leaving another step's mark
+    // lit was why picking a section in step 2 still showed a step-1 landmark.
+    if (state.tab === "practice") {
+      markActive(sideNavList.querySelector('.sn-item[data-practice="' + state.practice + '"]'));
+    } else if (state.tab === "learn" && state.mode === "checklist") {
+      markActive(sideNavList.querySelector('.sn-item[data-checklist="all"]'));
+      window.requestAnimationFrame(syncRailScroll);
+    } else {
+      markActive(null);                       // the scroll spy owns these (deep mode) or nothing to mark
+      window.requestAnimationFrame(syncRailScroll);
+    }
+    buildExtSideNav();
+  }
+
+  /* An explicit pick owns the highlight for a moment. Without this the
+     programmatic scroll fires scroll events, the spy runs, and the reader
+     never sees the row they just clicked light up. */
+  var railPinUntil = 0;
+  function pinRail(){ railPinUntil = (window.performance ? performance.now() : Date.now()) + 1200; }
+  function railPinned(){ return (window.performance ? performance.now() : Date.now()) < railPinUntil; }
+
+  // on long pages the rail follows the reader
+  function syncRailScroll(){
+    if (railPinned()) return;
+    var tab = state.tab;
+    if (tab === "learn") {
+      if (state.mode === "deep") markLearnActiveFromScroll();
+      else if (state.mode === "checklist") markChecklistActiveFromScroll();
+      return;
+    }
+    if (!sideNavList || (tab !== "start" && tab !== "examday")) return;
+    var panel = document.getElementById("panel-" + tab);
+    var line = stickyOffset() + 60, current = null, bestTop = -Infinity;
+    panel.querySelectorAll("[data-toc]").forEach(function(el){
+      var top = el.getBoundingClientRect().top;
+      // Strictly greater, so when two landmarks share a grid row (same top)
+      // the FIRST one wins. Keeping the last match meant the right-hand
+      // column always stole the highlight from the left-hand one.
+      if (top <= line && top > bestTop) { bestTop = top; current = el.dataset.railId; }
+    });
+    if (!current) return;
+    markActive(sideNavList.querySelector('.sn-item[data-tab="' + tab + '"][data-landmark="' + current + '"]'));
+  }
+
+  // same idea as above, but for step 2's subsections - drives both the left
+  // rail's current section AND the right "On this page" rail together
+  function markLearnActiveFromScroll(){
+    var panel = document.getElementById("ext-" + state.domain);
+    if (!panel) return;
+    var line = stickyOffset() + 60, current = null, bestTop = -Infinity;
+    panel.querySelectorAll(":scope > details.subsec[data-toc]").forEach(function(el){
+      var top = el.getBoundingClientRect().top;
+      if (top <= line && top > bestTop) { bestTop = top; current = el.dataset.railId; }
+    });
+    markLearnActive(current);
+  }
+
+  // same idea, but for the merged Checklist page - which domain section is
+  // at the top drives the right rail (the left rail's single Checklist
+  // entry doesn't need a per-domain highlight, it's already the whole page)
+  function markChecklistActiveFromScroll(){
+    var panel = document.getElementById("mode-checklist");
+    if (!panel) return;
+    var line = stickyOffset() + 60, current = null, bestTop = -Infinity;
+    panel.querySelectorAll(".domain-panel").forEach(function(el){
+      var top = el.getBoundingClientRect().top;
+      if (top <= line && top > bestTop) { bestTop = top; current = el.dataset.railId; }
+    });
+    markExtActive(current);
+  }
+
+  /* One jump timer for the whole rail: on phones the scroll waits for the
+     drawer to slide shut, and a second pick must replace that wait, not queue
+     behind it. */
+  var railJumpTimer = 0;
+  function railJump(el){
+    if (railJumpTimer) window.clearTimeout(railJumpTimer);
+    railJumpTimer = window.setTimeout(function(){
+      railJumpTimer = 0;
+      scrollToEl(el);
+    }, sideNavIsDrawer() ? 220 : 0);
+  }
+
+  var railTick = 0;
+  window.addEventListener("scroll", function(){
+    if (railTick) return;
+    railTick = window.requestAnimationFrame(function(){ railTick = 0; syncRailScroll(); });
+  }, { passive:true });
+
+  (function initSideNav(){
+    buildSideNav();
+    setSideNav(!sideNavIsDrawer());
+    document.querySelectorAll("#sideNavOpen, #sideNavOpenMobile").forEach(function(open){
+      open.addEventListener("click", function(){
+        setSideNav(sideLayout.classList.contains("sn-closed"));
+      });
+    });
+    var close = document.getElementById("sideNavCollapse");
+    if (close) close.addEventListener("click", function(){ setSideNav(false); });
+    var back = document.getElementById("sideNavBackdrop");
+    if (back) back.addEventListener("click", function(){ setSideNav(false); });
+
+    // Crossing the drawer breakpoint (resize, rotate, restored window) must
+    // re-apply that layout's default, not strand the rail in the other mode.
+    var wasDrawer = sideNavIsDrawer();
+    window.addEventListener("resize", function(){
+      var now = sideNavIsDrawer();
+      if (now === wasDrawer) return;
+      wasDrawer = now;
+      setSideNav(!now);
+    });
+    document.addEventListener("keydown", function(e){
+      if (e.key === "Escape" && sideNavIsDrawer()) setSideNav(false);
+    });
+  })();
+
 
   /* ---------- state -> DOM ---------- */
   function setSelected(list, matchFn){
@@ -5718,18 +6552,14 @@ Handwritten Notes:
     opts = opts || {};
 
     panels.forEach(function(p){ p.classList.toggle("active", p.id === "panel-" + state.tab); });
-    setSelected(stepBtns, function(b){ return b.dataset.tab === state.tab; });
-    bnBtns.forEach(function(b){
-      b.setAttribute("aria-current", b.dataset.tab === state.tab ? "true" : "false");
-    });
 
     // step 2
-    setSelected(dpBtns,   function(b){ return b.dataset.domain === state.domain; });
-    setSelected(modeBtns, function(b){ return b.dataset.mode === state.mode; });
-    domainPanels.forEach(function(p){ p.classList.toggle("active", p.id === "domain-" + state.domain); });
+    // Checklist is one merged page (all 5 domains shown together, see the
+    // Checklist rail entry), so unlike the deep-dive ext-panels these don't
+    // get filtered down to the current domain.
+    domainPanels.forEach(function(p){ p.classList.add("active"); });
     extPanels.forEach(function(p){ p.classList.toggle("active", p.id === "ext-" + state.domain); });
     learnModes.forEach(function(m){ m.classList.toggle("active", m.id === "mode-" + state.mode); });
-    if (state.mode === "deep") buildSectionNav(document.getElementById("ext-" + state.domain));
     updateDomainCta();
 
     // step 3
@@ -5737,9 +6567,26 @@ Handwritten Notes:
     practicePanels.forEach(function(p){ p.classList.toggle("active", p.id === "pr-" + state.practice); });
 
     renderFooters();
+    syncSideNav();
+    renderCrumb();
     if (!opts.keepScroll) window.scrollTo({ top:0, behavior:"auto" });
     if (!opts.noHash) writeHash();
     markScrollableTables();
+  }
+
+  /* Phones only: row 2 of the header shows a short "where am I" trail
+     instead of repeating the 4-step tabs or a fixed bottom bar. */
+  function renderCrumb(){
+    var el = document.getElementById("crumbTrail");
+    if (!el) return;
+    var parts = [STEP[state.tab].label];
+    if (state.tab === "learn") {
+      parts.push(state.mode === "checklist" ? "チェックリスト" : "D" + state.domain);
+    } else if (state.tab === "practice") {
+      var strong = document.querySelector('#practiceNav .pr-btn[data-practice="' + state.practice + '"] strong');
+      if (strong) parts.push(strong.textContent.replace(/^[^0-9A-Za-zぁ-んァ-ヶ一-龠]+/, "").trim());
+    }
+    el.textContent = parts.join(" › ");
   }
 
   function writeHash(){
@@ -5801,10 +6648,6 @@ Handwritten Notes:
     });
   }
 
-  wire(stepBtns, function(b){ go(b.dataset.tab); });
-  wire(bnBtns,   function(b){ go(b.dataset.tab); });
-  wire(dpBtns,   function(b){ state.domain = b.dataset.domain; applyState(); });
-  wire(modeBtns, function(b){ state.mode   = b.dataset.mode;   applyState(); });
   wire(prBtns,   function(b){ state.practice = b.dataset.practice; applyState(); });
 
   // data-goto="tab" [data-practice="sub-page"] [data-scroll="element id"]
@@ -5863,24 +6706,8 @@ Handwritten Notes:
   function renderProgress(){
     // Source of truth is the DOM (checkbox.checked), not localStorage — keeps
     // the UI correct even if storage is unavailable (private mode, sandbox...).
-    var doneTotal = 0, byDomain = {};
-    checkboxes.forEach(function(cb){
-      var card = cb.closest(".task-card");
-      var d = card ? card.dataset.domain : null;
-      if (!d) return;
-      byDomain[d] = byDomain[d] || { done:0, total:0 };
-      byDomain[d].total++;
-      if (cb.checked) { byDomain[d].done++; doneTotal++; }
-    });
-
-    dpBtns.forEach(function(btn){
-      var info = byDomain[btn.dataset.domain] || { done:0, total:0 };
-      var pct = info.total ? Math.round((info.done / info.total) * 100) : 0;
-      var bar = btn.querySelector(".dp-bar i");
-      if (bar) bar.style.width = pct + "%";
-      var count = btn.querySelector("[data-dp-count]");
-      if (count) count.textContent = info.done + "/" + info.total;
-    });
+    var doneTotal = 0;
+    checkboxes.forEach(function(cb){ if (cb.checked) doneTotal++; });
 
     var pct = totalTasks ? Math.round((doneTotal / totalTasks) * 100) : 0;
     var ringBar = document.getElementById("ringBar");
@@ -5911,16 +6738,6 @@ Handwritten Notes:
     });
   });
 
-  // The 20px checkbox alone was a poor pointer target: make the whole header row work.
-  document.querySelectorAll(".task-head").forEach(function(head){
-    head.addEventListener("click", function(e){
-      if (e.target.classList.contains("task-check")) return;
-      var cb = head.querySelector(".task-check");
-      if (!cb) return;
-      cb.checked = !cb.checked;
-      cb.dispatchEvent(new Event("change"));
-    });
-  });
 
   (function applyStoredChecks(){
     var s = loadJSON(PROGRESS_KEY);
@@ -6191,8 +7008,6 @@ Handwritten Notes:
   /* ---------- step 2: "このドメインのクイズを解く" shortcuts ---------- */
   function updateDomainCta(){
     var d = state.domain, info = Quiz.domainInfo(d);
-    var modeBtn = document.getElementById("modeQuizBtn");
-    if (modeBtn) modeBtn.innerHTML = "❓ クイズ D" + d + "<small>" + info.total + "問 · 回答済み " + info.done + "</small>";
     var title = document.getElementById("dqcTitle");
     if (title) title.textContent = "D" + d + " を学び終えたら、クイズで知識を定着させよう";
     var sub = document.getElementById("dqcSub");
@@ -6201,7 +7016,7 @@ Handwritten Notes:
     var btn = document.getElementById("dqcBtn");
     if (btn) btn.textContent = "❓ D" + d + " のクイズに挑戦 →";
   }
-  ["modeQuizBtn", "dqcBtn"].forEach(function(id){
+  ["dqcBtn"].forEach(function(id){
     var b = document.getElementById(id);
     if (b) b.addEventListener("click", function(){ Quiz.openDomain(state.domain); });
   });
@@ -6224,7 +7039,7 @@ Handwritten Notes:
       mockListEl.innerHTML = mocks.map(function(m, i){
         return '<li><span class="mock-score ' + (m.score >= 800 ? "pass" : "fail") + '">' + escHTML(m.score) + '</span>' +
                '<span class="mock-site">' + escHTML(m.site) + '</span><span class="mock-date">' + escHTML(m.date) + '</span>' +
-               '<button type="button" class="mock-del" data-i="' + i + '" aria-label="この模試の記録を削除">✕</button></li>';
+               '<button type="button" class="mock-del" data-i="' + i + '" aria-label="この演習の記録を削除">✕</button></li>';
       }).reverse().join("");
     }
     var empty = document.getElementById("mockEmpty");
